@@ -120,6 +120,8 @@ This repository has been tested on Python 3.10 64bit (Windows 10/PopOs linux), w
 ```sh
 > git clone https://github.com/corradosantoro/phidias
 > cd phidias
+> python -m venv ./venv
+> venv/Scripts/activate.bat
 > pip install -r requirements.txt
 > pip install .
 ```
@@ -152,6 +154,13 @@ First of all, you must create the ontology. In order to do that, you must follow
 
 * Choose the owl file name, by setting the variable FILE_NAME (ONTOLOGY Section) in the config.ini (test.owl for instance)
 * Execute semas.py
+---------------
+
+from prompt:
+```sh
+> python semas.py
+```
+
 
 ```sh
 Creating new test.owl file...
