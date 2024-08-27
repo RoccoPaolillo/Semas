@@ -152,6 +152,7 @@ from prompt:
 
 First of all, you must create the ontology. In order to do that, you must follow three preliminar steps:
 
+* Files in the phidias folder
 * Choose the owl file name, by setting the variable FILE_NAME (ONTOLOGY Section) in the config.ini (test.owl for instance)
 * Execute semas.py
 ---------------
