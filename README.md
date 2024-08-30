@@ -68,6 +68,12 @@ Stefano should accept offer from University Alma-Mater-Bologna with co-authors o
 Mandy should accept offer from University University-of-Messina with co-authors of top-authors in field of Artificial-Intelligence.
 ```
 
+Upon inference, the agent changes its affiliation, causing a change in the knowledge graph:
+
+<p align="center">
+<img src="images/kg_post.png" width=60% height=50%>
+</p>
+
 # SEMAS by Fabio Longo
 
 This is the repository of the Python (3.7+) implementation of SEMAS (**SE**mantic **M**ulti-**A**gent **S**ystem), which integrates 
