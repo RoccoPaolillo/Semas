@@ -71,7 +71,7 @@ Mandy should accept offer from University University-of-Messina with co-authors 
 Upon inference, the agent changes its affiliation, causing a change in the knowledge graph:
 
 <p align="center">
-<img src="images/kg_post.png" width=30% height=40%>
+<img src="images/kg_post.png" width=40% height=50%>
 </p>
 
 # SEMAS by Fabio Longo
