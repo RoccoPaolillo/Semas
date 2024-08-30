@@ -13,37 +13,9 @@ I initialized the ontology with the specific scenario, where scholars belong to 
 The intentions (reactors in PHIDIAS) to reach the desire to become top-author in Artificial Intelligence are either to publish directly with top-authors in Artificial Intelligence (direct match) or with an author which is co-author with a top-author in Artificial Intelligence (indirect match). Stefano has to decide whether to accept the offer from Bologna or Turin, based on where he has a chance to find co-authors who can connect him to a top author.
 The set of triplets that compose the ontology initialized is as follows:
 
-```sh
-eShell: main > kb
-CoAuthorship('Rocco', 'Fabio')          CoAuthorship('Esther', 'Fabio')
-CoAuthorship('Jack', 'Fabio')           CoAuthorship('Fabio', 'Misael')
-CoAuthorship('Rocco', 'Misael')         CoAuthorship('Esther', 'Misael')
-CoAuthorship('Isaac', 'Misael')         CoAuthorship('Fabio', 'Petra')
-CoAuthorship('Michael', 'Petra')        CoAuthorship('Jenny', 'Petra')
-CoAuthorship('Carlo', 'Rocco')          CoAuthorship('Albert', 'Michael')
-CoAuthorship('Michael', 'Anna')         CoAuthorship('Esther', 'Anna')
-CoAuthorship('Andrea', 'Anna')          Affiliation('Fabio', 'University-of-Catania')
-Affiliation('Misael', 'University-of-Catania')Affiliation('Petra', 'University-of-Catania')
-Affiliation('Anna', 'University-of-Catania')Affiliation('Rocco', 'Alma-Mater-Bologna')
-Affiliation('Michael', 'Alma-Mater-Bologna')Affiliation('Jenny', 'Alma-Mater-Bologna')
-Affiliation('Esther', 'Alma-Mater-Bologna')Affiliation('Albert', 'University-of-Turin')
-Affiliation('Carlo', 'University-of-Turin')Affiliation('Paola', 'University-of-Turin')
-Affiliation('Isaac', 'University-of-Messina')Affiliation('Andrea', 'University-of-Messina')
-Affiliation('Jack', 'University-of-Messina')TopAuthorship('Fabio', 'Artificial-Intelligence')
-TopAuthorship('Misael', 'Artificial-Intelligence')TopAuthorship('Petra', 'Artificial-Intelligence')
-TopAuthorship('Anna', 'Artificial-Intelligence')TopAuthorship('Rocco', 'Applied-Ontology')
-TopAuthorship('Michael', 'Applied-Ontology')TopAuthorship('Jenny', 'Applied-Ontology')
-TopAuthorship('Esther', 'Applied-Ontology')TopAuthorship('Andrea', 'Applied-Ontology')
-TopAuthorship('Albert', 'Machine-Learning')TopAuthorship('Carlo', 'Machine-Learning')
-TopAuthorship('Paola', 'Machine-Learning')TopAuthorship('Jack', 'Machine-Learning')
-TopAuthorship('Isaac', 'Philosophy')    TopAuthorship('Andrea', 'Philosophy')
-Selectionship('Stefano', 'Alma-Mater-Bologna')Selectionship('Stefano', 'University-of-Turin')
-Selectionship('Mandy', 'University-of-Turin')Selectionship('Mandy', 'University-of-Messina')
-HasGender('Fabio', 'Male')              HasGender('Misael', 'Male')
-HasGender('Rocco', 'Male')              HasGender('Albert', 'Male')
-HasGender('Petra', 'Female')            HasGender('Anna', 'Female')
-HasGender('Jenny', 'Female')
-```
+<p align="center">
+<img src="images/kg_pre.png" width=70% height=80%>
+</p>
 
 Plotted (here manually):
 
