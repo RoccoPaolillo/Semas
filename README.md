@@ -43,11 +43,6 @@ For simplicity, this condition includes the intention associated with the next r
 Publicationship(X) / (CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +ProposeCoauthorship_2(Z, Y,X),+AcceptOffer(X,U), Publicationship(X)]
 +ProposeCoauthorship_2(X,Z, Y) >> [show_line("Propose co-authorship with ",X," as co-author with ",Z,", a top-author in the field of ",Y,".\n")]
 +AcceptOffer(S,X,U) >> [show_line(S," should accept offer from University ",U," with co-authors of top-authors in field of ",X,".\n"),-TRIPLE(S, "hasAffiliationWith", U), +Affiliation(S, U), pre_process()]```
-
-* Select university which increases the chance to publish in X field. In this scenario, the one with co-authors of top-authors in the field of "Artificial Universities" (SelectUniversity("Artificial Intelligence")), for Stefano that was not selected from the university that hosts top-authors in the field
- 
-```sh
-+AcceptOffer(S,X,U) >> [show_line(S," should accept offer from University ",U," with co-authors of top-authors in field of ",X,".\n"),-TRIPLE(S, "hasAffiliationWith", U), +Affiliation(S, U), pre_process()]
 ```
 
 the outcome will be as follows:
