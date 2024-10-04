@@ -1,5 +1,4 @@
 # SEMAS
-# EXPLORING CODE FOR THE MAS COMPONENT
 
 This is the repository of the Python (3.7+) implementation of SEMAS (**SE**mantic **M**ulti-**A**gent **S**ystem), which integrates 
 Multi-Agent systems with the Semantic Web. SEMAS is built on top of the framework [PHIDIAS](https://ceur-ws.org/Vol-2502/paper5.pdf).
@@ -87,14 +86,14 @@ Unless you delete the owl file or choose to create another ontology, the agent w
 
 ---------------
 The *mental attitudes* (Beliefs, Desire and Intentions) represent respectively the **information**, **motivational** and **deliberative**
-states of the agent. SEMAS aims to integrate distinct models' mental attitudes, in order to leverage all their features, by considering the following schema:
+states of the agent. SEMAS aims to integrate distinct models' mental attitudes, in order to leverage all their features, by considering the following schema for Agents:
 
 
-| BDI-Model  | OWL 2      | PHIDIAS    |
-|------------|------------|------------|
-| Beliefs    | Properties | Beliefs    |
-| Desires    | Properties | Procedures |
-| Intentions | Properties | Reactors   |
+| BDI-Model  | Semantic Web                     | PHIDIAS   |
+|------------|----------------------------------|-----------|
+| Belief     | (Agent, hasBelief, Belief)       | Belief    |
+| Desire     | (Agent, hasDesire, Desire)       | Procedure |
+| Intention  | (Agent, hasIntention, Intention) | Reactor   |
 
 PHIDIAS mental attitudes are built starting from [this](https://cdn.aaai.org/ICMAS/1995/ICMAS95-042.pdf) paper, by considering the following assumptions:
 
@@ -144,8 +143,8 @@ Similarly, the belief can be retracted from the KB:
 ```
 
 Since in Python code there cannot exist classes with same names but distinct usage, we are forced to choose distinct name for OWL beliefs (which are individuals properties) and PHIDIAS beliefs.
-When triples are imported from OWL are asserted in the shame "TRIPLE(object, property, subject)" (for instance: *TRIPLE(Fabio, coAuthorWith, Misael)*). Afterward, a production rule system
-invoked by a procedure (load) will retract such belief and assert a new one as defined in the correspondence entry in config.ini (*CoAuthorship(Fabio, Misael)*).
+When triples are imported from OWL, they are asserted with the shape: "TRIPLE(object, property, subject)" (for instance: *TRIPLE(Fabio, coAuthorWith, Misael)*). Afterward, a production rule system
+invoked by a procedure (load) will retract such beliefs and assert new ones as defined in the correspondence entries in config.ini (namely, *CoAuthorship(Fabio, Misael)*).
 
 2. **Desires**: by convention we have chosen to represent Desires with **Procedures**, which can be used to trigger manually part of the production rules stack, taking in account (or not)
 of one or more arguments.
@@ -161,7 +160,8 @@ which does not pass through the KB but it can (as like as beliefs) interact with
 ---------------
 
 Semas integrates the explicit declaration of SWRL rules (in Section [SWRL]), whom will interact with the ontology when the variable **ACTIVE** (in Section [REASONING]) is set to *true*.
-The variable **REASONER** indicates which of the integrated reasoners (HERMIT/PELLET) must be employed before every SPARQL query in some Action's PLAN.
+The variable **REASONER** indicates which of the integrated reasoners (HERMIT/PELLET) must be employed before every SPARQL query in some Action's PLAN. However, due to restriction given by
+*Horn-like* clauses shape of SWRL rules, each rule's head can have at most one predicate. Such restriction in most cases can be overridden with the employment of PHIDIAS production rules and plans.
 
 
 ### Case-study: Co-Authorship and Academic Mobility
@@ -293,6 +293,7 @@ eShell: main >
 ```
 
 
+
 ### Case-study: Warehouse management
 
 ---------------
@@ -313,7 +314,24 @@ exceeds *MAX_WORK_TIME*, all agents are put to rest for *REST_TIME* by retractin
 in the canvas changes to red). When the overall time exceeds *MAX_WORKDAY_TIME*, the working day ends and each agent get paid considering the
 jobs done reported in the ledger.
 
+* Choose the owl file name, by setting the variable FILE_NAME (ONTOLOGY Section) in the config.ini (*warehouse.owl* for instance)
+* Execute semas_mas.py
+
 ```sh
+Creating new warehouse.owl file...
+
+Please Re-Run Semas.
+
+Process finished with exit code 0
+```
+
+#### Ontology initialization
+
+---------------
+As with mono-agent mode, the details of the above formalization are all defined in config_mas.ini. Both OWL 2 ontology and PHIDIAS classes can be initialised with the command *init()* as follows:
+
+```sh
+eShell: main > init()
 eShell: main > setup()
 Setup jobs ledger...
 eShell: main > work()
