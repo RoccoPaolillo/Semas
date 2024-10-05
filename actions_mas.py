@@ -25,6 +25,7 @@ from phidias.Types import *
 
 import configparser
 from owlready2 import *
+from front_end_mas import *
 
 config = configparser.ConfigParser()
 config.read('config_mas.ini')
@@ -71,10 +72,13 @@ STEP_DURATIN = 0.005
 
 # Worker-Turtle dictionary
 # dict_turtle = {}
-G = nx.Graph()
-#pos = nx.spring_layout(G, seed=numpy.random.seed(1229))
-
-
+# G = nx.Graph()
+# agents = get_agents_names()[1:]
+# G.add_nodes_from(agents)
+# pos = nx.spring_layout(G, seed=numpy.random.seed(1229))
+# agents = get_agents_names()[1:]
+# G.add_nodes_from(agents)
+# pos = nx.spring_layout(G, seed=231)
 
 # ---------------------------------------------------------------------
 # Ontology section
@@ -501,6 +505,7 @@ class network_init(Action):
         G.remove_edges_from(list(G.edges()))
         agents = get_agents_names()[1:]
         G.add_nodes_from(agents)
+        pos = nx.spring_layout(G, seed=231)
 #        pos = nx.spring_layout(G, seed=numpy.random.seed(1229))
         vis_network()
 #        plt.clf() 
@@ -513,9 +518,14 @@ class create_link(Action):
         G.add_edges_from([(agents[0],agents[1])])
         vis_network()
 
+G = nx.Graph()
+agents = get_agents_names()[1:]
+G.add_nodes_from(agents)
+pos = nx.spring_layout(G, seed=numpy.random.seed(1229))
+
 def vis_network():
         plt.clf() 
-        nx.draw(G,with_labels=True)
+        nx.draw(G,with_labels=True, pos = pos)
         plt.show()
 
 
