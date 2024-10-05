@@ -392,6 +392,62 @@ def get_agents_names():
 
     return agents
 
+def get_scholars_names():
+    scholars = []
+    q = PREFIX + f" SELECT ?subj" + " WHERE { "
+    q = q + f"?subj rdf:type {ONTO_NAME}:Scholar." + "}"
+
+    result_event = threading.Event()  # Evento per sincronizzare il risultato
+    query_queue.put((q, result_event))  # Invia la query al thread dedicato
+
+    result_event.wait()  # Aspetta che il risultato sia pronto
+
+    result = result_queue.get()  # Ottieni il risultato dalla coda
+
+    for res in result:
+        subj = str(res).split(",")[0]
+        subj = subj.split("#")[1][:-2]
+        scholars.append(subj)
+
+    return scholars
+
+def get_universities_names():
+    universities = []
+    q = PREFIX + f" SELECT ?subj" + " WHERE { "
+    q = q + f"?subj rdf:type {ONTO_NAME}:University." + "}"
+
+    result_event = threading.Event()  # Evento per sincronizzare il risultato
+    query_queue.put((q, result_event))  # Invia la query al thread dedicato
+
+    result_event.wait()  # Aspetta che il risultato sia pronto
+
+    result = result_queue.get()  # Ottieni il risultato dalla coda
+
+    for res in result:
+        subj = str(res).split(",")[0]
+        subj = subj.split("#")[1][:-2]
+        universities.append(subj)
+
+    return universities
+
+def get_fields_names():
+    fields = []
+    q = PREFIX + f" SELECT ?subj" + " WHERE { "
+    q = q + f"?subj rdf:type {ONTO_NAME}:Field." + "}"
+
+    result_event = threading.Event()  # Evento per sincronizzare il risultato
+    query_queue.put((q, result_event))  # Invia la query al thread dedicato
+
+    result_event.wait()  # Aspetta che il risultato sia pronto
+
+    result = result_queue.get()  # Ottieni il risultato dalla coda
+
+    for res in result:
+        subj = str(res).split(",")[0]
+        subj = subj.split("#")[1][:-2]
+        fields.append(subj)
+
+    return fields
 
 # Funzione per terminare il thread in sicurezza
 def stop_query_thread():
@@ -520,16 +576,51 @@ class create_link(Action):
 
 G = nx.Graph()
 agents = get_agents_names()[1:]
+scholars = get_scholars_names()[1:]
+universities = get_universities_names()[1:]
+fields = get_fields_names()[1:]
+# G.add_nodes_from(agents)
+G.add_nodes_from(universities)
+G.add_nodes_from(fields)
 G.add_nodes_from(agents)
-pos = nx.spring_layout(G, seed=numpy.random.seed(1229))
+
+color_map = ['red' if node in universities else 'green' if node in fields else 'cyan' for node in G] 
+# color_map = ['red' if node in universities elif 'green' if node in fields else "blue" for node in G] 
+
+# color_map = []
+
+# for node in G:
+#     if node in universities:
+#         node.color_map = "red"
+#     elif node in fields:
+#         node.color_map = "green"
+#     else:
+#         node.color_map = "blue"
+        
+        
+        
+        
+#             else 'violet' for node in G]  G.nodes[node]["color"]
+
+#df = pd.read_csv('nodes.csv', delimiter = ";")  # dataframe nodes
+#G.from_pandas_dataframe(df)
+# for node in G.nodes():  # to add attribute color to nodes extracting from the dataframe
+#    G.nodes[node]["color"] = df[(df.node == node)]["color"].item()
+
+# features for the layout of the graph
+
+# colors = [node[1]['color'] for node in G.nodes(data=True)] # color of nodes
+
+pos = nx.spring_layout(G, seed=numpy.random.seed(1229)) # seed for having stable configuration
 
 def vis_network():
         plt.clf() 
-        nx.draw(G,with_labels=True, pos = pos)
+        nx.draw(G,with_labels=True, node_color=color_map, pos = pos)
         plt.show()
 
-
-
+for i in scholars:
+    print(i)
+print(G)
 # Avviare il thread del network
 ntw_thread = threading.Thread(target=vis_network)
 ntw_thread.daemon = True
