@@ -191,11 +191,16 @@
   <rdfs:subClassOf rdf:resource="#ENTITY"/>
 </owl:Class>
 
+<owl:Class rdf:about="#Newcomers">
+  <rdfs:subClassOf rdf:resource="#ENTITY"/>
+</owl:Class>
+
 <owl:NamedIndividual rdf:about="#Warehouse">
   <rdf:type rdf:resource="#Agent"/>
   <rdf:type rdf:resource="#Scholar"/>
   <rdf:type rdf:resource="#Field"/>
   <rdf:type rdf:resource="#University"/>
+  <rdf:type rdf:resource="#Newcomers"/>
   <hasDuty rdf:resource="#Duty1"/>
   <hasWorkTime rdf:resource="#WorkTime1"/>
   <hasAgent rdf:resource="#Fabio"/>
@@ -269,16 +274,6 @@
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Paola">
-  <rdf:type rdf:resource="#Agent"/>
-  <rdf:type rdf:resource="#Scholar"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Stefano">
-  <rdf:type rdf:resource="#Agent"/>
-  <rdf:type rdf:resource="#Scholar"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Mandy">
   <rdf:type rdf:resource="#Agent"/>
   <rdf:type rdf:resource="#Scholar"/>
 </owl:NamedIndividual>
@@ -376,6 +371,16 @@
 
 <owl:NamedIndividual rdf:about="#RestTime1">
   <rdf:type rdf:resource="#AgentRestTime"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Stefano">
+  <rdf:type rdf:resource="#Scholar"/>
+  <rdf:type rdf:resource="#Newcomers"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Mandy">
+  <rdf:type rdf:resource="#Scholar"/>
+  <rdf:type rdf:resource="#Newcomers"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Artificial-Intelligence">

@@ -449,6 +449,25 @@ def get_fields_names():
 
     return fields
 
+def get_newcomers_names():
+    newcomers = []
+    q = PREFIX + f" SELECT ?subj" + " WHERE { "
+    q = q + f"?subj rdf:type {ONTO_NAME}:Newcomers." + "}"
+
+    result_event = threading.Event()  # Evento per sincronizzare il risultato
+    query_queue.put((q, result_event))  # Invia la query al thread dedicato
+
+    result_event.wait()  # Aspetta che il risultato sia pronto
+
+    result = result_queue.get()  # Ottieni il risultato dalla coda
+
+    for res in result:
+        subj = str(res).split(",")[0]
+        subj = subj.split("#")[1][:-2]
+        newcomers.append(subj)
+
+    return newcomers
+
 # Funzione per terminare il thread in sicurezza
 def stop_query_thread():
     query_queue.put((None, None))  # Invia un segnale di terminazione
@@ -579,12 +598,14 @@ agents = get_agents_names()[1:]
 scholars = get_scholars_names()[1:]
 universities = get_universities_names()[1:]
 fields = get_fields_names()[1:]
+newcomers = get_newcomers_names()[1:]
 # G.add_nodes_from(agents)
 G.add_nodes_from(universities)
 G.add_nodes_from(fields)
 G.add_nodes_from(agents)
+G.add_nodes_from(newcomers)
 
-color_map = ['red' if node in universities else 'green' if node in fields else 'cyan' for node in G] 
+color_map = ['red' if node in universities else 'green' if node in fields else 'orange' if node in newcomers else "cyan" for node in G] 
 # color_map = ['red' if node in universities elif 'green' if node in fields else "blue" for node in G] 
 
 # color_map = []
