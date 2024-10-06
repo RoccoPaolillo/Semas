@@ -589,14 +589,15 @@ class network_init(Action):
         
 class create_link(Action):
     def execute(self):
-        agents = get_agents_names()[1:]
-        G.add_edges_from([(agents[0],agents[1])])
+#        agents = get_agents_names()[1:]
+        G.add_edges_from([(newcomers[0],universities[1])])
         vis_network()
 
 G = nx.Graph()
 agents = get_agents_names()[1:]
 scholars = get_scholars_names()[1:]
 universities = get_universities_names()[1:]
+newcomers = get_newcomers_names()[1:]
 fields = get_fields_names()[1:]
 newcomers = get_newcomers_names()[1:]
 # G.add_nodes_from(agents)
