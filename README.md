@@ -292,6 +292,9 @@ eShell: worker > agent main
 eShell: main >
 ```
 
+### Case-study academic mobility, Semas_mas academia.owl visualized, links to be added
+
+![Image 6](images/networknolink.jpg)
 
 
 ### Case-study: Warehouse management
@@ -352,7 +355,7 @@ assigning job to worker1
 ..........................
 ```
 
-![Image 6](images/workers.jpg)
+![Image 7](images/workers.jpg)
 
 ### Semantic Web MAS interaction
 
@@ -362,5 +365,3 @@ As seen in the case of mono-agent code, triples from ontologies (Semantic Web) c
 the SEMAS production rules system. The code [semas_mas.py](semas_mas.py) implements the above *Warehouse* case-study including the already
 seen procedure *init()* and *load()* to initialize the ontology described in [config_mas.ini](config_mas.ini) and import
 its triples into the SEMAS KB. The interaction between *belief-from-triples* and production rules is left to the developer.
-
-# Semas_mas academia.owl visualized, links to be added
