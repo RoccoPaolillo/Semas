@@ -597,11 +597,14 @@ class move_turtle(Action):
 class create_link(Action):
     def execute(self,arg0,arg1):
 #        agents = get_agents_names()[1:]
-        G.add_edges_from([(arg0,arg1)])
+        node_1 = str(arg0).split("'")[3]
+        node_2 = str(arg1).split("'")[3]
+#        print(str(arg1).split("'")[3])
+        G.add_edges_from([(node_1,node_2)])
 #        G.add_edges_from([(arg0, arg1)])
-#        vis_network()
-        print(G.edges())
-
+        vis_network()
+#        print(G.edges())
+        
 G = nx.Graph()
 
 # G.add_nodes_from(agents)
