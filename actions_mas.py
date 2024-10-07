@@ -93,7 +93,134 @@ Rest_Time = 3
 # Timer tick
 TICK = 0.1
 
+# ---------------------------------------------------------------------
+# Agent section
+# ---------------------------------------------------------------------
 
+# Thread che esegue le query SPARQL
+def query_thread():
+    my_world = owlready2.World()
+    my_world.get_ontology(FILE_NAME).load()  # path to the owl file
+
+    while True:
+        q, result_event = query_queue.get()  # Ottieni la query e l'evento di sincronizzazione
+
+        if q is None:  # Esci dal ciclo quando ricevi None
+            break
+
+        graph = my_world.as_rdflib_graph()
+        result = list(graph.query(q))  # Esegui la query
+        result_queue.put(result)  # Inserisci il risultato nella coda dei risultati
+        result_event.set()  # Notifica che il risultato è pronto
+
+
+# Avvia il thread delle query
+query_thread_instance = threading.Thread(target=query_thread)
+query_thread_instance.start()
+
+
+# Funzione per ottenere i nomi degli agenti (inviando la query al thread dedicato)
+def get_agents_names():
+    agents = []
+    q = PREFIX + f" SELECT ?subj" + " WHERE { "
+    q = q + f"?subj rdf:type {ONTO_NAME}:Agent." + "}"
+
+    result_event = threading.Event()  # Evento per sincronizzare il risultato
+    query_queue.put((q, result_event))  # Invia la query al thread dedicato
+
+    result_event.wait()  # Aspetta che il risultato sia pronto
+
+    result = result_queue.get()  # Ottieni il risultato dalla coda
+
+    for res in result:
+        subj = str(res).split(",")[0]
+        subj = subj.split("#")[1][:-2]
+        agents.append(subj)
+
+    return agents
+
+def get_scholars_names():
+    scholars = []
+    q = PREFIX + f" SELECT ?subj" + " WHERE { "
+    q = q + f"?subj rdf:type {ONTO_NAME}:Scholar." + "}"
+
+    result_event = threading.Event()  # Evento per sincronizzare il risultato
+    query_queue.put((q, result_event))  # Invia la query al thread dedicato
+
+    result_event.wait()  # Aspetta che il risultato sia pronto
+
+    result = result_queue.get()  # Ottieni il risultato dalla coda
+
+    for res in result:
+        subj = str(res).split(",")[0]
+        subj = subj.split("#")[1][:-2]
+        scholars.append(subj)
+
+    return scholars
+
+def get_universities_names():
+    universities = []
+    q = PREFIX + f" SELECT ?subj" + " WHERE { "
+    q = q + f"?subj rdf:type {ONTO_NAME}:University." + "}"
+
+    result_event = threading.Event()  # Evento per sincronizzare il risultato
+    query_queue.put((q, result_event))  # Invia la query al thread dedicato
+
+    result_event.wait()  # Aspetta che il risultato sia pronto
+
+    result = result_queue.get()  # Ottieni il risultato dalla coda
+
+    for res in result:
+        subj = str(res).split(",")[0]
+        subj = subj.split("#")[1][:-2]
+        universities.append(subj)
+
+    return universities
+
+def get_fields_names():
+    fields = []
+    q = PREFIX + f" SELECT ?subj" + " WHERE { "
+    q = q + f"?subj rdf:type {ONTO_NAME}:Field." + "}"
+
+    result_event = threading.Event()  # Evento per sincronizzare il risultato
+    query_queue.put((q, result_event))  # Invia la query al thread dedicato
+
+    result_event.wait()  # Aspetta che il risultato sia pronto
+
+    result = result_queue.get()  # Ottieni il risultato dalla coda
+
+    for res in result:
+        subj = str(res).split(",")[0]
+        subj = subj.split("#")[1][:-2]
+        fields.append(subj)
+
+    return fields
+
+def get_newcomers_names():
+    newcomers = []
+    q = PREFIX + f" SELECT ?subj" + " WHERE { "
+    q = q + f"?subj rdf:type {ONTO_NAME}:Newcomers." + "}"
+
+    result_event = threading.Event()  # Evento per sincronizzare il risultato
+    query_queue.put((q, result_event))  # Invia la query al thread dedicato
+
+    result_event.wait()  # Aspetta che il risultato sia pronto
+
+    result = result_queue.get()  # Ottieni il risultato dalla coda
+
+    for res in result:
+        subj = str(res).split(",")[0]
+        subj = subj.split("#")[1][:-2]
+        newcomers.append(subj)
+
+    return newcomers
+
+agents = get_agents_names()[1:]
+scholars = get_scholars_names()[1:]
+universities = get_universities_names()[1:]
+newcomers = get_newcomers_names()[1:]
+fields = get_fields_names()[1:]
+newcomers = get_newcomers_names()[1:]
 
 try:
     my_onto = get_ontology(FILE_NAME).load()
@@ -311,7 +438,7 @@ class TaskDetect(Sensor):
            pos_x = random.randint(-N // 2, N // 2)
            pos_y = random.randint(-N // 2, N // 2)
            print(f"Generating task on position ({pos_x}, {pos_y})...")
-           self.assert_belief(TASK(pos_x, pos_y))
+           self.assert_belief(TASK())
 
 
 
@@ -346,127 +473,7 @@ class Timer(Sensor):
                 return
 
 
-# ---------------------------------------------------------------------
-# Agent section
-# ---------------------------------------------------------------------
 
-# Thread che esegue le query SPARQL
-def query_thread():
-    my_world = owlready2.World()
-    my_world.get_ontology(FILE_NAME).load()  # path to the owl file
-
-    while True:
-        q, result_event = query_queue.get()  # Ottieni la query e l'evento di sincronizzazione
-
-        if q is None:  # Esci dal ciclo quando ricevi None
-            break
-
-        graph = my_world.as_rdflib_graph()
-        result = list(graph.query(q))  # Esegui la query
-        result_queue.put(result)  # Inserisci il risultato nella coda dei risultati
-        result_event.set()  # Notifica che il risultato è pronto
-
-
-# Avvia il thread delle query
-query_thread_instance = threading.Thread(target=query_thread)
-query_thread_instance.start()
-
-
-# Funzione per ottenere i nomi degli agenti (inviando la query al thread dedicato)
-def get_agents_names():
-    agents = []
-    q = PREFIX + f" SELECT ?subj" + " WHERE { "
-    q = q + f"?subj rdf:type {ONTO_NAME}:Agent." + "}"
-
-    result_event = threading.Event()  # Evento per sincronizzare il risultato
-    query_queue.put((q, result_event))  # Invia la query al thread dedicato
-
-    result_event.wait()  # Aspetta che il risultato sia pronto
-
-    result = result_queue.get()  # Ottieni il risultato dalla coda
-
-    for res in result:
-        subj = str(res).split(",")[0]
-        subj = subj.split("#")[1][:-2]
-        agents.append(subj)
-
-    return agents
-
-def get_scholars_names():
-    scholars = []
-    q = PREFIX + f" SELECT ?subj" + " WHERE { "
-    q = q + f"?subj rdf:type {ONTO_NAME}:Scholar." + "}"
-
-    result_event = threading.Event()  # Evento per sincronizzare il risultato
-    query_queue.put((q, result_event))  # Invia la query al thread dedicato
-
-    result_event.wait()  # Aspetta che il risultato sia pronto
-
-    result = result_queue.get()  # Ottieni il risultato dalla coda
-
-    for res in result:
-        subj = str(res).split(",")[0]
-        subj = subj.split("#")[1][:-2]
-        scholars.append(subj)
-
-    return scholars
-
-def get_universities_names():
-    universities = []
-    q = PREFIX + f" SELECT ?subj" + " WHERE { "
-    q = q + f"?subj rdf:type {ONTO_NAME}:University." + "}"
-
-    result_event = threading.Event()  # Evento per sincronizzare il risultato
-    query_queue.put((q, result_event))  # Invia la query al thread dedicato
-
-    result_event.wait()  # Aspetta che il risultato sia pronto
-
-    result = result_queue.get()  # Ottieni il risultato dalla coda
-
-    for res in result:
-        subj = str(res).split(",")[0]
-        subj = subj.split("#")[1][:-2]
-        universities.append(subj)
-
-    return universities
-
-def get_fields_names():
-    fields = []
-    q = PREFIX + f" SELECT ?subj" + " WHERE { "
-    q = q + f"?subj rdf:type {ONTO_NAME}:Field." + "}"
-
-    result_event = threading.Event()  # Evento per sincronizzare il risultato
-    query_queue.put((q, result_event))  # Invia la query al thread dedicato
-
-    result_event.wait()  # Aspetta che il risultato sia pronto
-
-    result = result_queue.get()  # Ottieni il risultato dalla coda
-
-    for res in result:
-        subj = str(res).split(",")[0]
-        subj = subj.split("#")[1][:-2]
-        fields.append(subj)
-
-    return fields
-
-def get_newcomers_names():
-    newcomers = []
-    q = PREFIX + f" SELECT ?subj" + " WHERE { "
-    q = q + f"?subj rdf:type {ONTO_NAME}:Newcomers." + "}"
-
-    result_event = threading.Event()  # Evento per sincronizzare il risultato
-    query_queue.put((q, result_event))  # Invia la query al thread dedicato
-
-    result_event.wait()  # Aspetta che il risultato sia pronto
-
-    result = result_queue.get()  # Ottieni il risultato dalla coda
-
-    for res in result:
-        subj = str(res).split(",")[0]
-        subj = subj.split("#")[1][:-2]
-        newcomers.append(subj)
-
-    return newcomers
 
 # Funzione per terminare il thread in sicurezza
 def stop_query_thread():
@@ -573,33 +580,30 @@ class move_turtle(Action):
 
 #    wn.mainloop()
    
-class network_init(Action):
-    def execute(self):
+# class network_init(Action):
+#     def execute(self):
 #        dflink = pd.read_csv('links.csv', delimiter = ";") # dataframe links
          # empty graph
-        G.remove_edges_from(list(G.edges()))
-        agents = get_agents_names()[1:]
-        G.add_nodes_from(agents)
-        pos = nx.spring_layout(G, seed=231)
+#         G.remove_edges_from(list(G.edges()))
+#         agents = get_agents_names()[1:]
+#         G.add_nodes_from(agents)
+#         pos = nx.spring_layout(G, seed=231)
 #        pos = nx.spring_layout(G, seed=numpy.random.seed(1229))
-        vis_network()
+#         vis_network()
 #        plt.clf() 
 #        nx.draw(G,with_labels=True)
 #        plt.show()
         
 class create_link(Action):
-    def execute(self):
+    def execute(self,arg0,arg1):
 #        agents = get_agents_names()[1:]
-        G.add_edges_from([(newcomers[0],universities[1])])
-        vis_network()
+        G.add_edges_from([(arg0,arg1)])
+#        G.add_edges_from([(arg0, arg1)])
+#        vis_network()
+        print(G.edges())
 
 G = nx.Graph()
-agents = get_agents_names()[1:]
-scholars = get_scholars_names()[1:]
-universities = get_universities_names()[1:]
-newcomers = get_newcomers_names()[1:]
-fields = get_fields_names()[1:]
-newcomers = get_newcomers_names()[1:]
+
 # G.add_nodes_from(agents)
 G.add_nodes_from(universities)
 G.add_nodes_from(fields)
@@ -637,7 +641,7 @@ pos = nx.spring_layout(G, seed=numpy.random.seed(1229)) # seed for having stable
 
 def vis_network():
         plt.clf() 
-        nx.draw(G,with_labels=True, node_color=color_map, pos = pos)
+        nx.draw(G,with_labels=True, node_color=color_map , pos = pos)
         plt.show()
 
 for i in scholars:

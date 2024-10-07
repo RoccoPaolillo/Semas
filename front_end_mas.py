@@ -26,7 +26,11 @@ else:
 def create_agents(class_name):
     def main(self):
         # MoveAndCompleteJob intention
-        +TASK(X, Y, A)[{'from': M}] >> [show_line("\n",A," is moving to (", X, ",", Y, "), received task from ", M), move_turtle(A, X, Y), +COMM("DONE")[{'to': 'main'}]]
+#         +TASK(X, Y, A)[{'from': M}] >> [show_line("\n",A," is moving to (", X, ",", Y, "), received task from ", M), move_turtle(A, X, Y), +COMM("DONE")[{'to': 'main'}]]
+         +TASK(X)[{'from': M}] >> [pubby(X), +COMM("DONE")[{'to': 'main'}]]
+
+
+
 #        +NETNEW(X, Y)[{'from': M}] >> [show_line(create_link(X,Y))[{'to': 'main'}]]
     # Creiamo una nuova classe con il metodo 'main' definito sopra
     return type(class_name, (Agent,), {"main": main})
@@ -75,6 +79,7 @@ class main(Agent):
         # desires
         setup() / WORKTIME(W) >> [show_line("Setup worktime again...\n"), load(), -WORKTIME(W), +WORKTIME(0)]
         setup() >> [show_line("Setup worktime...\n"), +WORKTIME(0), +MAX_WORK_TIME(Max_Work_Time), +MAX_WORKDAY_TIME(Max_WorkDay_Time), +REST_TIME(Rest_Time)]
+#        work() >> [show_line("Starting task detection...\n"), Timer(Max_Work_Time).start(), TaskDetect().start(), show_line("Workers on duty...")]
         work() >> [show_line("Starting task detection...\n"), Timer(Max_Work_Time).start(), TaskDetect().start(), show_line("Workers on duty...")]
 
         # AssignJob intentions
@@ -98,19 +103,19 @@ class main(Agent):
         # pay desires
         pay() / LEDGER(Z, H) >> [show_line("\nSending payment to ",Z, " for ",H," tasks..."), -LEDGER(Z, H), pay()]
         pay() >> [show_line("\nPayments completed.")]
-        netty() >> [network_init()]
+#        netty() >> [network_init()]
         newlink() >> [create_link()]
         
         pubby(X) >> [Publicationship(X)]        
         
         SelectUniversity(X) / (Selectionship(S,U) & CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +AcceptOffer(S,X,U), SelectUniversity(X)]
-        Publicationship(X) / (Selectionship(S,U) & CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +ProposeCoauthorship_2(Z, Y,X),+AcceptOffer(S,X,U), Publicationship(X)]
+        Publicationship(X) / (Selectionship(S,U) & CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +ProposeCoauthorship_2(Z, Y,X), +AcceptOffer(S,X,U), Publicationship(X)]
         Publicationship(X) / (TopAuthorship(Y, X) & Affiliation(Y, U)) >> [show_line("Direct match found at ",U,".\n"), -TopAuthorship(Y, X), +ProposeCoauthorship(Y, X), Publicationship(X)]
 
 
         +ProposeCoauthorship_2(X,Z, Y) >> [show_line("Propose co-authorship with ",X," as co-author with ",Z,", a top-author in the field of ",Y,".\n")]
         +ProposeCoauthorship(X,Y) >> [show_line("Propose co-authorship with ",X," as top-author in the field of ",Y,".\n")]
-        +AcceptOffer(S,X,U) >> [show_line(S," should accept offer from University ",U," with co-authors of top-authors in field of ",X,".\n"),-TRIPLE(S, "hasAffiliationWith", U), +Affiliation(S, U), newlink() , turn()]
+        +AcceptOffer(S,X,U) >> [show_line(S," should accept offer from University ",U," with co-authors of top-authors in field of ",X,".\n"),-TRIPLE(S, "hasAffiliationWith", U), +Affiliation(S,U), create_link(S,U), turn()]
 
 
 # for i in range(len(agents)):
