@@ -27,6 +27,7 @@ nx.draw(G, with_labels=True)
 #if not in interactive mode for 
 plt.show()
 
+# Per identificare una persona specific (provato)
 agostinelli = rdflib.URIRef("http://fossr.eu/kg/data/authors/6701393010")
 
 if (agostinelli, rdflib.namespace.RDF.type, g.FOAF.Person) in g:
