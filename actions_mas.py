@@ -673,12 +673,12 @@ def vis_network():
         colors_edges = nx.get_edge_attributes(G,"color").values()
         edges = G.edges()
         weights_edges = [G[u][v]['weight'] for u,v in edges]# nx.get_edge_attributes(G,'weight').values()
-        labac = nx.get_edge_attributes(G,'label').values()
         plt.clf()
         nx.draw(G,with_labels=True, node_color=color_map , edge_color = colors_edges, width = weights_edges , pos = pos)
         nx.draw_networkx_edge_labels(G, edge_labels=nx.get_edge_attributes(G,'label'), label_pos=0.7, pos = pos) # edge_color = colors_edges,  pos = pos)
         
         plt.show()
+
 
 # Avviare il thread del network
 ntw_thread = threading.Thread(target=vis_network)
