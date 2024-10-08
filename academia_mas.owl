@@ -251,6 +251,14 @@
   <rdfs:subClassOf rdf:resource="#ENTITY"/>
 </owl:Class>
 
+<owl:Class rdf:about="#DesireGoalFor">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#coauthorIndirect">
+  <rdfs:subClassOf rdf:resource="#INTENTION"/>
+</owl:Class>
+
 <owl:NamedIndividual rdf:about="#Warehouse">
   <rdf:type rdf:resource="#Agent"/>
   <rdf:type rdf:resource="#Scholar"/>
@@ -650,6 +658,18 @@
   <selectedFor rdf:resource="#University-of-Messina"/>
   <selectedFor rdf:resource="#University-of-Turin"/>
 </owl:NamedIndividual>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
 
 <swrl:Imp/>
 
