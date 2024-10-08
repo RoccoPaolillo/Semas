@@ -594,16 +594,40 @@ class move_turtle(Action):
 #        nx.draw(G,with_labels=True)
 #        plt.show()
         
-class create_link(Action):
+class new_affiliation(Action):
     def execute(self,arg0,arg1):
-#        agents = get_agents_names()[1:]
         node_1 = str(arg0).split("'")[3]
         node_2 = str(arg1).split("'")[3]
-#        print(str(arg1).split("'")[3])
-        G.add_edges_from([(node_1,node_2)])
-#        G.add_edges_from([(arg0, arg1)])
+        G.add_edge(node_1, node_2, color = "orange", weight = 4, label = "affil") # str(arg3).split()[0])
         vis_network()
-#        print(G.edges())
+        
+class co_authorshiplink(Action):
+    def execute(self,arg0,arg1):
+        node_1 = str(arg0).split("'")[3]
+        node_2 = str(arg1).split("'")[3]
+        G.add_edge(node_1, node_2, color = "blue", weight = 2, label = "coauthor") # str(arg3).split()[0])
+        vis_network()
+        
+class affiliationlink(Action):
+    def execute(self,arg0,arg1):
+        node_1 = str(arg0).split("'")[3]
+        node_2 = str(arg1).split("'")[3]
+        G.add_edge(node_1, node_2, color = "red", weight = 2, label = "affil") # str(arg3).split()[0])
+        vis_network()
+        
+class topauthorlink(Action):
+    def execute(self,arg0,arg1):
+        node_1 = str(arg0).split("'")[3]
+        node_2 = str(arg1).split("'")[3]
+        G.add_edge(node_1, node_2, color = "violet", weight = 2, label = "topauthor") # str(arg3).split()[0])
+        vis_network()
+        
+class selectforlink(Action):
+    def execute(self,arg0,arg1):
+        node_1 = str(arg0).split("'")[3]
+        node_2 = str(arg1).split("'")[3]
+        G.add_edge(node_1, node_2, color = "green", weight = 4, label  = "selected") # str(arg3).split()[0])
+        vis_network()
         
 G = nx.Graph()
 
@@ -614,6 +638,9 @@ G.add_nodes_from(agents)
 G.add_nodes_from(newcomers)
 
 color_map = ['red' if node in universities else 'green' if node in fields else 'orange' if node in newcomers else "cyan" for node in G] 
+
+
+#colors_edges = nx.get_edge_attributes(G,"color").values()
 # color_map = ['red' if node in universities elif 'green' if node in fields else "blue" for node in G] 
 
 # color_map = []
@@ -643,13 +670,16 @@ color_map = ['red' if node in universities else 'green' if node in fields else '
 pos = nx.spring_layout(G, seed=numpy.random.seed(1229)) # seed for having stable configuration
 
 def vis_network():
-        plt.clf() 
-        nx.draw(G,with_labels=True, node_color=color_map , pos = pos)
+        colors_edges = nx.get_edge_attributes(G,"color").values()
+        edges = G.edges()
+        weights_edges = [G[u][v]['weight'] for u,v in edges]# nx.get_edge_attributes(G,'weight').values()
+        labac = nx.get_edge_attributes(G,'label').values()
+        plt.clf()
+        nx.draw(G,with_labels=True, node_color=color_map , edge_color = colors_edges, width = weights_edges , pos = pos)
+        nx.draw_networkx_edge_labels(G, edge_labels=nx.get_edge_attributes(G,'label'), label_pos=0.7, pos = pos) # edge_color = colors_edges,  pos = pos)
+        
         plt.show()
 
-for i in scholars:
-    print(i)
-print(G)
 # Avviare il thread del network
 ntw_thread = threading.Thread(target=vis_network)
 ntw_thread.daemon = True

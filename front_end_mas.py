@@ -67,13 +67,13 @@ class main(Agent):
 
         # Importing related triples
         load() >> [show_line("\nAsserting all OWL 2 triples beliefs...\n"), assert_beliefs_triples(), show_line("\nTurning triples beliefs into Semas beliefs...\n"), turn()]
-        turn() / TRIPLE(X, "hasLedger",Z) >> [-TRIPLE(X,"hasLedger",Z), +LEDGER(X,"0"), AssignId(X), turn()]
+#        turn() / TRIPLE(X, "hasLedger",Z) >> [-TRIPLE(X,"hasLedger",Z), +LEDGER(X,"0"), AssignId(X), turn()]
 
 # FOSSR DAYS        
-        turn() / TRIPLE(X, "coAuthorWith", Y) >> [-TRIPLE(X, "coAuthorWith", Y), +CoAuthorship(X, Y), turn()]
-        turn() / TRIPLE(X, "hasAffiliationWith", Y) >> [-TRIPLE(X, "hasAffiliationWith", Y), +Affiliation(X, Y), turn()]
-        turn() / TRIPLE(X, "isTopAuthorIn", Y) >> [-TRIPLE(X, "isTopAuthorIn", Y), +TopAuthorship(X, Y), turn()]
-        turn() / TRIPLE(X, "selectedFor", Y) >> [-TRIPLE(X, "selectedFor", Y), +Selectionship(X, Y), turn()]
+        turn() / TRIPLE(X, "coAuthorWith", Y) >> [-TRIPLE(X, "coAuthorWith", Y), +CoAuthorship(X, Y), co_authorshiplink(X,Y), turn()]
+        turn() / TRIPLE(X, "hasAffiliationWith", Y) >> [-TRIPLE(X, "hasAffiliationWith", Y), +Affiliation(X, Y), affiliationlink(X,Y), turn()]
+        turn() / TRIPLE(X, "isTopAuthorIn", Y) >> [-TRIPLE(X, "isTopAuthorIn", Y), +TopAuthorship(X, Y), topauthorlink(X,Y), turn()]
+        turn() / TRIPLE(X, "selectedFor", Y) >> [-TRIPLE(X, "selectedFor", Y), +Selectionship(X, Y), selectforlink(X,Y) , turn()]
 # FOSSR DAYS
 
         # desires
@@ -103,19 +103,26 @@ class main(Agent):
         # pay desires
         pay() / LEDGER(Z, H) >> [show_line("\nSending payment to ",Z, " for ",H," tasks..."), -LEDGER(Z, H), pay()]
         pay() >> [show_line("\nPayments completed.")]
-#        netty() >> [network_init()]
-        newlink() >> [create_link()]
         
-        pubby(X) >> [Publicationship(X)]        
+#        netty() / (CoAuthorship(X, Y)) >> [co_authorshiplink(X,Y), netty()]
+#        netty() / (Affiliation(X, Y)) >> [affiliationlink(X,Y), netty()]
+#        netty() / (TopAuthorship(X, Y)) >> [topauthorlink(X,Y), netty()]
+#        netty() / (Selectionship(X, Y)) >> [selectforlink(X,Y), netty()]
+#        newlink() >> [new_affiliation()]
         
-        SelectUniversity(X) / (Selectionship(S,U) & CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +AcceptOffer(S,X,U), SelectUniversity(X)]
-        Publicationship(X) / (Selectionship(S,U) & CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +ProposeCoauthorship_2(Z, Y,X), +AcceptOffer(S,X,U), Publicationship(X)]
-        Publicationship(X) / (TopAuthorship(Y, X) & Affiliation(Y, U)) >> [show_line("Direct match found at ",U,".\n"), -TopAuthorship(Y, X), +ProposeCoauthorship(Y, X), Publicationship(X)]
+        pubby(X) >> [DesireGoalFor(X)]        
+        
+#        SelectUniversity(X) / (Selectionship(S,U) & CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +AcceptOffer(S,X,U), SelectUniversity(X)]
+#        DesireGoalFor(X) / (Selectionship(S,U) & CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +coauthorIndirect(Z, Y,X), +AcceptOffer(S,X,U), DesireGoalFor(X)]
+#        DesireGoalFor(X) / (Selectionship(S,U) & CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +coauthorIndirect(Z, Y,X), +AcceptOffer(S,X,U), DesireGoalFor(X)]
+        DesireGoalFor(X) / (Selectionship(S,U) & CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +coauthorIndirect(Z, Y,X), +AcceptOffer(S,X,U), DesireGoalFor(X)]
+
+#        DesireGoalFor(X) / (TopAuthorship(Y, X) & Affiliation(Y, U)) >> [show_line("Direct match found at ",U,".\n"), -TopAuthorship(Y, X), +ProposeCoauthorship(Y, X), DesireGoalFor(X)]
 
 
-        +ProposeCoauthorship_2(X,Z, Y) >> [show_line("Propose co-authorship with ",X," as co-author with ",Z,", a top-author in the field of ",Y,".\n")]
+        +coauthorIndirect(X,Z, Y) >> [show_line(X," is co-author with ",Z,", a top-author in the field of ",Y,".\n")]
         +ProposeCoauthorship(X,Y) >> [show_line("Propose co-authorship with ",X," as top-author in the field of ",Y,".\n")]
-        +AcceptOffer(S,X,U) >> [show_line(S," should accept offer from University ",U," with co-authors of top-authors in field of ",X,".\n"),-TRIPLE(S, "hasAffiliationWith", U), +Affiliation(S,U), create_link(S,U), turn()]
+        +AcceptOffer(S,X,U) >> [show_line(S," should accept offer from University ",U," with co-authors of top-authors in field of ",X,".\n"),-TRIPLE(S, "hasAffiliationWith", U), +Affiliation(S,U), new_affiliation(S,U), turn()]
 
 
 # for i in range(len(agents)):
