@@ -1,0 +1,1169 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xml:base="http://test.org/academia_mas.owl"
+         xmlns="http://test.org/academia_mas.owl#"
+         xmlns:swrl="http://www.w3.org/2003/11/swrl#">
+
+<owl:Ontology rdf:about="http://test.org/academia_mas.owl"/>
+
+<owl:ObjectProperty rdf:about="#hasDuty"/>
+
+<owl:ObjectProperty rdf:about="#hasTask"/>
+
+<owl:ObjectProperty rdf:about="#hasLedger"/>
+
+<owl:ObjectProperty rdf:about="#hasComm"/>
+
+<owl:ObjectProperty rdf:about="#hasWorkTime"/>
+
+<owl:ObjectProperty rdf:about="#hasMaxWorkTime"/>
+
+<owl:ObjectProperty rdf:about="#hasMaxWorkDayTime"/>
+
+<owl:ObjectProperty rdf:about="#hasStopWork"/>
+
+<owl:ObjectProperty rdf:about="#hasDutyTime"/>
+
+<owl:ObjectProperty rdf:about="#hasAgent"/>
+
+<owl:ObjectProperty rdf:about="#hasRestTime"/>
+
+<owl:ObjectProperty rdf:about="#coAuthorWith"/>
+
+<owl:ObjectProperty rdf:about="#hasAffiliationWith"/>
+
+<owl:ObjectProperty rdf:about="#isTopAuthorIn"/>
+
+<owl:ObjectProperty rdf:about="#selectedFor"/>
+
+<owl:Class rdf:about="#ENTITY">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#BELIEF">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#REACTOR">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#DESIRE">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#INTENTION">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#DUTY">
+  <rdfs:subClassOf rdf:resource="#BELIEF"/>
+</owl:Class>
+
+<owl:Class rdf:about="#WORKTIME">
+  <rdfs:subClassOf rdf:resource="#BELIEF"/>
+</owl:Class>
+
+<owl:Class rdf:about="#LEDGER">
+  <rdfs:subClassOf rdf:resource="#BELIEF"/>
+</owl:Class>
+
+<owl:Class rdf:about="#AGT">
+  <rdfs:subClassOf rdf:resource="#BELIEF"/>
+</owl:Class>
+
+<owl:Class rdf:about="#MAX_WORK_TIME">
+  <rdfs:subClassOf rdf:resource="#BELIEF"/>
+</owl:Class>
+
+<owl:Class rdf:about="#MAX_WORKDAY_TIME">
+  <rdfs:subClassOf rdf:resource="#BELIEF"/>
+</owl:Class>
+
+<owl:Class rdf:about="#REST_TIME">
+  <rdfs:subClassOf rdf:resource="#BELIEF"/>
+</owl:Class>
+
+<owl:Class rdf:about="#CoAuthorship">
+  <rdfs:subClassOf rdf:resource="#BELIEF"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Affiliation">
+  <rdfs:subClassOf rdf:resource="#BELIEF"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Selectionship">
+  <rdfs:subClassOf rdf:resource="#BELIEF"/>
+</owl:Class>
+
+<owl:Class rdf:about="#TopAuthorship">
+  <rdfs:subClassOf rdf:resource="#BELIEF"/>
+</owl:Class>
+
+<owl:Class rdf:about="#TASK">
+  <rdfs:subClassOf rdf:resource="#REACTOR"/>
+</owl:Class>
+
+<owl:Class rdf:about="#COMM">
+  <rdfs:subClassOf rdf:resource="#REACTOR"/>
+</owl:Class>
+
+<owl:Class rdf:about="#TIMEOUT">
+  <rdfs:subClassOf rdf:resource="#REACTOR"/>
+</owl:Class>
+
+<owl:Class rdf:about="#setup">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#work">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#pay">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#stopwork">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#noduty">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#init">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#load">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#turn">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#netty">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#newlink">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#BeTopAuthorship">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Publicationship">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#SelectUniversity">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#pubby">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#MoveAndCompleteJob">
+  <rdfs:subClassOf rdf:resource="#INTENTION"/>
+</owl:Class>
+
+<owl:Class rdf:about="#AssignJob">
+  <rdfs:subClassOf rdf:resource="#INTENTION"/>
+</owl:Class>
+
+<owl:Class rdf:about="#SendComm">
+  <rdfs:subClassOf rdf:resource="#INTENTION"/>
+</owl:Class>
+
+<owl:Class rdf:about="#ProposeCoauthorship">
+  <rdfs:subClassOf rdf:resource="#INTENTION"/>
+</owl:Class>
+
+<owl:Class rdf:about="#ProposeCoauthorship_2">
+  <rdfs:subClassOf rdf:resource="#INTENTION"/>
+</owl:Class>
+
+<owl:Class rdf:about="#AcceptOffer">
+  <rdfs:subClassOf rdf:resource="#INTENTION"/>
+</owl:Class>
+
+<owl:Class rdf:about="#NetWork">
+  <rdfs:subClassOf rdf:resource="#INTENTION"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Agent">
+  <rdfs:subClassOf rdf:resource="#ENTITY"/>
+</owl:Class>
+
+<owl:Class rdf:about="#AgentTask">
+  <rdfs:subClassOf rdf:resource="#ENTITY"/>
+</owl:Class>
+
+<owl:Class rdf:about="#AgentLedger">
+  <rdfs:subClassOf rdf:resource="#ENTITY"/>
+</owl:Class>
+
+<owl:Class rdf:about="#AgentDuty">
+  <rdfs:subClassOf rdf:resource="#ENTITY"/>
+</owl:Class>
+
+<owl:Class rdf:about="#AgentWorkTime">
+  <rdfs:subClassOf rdf:resource="#ENTITY"/>
+</owl:Class>
+
+<owl:Class rdf:about="#AgentDutyTime">
+  <rdfs:subClassOf rdf:resource="#ENTITY"/>
+</owl:Class>
+
+<owl:Class rdf:about="#AgentMaxWorkTime">
+  <rdfs:subClassOf rdf:resource="#ENTITY"/>
+</owl:Class>
+
+<owl:Class rdf:about="#AgentMaxWorkDayTime">
+  <rdfs:subClassOf rdf:resource="#ENTITY"/>
+</owl:Class>
+
+<owl:Class rdf:about="#AgentRestTime">
+  <rdfs:subClassOf rdf:resource="#ENTITY"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Scholar">
+  <rdfs:subClassOf rdf:resource="#ENTITY"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Field">
+  <rdfs:subClassOf rdf:resource="#ENTITY"/>
+</owl:Class>
+
+<owl:Class rdf:about="#University">
+  <rdfs:subClassOf rdf:resource="#ENTITY"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Newcomers">
+  <rdfs:subClassOf rdf:resource="#ENTITY"/>
+</owl:Class>
+
+<owl:Class rdf:about="#DesireGoalFor">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#coauthorIndirect">
+  <rdfs:subClassOf rdf:resource="#INTENTION"/>
+</owl:Class>
+
+<owl:NamedIndividual rdf:about="#Warehouse">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <rdf:type rdf:resource="#Field"/>
+  <rdf:type rdf:resource="#University"/>
+  <rdf:type rdf:resource="#Newcomers"/>
+  <hasDuty rdf:resource="#Duty1"/>
+  <hasWorkTime rdf:resource="#WorkTime1"/>
+  <hasAgent rdf:resource="#Fabio1"/>
+  <hasAgent rdf:resource="#Rocco2"/>
+  <hasAgent rdf:resource="#Misael3"/>
+  <hasAgent rdf:resource="#Albert4"/>
+  <hasAgent rdf:resource="#Jenny5"/>
+  <hasAgent rdf:resource="#Petra6"/>
+  <hasAgent rdf:resource="#Anna7"/>
+  <hasAgent rdf:resource="#Esther8"/>
+  <hasAgent rdf:resource="#Michael9"/>
+  <hasAgent rdf:resource="#Carlo10"/>
+  <hasAgent rdf:resource="#Paola11"/>
+  <hasAgent rdf:resource="#Isaac12"/>
+  <hasAgent rdf:resource="#Andrea13"/>
+  <hasAgent rdf:resource="#Jack14"/>
+  <hasMaxWorkDayTime rdf:resource="#MaxWorkTime1"/>
+  <hasMaxWorkTime rdf:resource="#MaxWorkDayTime1"/>
+  <hasRestTime rdf:resource="#RestTime1"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Duty1">
+  <rdf:type rdf:resource="#AgentDuty"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#WorkTime1">
+  <rdf:type rdf:resource="#AgentWorkTime"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Fabio1">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <hasDuty rdf:resource="#Duty2"/>
+  <hasLedger rdf:resource="#LedgerRow1"/>
+  <coAuthorWith rdf:resource="#Rocco2"/>
+  <coAuthorWith rdf:resource="#Petra6"/>
+  <hasAffiliationWith rdf:resource="#University-of-Catania"/>
+  <isTopAuthorIn rdf:resource="#Artificial-Intelligence"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Rocco2">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <hasDuty rdf:resource="#Duty2"/>
+  <hasLedger rdf:resource="#LedgerRow2"/>
+  <coAuthorWith rdf:resource="#Misael3"/>
+  <coAuthorWith rdf:resource="#Fabio1"/>
+  <hasAffiliationWith rdf:resource="#Alma-Mater-Bologna"/>
+  <isTopAuthorIn rdf:resource="#Applied-Ontology"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Misael3">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <hasDuty rdf:resource="#Duty3"/>
+  <hasLedger rdf:resource="#LedgerRow3"/>
+  <hasAffiliationWith rdf:resource="#University-of-Catania"/>
+  <isTopAuthorIn rdf:resource="#Artificial-Intelligence"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Albert4">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <hasDuty rdf:resource="#Duty4"/>
+  <hasLedger rdf:resource="#LedgerRow4"/>
+  <coAuthorWith rdf:resource="#Michael9"/>
+  <hasAffiliationWith rdf:resource="#University-of-Turin"/>
+  <isTopAuthorIn rdf:resource="#Machine-Learning"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Jenny5">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <hasDuty rdf:resource="#Duty5"/>
+  <hasLedger rdf:resource="#LedgerRow5"/>
+  <coAuthorWith rdf:resource="#Petra6"/>
+  <hasAffiliationWith rdf:resource="#Alma-Mater-Bologna"/>
+  <isTopAuthorIn rdf:resource="#Applied-Ontology"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Petra6">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <hasDuty rdf:resource="#Duty6"/>
+  <hasLedger rdf:resource="#LedgerRow6"/>
+  <hasAffiliationWith rdf:resource="#University-of-Catania"/>
+  <isTopAuthorIn rdf:resource="#Artificial-Intelligence"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Anna7">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <hasDuty rdf:resource="#Duty7"/>
+  <hasLedger rdf:resource="#LedgerRow7"/>
+  <hasAffiliationWith rdf:resource="#University-of-Catania"/>
+  <isTopAuthorIn rdf:resource="#Artificial-Intelligence"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Esther8">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <hasDuty rdf:resource="#Duty8"/>
+  <hasLedger rdf:resource="#LedgerRow8"/>
+  <coAuthorWith rdf:resource="#Fabio1"/>
+  <coAuthorWith rdf:resource="#Anna7"/>
+  <coAuthorWith rdf:resource="#Misael3"/>
+  <hasAffiliationWith rdf:resource="#Alma-Mater-Bologna"/>
+  <isTopAuthorIn rdf:resource="#Applied-Ontology"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Michael9">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <hasDuty rdf:resource="#Duty9"/>
+  <hasLedger rdf:resource="#LedgerRow9"/>
+  <coAuthorWith rdf:resource="#Anna7"/>
+  <coAuthorWith rdf:resource="#Petra6"/>
+  <hasAffiliationWith rdf:resource="#Alma-Mater-Bologna"/>
+  <isTopAuthorIn rdf:resource="#Applied-Ontology"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Carlo10">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <hasDuty rdf:resource="#Duty10"/>
+  <hasLedger rdf:resource="#LedgerRow10"/>
+  <coAuthorWith rdf:resource="#Rocco2"/>
+  <hasAffiliationWith rdf:resource="#University-of-Turin"/>
+  <isTopAuthorIn rdf:resource="#Machine-Learning"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Paola11">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <hasDuty rdf:resource="#Duty11"/>
+  <hasLedger rdf:resource="#LedgerRow11"/>
+  <hasAffiliationWith rdf:resource="#University-of-Turin"/>
+  <isTopAuthorIn rdf:resource="#Machine-Learning"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Isaac12">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <hasDuty rdf:resource="#Duty12"/>
+  <hasLedger rdf:resource="#LedgerRow12"/>
+  <coAuthorWith rdf:resource="#Misael3"/>
+  <hasAffiliationWith rdf:resource="#University-of-Messina"/>
+  <isTopAuthorIn rdf:resource="#Philosophy"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Andrea13">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <hasDuty rdf:resource="#Duty13"/>
+  <hasLedger rdf:resource="#LedgerRow13"/>
+  <coAuthorWith rdf:resource="#Anna7"/>
+  <hasAffiliationWith rdf:resource="#University-of-Messina"/>
+  <isTopAuthorIn rdf:resource="#Philosophy"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Jack14">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <hasDuty rdf:resource="#Duty14"/>
+  <hasLedger rdf:resource="#LedgerRow14"/>
+  <coAuthorWith rdf:resource="#Fabio1"/>
+  <hasAffiliationWith rdf:resource="#University-of-Messina"/>
+  <isTopAuthorIn rdf:resource="#Machine-Learning"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#MaxWorkTime1">
+  <rdf:type rdf:resource="#AgentMaxWorkTime"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#MaxWorkDayTime1">
+  <rdf:type rdf:resource="#AgentMaxWorkDayTime"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#RestTime1">
+  <rdf:type rdf:resource="#AgentRestTime"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Duty2">
+  <rdf:type rdf:resource="#AgentDuty"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#LedgerRow1">
+  <rdf:type rdf:resource="#AgentLedger"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#University-of-Catania">
+  <rdf:type rdf:resource="#University"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Artificial-Intelligence">
+  <rdf:type rdf:resource="#Field"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#LedgerRow2">
+  <rdf:type rdf:resource="#AgentLedger"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Alma-Mater-Bologna">
+  <rdf:type rdf:resource="#University"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Applied-Ontology">
+  <rdf:type rdf:resource="#Field"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Duty3">
+  <rdf:type rdf:resource="#AgentDuty"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#LedgerRow3">
+  <rdf:type rdf:resource="#AgentLedger"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Duty4">
+  <rdf:type rdf:resource="#AgentDuty"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#LedgerRow4">
+  <rdf:type rdf:resource="#AgentLedger"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#University-of-Turin">
+  <rdf:type rdf:resource="#University"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Machine-Learning">
+  <rdf:type rdf:resource="#Field"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Duty5">
+  <rdf:type rdf:resource="#AgentDuty"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#LedgerRow5">
+  <rdf:type rdf:resource="#AgentLedger"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Duty6">
+  <rdf:type rdf:resource="#AgentDuty"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#LedgerRow6">
+  <rdf:type rdf:resource="#AgentLedger"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Duty7">
+  <rdf:type rdf:resource="#AgentDuty"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#LedgerRow7">
+  <rdf:type rdf:resource="#AgentLedger"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Duty8">
+  <rdf:type rdf:resource="#AgentDuty"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#LedgerRow8">
+  <rdf:type rdf:resource="#AgentLedger"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Duty9">
+  <rdf:type rdf:resource="#AgentDuty"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#LedgerRow9">
+  <rdf:type rdf:resource="#AgentLedger"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Duty10">
+  <rdf:type rdf:resource="#AgentDuty"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#LedgerRow10">
+  <rdf:type rdf:resource="#AgentLedger"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Duty11">
+  <rdf:type rdf:resource="#AgentDuty"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#LedgerRow11">
+  <rdf:type rdf:resource="#AgentLedger"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Duty12">
+  <rdf:type rdf:resource="#AgentDuty"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#LedgerRow12">
+  <rdf:type rdf:resource="#AgentLedger"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#University-of-Messina">
+  <rdf:type rdf:resource="#University"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Philosophy">
+  <rdf:type rdf:resource="#Field"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Duty13">
+  <rdf:type rdf:resource="#AgentDuty"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#LedgerRow13">
+  <rdf:type rdf:resource="#AgentLedger"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Duty14">
+  <rdf:type rdf:resource="#AgentDuty"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#LedgerRow14">
+  <rdf:type rdf:resource="#AgentLedger"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#GoPutShelves1">
+  <rdf:type rdf:resource="#AgentTask"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#GoPutShelves2">
+  <rdf:type rdf:resource="#AgentTask"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#GoPutShelves3">
+  <rdf:type rdf:resource="#AgentTask"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#GoPutShelves4">
+  <rdf:type rdf:resource="#AgentTask"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#GoPutShelves5">
+  <rdf:type rdf:resource="#AgentTask"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#GoPutShelves6">
+  <rdf:type rdf:resource="#AgentTask"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#GoPutShelves7">
+  <rdf:type rdf:resource="#AgentTask"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#GoPutShelves8">
+  <rdf:type rdf:resource="#AgentTask"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#GoPutShelves9">
+  <rdf:type rdf:resource="#AgentTask"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#GoPutShelves10">
+  <rdf:type rdf:resource="#AgentTask"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#GoPutShelves11">
+  <rdf:type rdf:resource="#AgentTask"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#GoPutShelves12">
+  <rdf:type rdf:resource="#AgentTask"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#GoPutShelves13">
+  <rdf:type rdf:resource="#AgentTask"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#GoPutShelves14">
+  <rdf:type rdf:resource="#AgentTask"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#DutyTime1">
+  <rdf:type rdf:resource="#AgentDutyTime"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Stefano15">
+  <rdf:type rdf:resource="#Newcomers"/>
+  <selectedFor rdf:resource="#Alma-Mater-Bologna"/>
+  <selectedFor rdf:resource="#University-of-Turin"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Mandy16">
+  <rdf:type rdf:resource="#Newcomers"/>
+  <selectedFor rdf:resource="#University-of-Messina"/>
+  <selectedFor rdf:resource="#University-of-Turin"/>
+</owl:NamedIndividual>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+
+</rdf:RDF>
