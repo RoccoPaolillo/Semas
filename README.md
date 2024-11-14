@@ -1,4 +1,73 @@
-# SEMAS
+# SCENARIO
+
+Implemented the scenario for Social Simulation Conference 2024 where we map an ontology of academic network to the BDI protocol. PHIDIAS/SEMAS package is for deducing declarative inferences from ontologies through the architecture of the BDI.
+
+The declarative inference should translate into the actual behavior of the agent and there should be multiple agents holding their own desires, intentions and actions.
+
+<p align="center">
+<img src="images/theorySSC2024.png" width=60% height=50%>
+</p>
+
+I initialized the ontology with the specific scenario, where scholars belong to 4 universities (Catania, Bologna, Turin, Messina) and each scholar is a top-author in a field. Coauthorships are imposed between members. I also started adding some other features (see variables from the Italian PhD dataset). Stefano and Mandy were accepted by two different universities, aiming both to be top-author in Artificial Intelligence, whose top authors are at University of Catania, but neither of them was accepted. Given the strategies to publish with top-authors in Artificial Intelligence or their co-authors, the inference is on whose offer is best to select to achieve their goals.
+
+The intentions (reactors in PHIDIAS) to reach the desire to become top-author in Artificial Intelligence are either to publish directly with top-authors in Artificial Intelligence (direct match) or with an author which is co-author with a top-author in Artificial Intelligence (indirect match). Stefano has to decide whether to accept the offer from Bologna or Turin, based on where he has a chance to find co-authors who can connect him to a top author.
+The set of triplets that compose the ontology initialized is as follows:
+
+<p align="center">
+<img src="images/kg_pre.png" width=70% height=80%>
+</p>
+
+Plotted (here manually):
+
+<p align="center">
+<img src="images/appliedSSC2024legend.png" width=70% height=80%>
+</p>
+
+
+### SEMAS inference
+
+---------------
+To achieve inference, one of the defined DESIRES must be employed as PHIDIA Procedure, which are in this case: *Publicationship()*,
+and *BeTopAuthorship()*, and specifically to this contest *SelectUniversity()* for choosing between the universities that offered a job to Stefano. Both of them can be used with one or more arguments. For instance, supposing one want to publish in the field of *Artificial Intelligence* a minimal usage is: *Publicationship("Artificial-Intelligence")*, which matches with two defined rules in [front_end.py](front_end.py): <be>
+
+* Propose co-authorship directly to a top-author X in the field of *Artificial-Intelligence"
+```sh
+Publicationship(X) / (TopAuthorship(Y, X) & Affiliation(Y, U)) >> [show_line("Direct match found at ",U,".\n"), -TopAuthorship(Y, X), +ProposeCoauthorship(Y, X), Publicationship(X)]
++ProposeCoauthorship(X,Y) >> [show_line("Propose co-authorship with ",X," as top-author in the field of ",Y,".\n")]
+```
+* Propose co-authorship with a scholar who is co-author of a top-author in the field of "Artificial Intelligence".
+  
+For simplicity, this condition includes the intention associated with the next rule (SelectUniversity(X)), because it had the same triggering conditions in this scenario
+
+```sh
+Publicationship(X) / (CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +ProposeCoauthorship_2(Z, Y,X),+AcceptOffer(X,U), Publicationship(X)]
++ProposeCoauthorship_2(X,Z, Y) >> [show_line("Propose co-authorship with ",X," as co-author with ",Z,", a top-author in the field of ",Y,".\n")]
++AcceptOffer(S,X,U) >> [show_line(S," should accept offer from University ",U," with co-authors of top-authors in field of ",X,".\n"),-TRIPLE(S, "hasAffiliationWith", U), +Affiliation(S, U), pre_process()]```
+```
+
+the outcome will be as follows:
+
+```sh
+eShell: main > Publicationship("Artificial-Intelligence")
+
+Direct match found at University-of-Catania.
+Indirect match found at Alma-Mater-Bologna.
+Indirect match found at University-of-Messina.
+
+Propose co-authorship with Petra as top-author in the field of Artificial-Intelligence.
+Propose co-authorship with Michael as co-author with Petra, a top-author in the field of Artificial-Intelligence.
+
+Stefano should accept offer from University Alma-Mater-Bologna with co-authors of top-authors in field of Artificial-Intelligence.
+Mandy should accept offer from University University-of-Messina with co-authors of top-authors in field of Artificial-Intelligence.
+```
+
+Upon inference, the agent changes its affiliation, causing a change in the knowledge graph:
+
+<p align="center">
+<img src="images/kg_post.png" width=70% height=60%>
+</p>
+
+# SEMAS by Fabio Longo
 
 This is the repository of the Python (3.7+) implementation of SEMAS (**SE**mantic **M**ulti-**A**gent **S**ystem), which integrates 
 Multi-Agent systems with the Semantic Web. SEMAS is built on top of the framework [PHIDIAS](https://ceur-ws.org/Vol-2502/paper5.pdf).
@@ -22,6 +91,8 @@ This repository has been tested on Python 3.10 64bit (Windows 10/PopOs linux), w
 ```sh
 > git clone https://github.com/corradosantoro/phidias
 > cd phidias
+> python -m venv ./venv
+> venv/Scripts/activate.bat
 > pip install -r requirements.txt
 > pip install .
 ```
@@ -52,8 +123,16 @@ from prompt:
 
 First of all, you must create the ontology. In order to do that, you must follow three preliminar steps:
 
+* Files in the phidias folder
 * Choose the owl file name, by setting the variable FILE_NAME (ONTOLOGY Section) in the config.ini (test.owl for instance)
 * Execute semas.py
+---------------
+
+from prompt:
+```sh
+> python semas.py
+```
+
 
 ```sh
 Creating new test.owl file...
@@ -187,12 +266,13 @@ Ontology saved.
 ```
 After the *init()* procedure execution, the ontology (whose file name is defined in **FILE_NAME**, Section [ONTOLOGY] in config.ini) will be as follows:
 
-![Image 2](images/classes.png)
+![Image 3](images/classes.png)
 
 All OWL beliefs/desires/intentions are defined by properties of individuals which are instances of subclasses of **ENTITY**. In regard of classes **BELIEF**,
 **DESIRE** and **INTENTIONS**, their subclasses express the linkage with the corresponding Beliefs/Procedures/Reactors in the PHIDIAS environment.
 
-![Image 3](images/individuals.png)![Image 4](images/properties.png)
+![Image 4](images/individuals.png)![Image 4](images/properties.png)
+
 
 #### Ontology import
 
@@ -215,16 +295,6 @@ Asserting triples ended.
 Such procedure triggers a production rule whose PLAN invokes an Action (assert_beliefs_triples) to query
 by means SPARQL the ontology and assert all beliefs triples. Such query might include further conditions to
 constrainct the results. The query execution can also be preceded by OWL reasoning (with HERMIT/PELLET).
-After the ontology import, the KB's content will be as follows:
-
-
-```sh
-eShell: main > kb
-CoAuthorship('Fabio', 'Misael')         CoAuthorship('Misael', 'Rocco')         
-Affiliation('Misael', 'University-of-Catania')Affiliation('Rocco', 'Alma-Mater-Bologna')
-TopAuthorship('Fabio', 'Artificial-Intelligence')TopAuthorship('Misael', 'Artificial-Intelligence')
-TopAuthorship('Rocco', 'Applied-Ontology')Selectionship('Fabio', 'University-of-Catania')
-```
 
 In case of active inference with PELLET/HERMIT before the SPARQL query, the outcome after *load()* 
 will be as follows, by the virtue of the defined SWRL rule which specifies the simmetric mutual Coauthorship.
@@ -260,12 +330,7 @@ eShell: main > Publicationship("Applied-Ontology")
 
 Indirect match found at University-of-Catania.
 
-Direct match found at Alma-Mater-Bologna.
 
-Propose co-authorship with Misael to publish in the field of Applied-Ontology.
-
-Propose co-authorship with Rocco to publish in the field of Applied-Ontology.
-```
 
 ## Multi-Agent Systems
 
