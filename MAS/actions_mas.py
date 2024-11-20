@@ -13,6 +13,7 @@ import os
 import csv
 import pandas as pd
 import re
+import math
 
 # Coda per inviare richieste di query
 query_queue = queue.Queue()
@@ -328,7 +329,7 @@ class init(Procedure): pass
 # Import OWL triples
 class load(Procedure): pass
 # Turning triples to beliefs
-class turn(Procedure): pass
+class pre_process(Procedure): pass
 
 
 
@@ -611,35 +612,35 @@ class new_affiliation(Action):
     def execute(self,arg0,arg1):
         node_1 = str(arg0).split("'")[3]
         node_2 = str(arg1).split("'")[3]
-        G.add_edge(node_1, node_2, color = "orange", weight = 4, label = "affil") # str(arg3).split()[0])
+        G.add_edge(node_1, node_2, color = "orange", weight = 4, label = "affil", edgestyle = "solid") # str(arg3).split()[0])
         vis_network()
         
 class co_authorshiplink(Action):
     def execute(self,arg0,arg1):
         node_1 = str(arg0).split("'")[3]
         node_2 = str(arg1).split("'")[3]
-        G.add_edge(node_1, node_2, color = "lightgrey", weight = 2, label = "coauthor") # str(arg3).split()[0])
+        G.add_edge(node_1, node_2, color = "lightgrey", weight = 2, label = "coauthor", edgestyle = "dashed") # str(arg3).split()[0])
         vis_network()
         
 class affiliationlink(Action):
     def execute(self,arg0,arg1):
         node_1 = str(arg0).split("'")[3]
         node_2 = str(arg1).split("'")[3]
-        G.add_edge(node_1, node_2, color = "lightgrey", weight = 2, label = "affil") # str(arg3).split()[0])
+        G.add_edge(node_1, node_2, color = "lightgrey", weight = 2, label = "affil", edgestyle = "dotted") # str(arg3).split()[0])
         vis_network()
         
 class topauthorlink(Action):
     def execute(self,arg0,arg1):
         node_1 = str(arg0).split("'")[3]
         node_2 = str(arg1).split("'")[3]
-        G.add_edge(node_1, node_2, color = "lightgrey", weight = 2, label = "topauthor") # str(arg3).split()[0])
+        G.add_edge(node_1, node_2, color = "lightgrey", weight = 2, label = "topauthor", edgestyle = "dashdot") # str(arg3).split()[0])
         vis_network()
         
 class selectforlink(Action):
     def execute(self,arg0,arg1):
         node_1 = str(arg0).split("'")[3]
         node_2 = str(arg1).split("'")[3]
-        G.add_edge(node_1, node_2, color = "darkgrey", weight = 4, label  = "selected") # str(arg3).split()[0])
+        G.add_edge(node_1, node_2, color = "darkgrey", weight = 4, label  = "selected", edgestyle = "dashed") # str(arg3).split()[0])
         vis_network()
         
 G = nx.Graph()
@@ -681,7 +682,7 @@ color_map = ['orange' if node in newcomers else 'white' for node in G]
 
 # colors = [node[1]['color'] for node in G.nodes(data=True)] # color of nodes
 
-pos = nx.spring_layout(G, seed=numpy.random.seed(15495)) # 12495
+pos = nx.spring_layout(G , seed=numpy.random.seed(5581), scale = 8) # k = 300, iterations = 70)  # 15495 #5581 # 1933
 # G = nx.relabel_nodes(G, lambda x: ''.join([i for i in x if not i.isdigit()]))
 
 def vis_network():
@@ -694,10 +695,11 @@ def vis_network():
         weights_edges = [G[u][v]['weight'] for u,v in edges]# nx.get_edge_attributes(G,'weight').values()        
         plt.clf()
 #        fig = plt.figure()
-        nx.draw(G,with_labels=True, node_color=color_map , edge_color = colors_edges, width = weights_edges , pos = pos,
-                font_size = 20)
-        nx.draw_networkx_edge_labels(G, edge_labels=nx.get_edge_attributes(G,'label'), label_pos=0.7, pos = pos,
-                                     font_size = 17) # edge_color = colors_edges,  pos = pos)
+        nx.draw(G,with_labels=True, node_color=color_map , edge_color = colors_edges, width = weights_edges ,  pos = pos,
+                font_size = 18)
+        nx.draw_networkx_edge_labels(G, edge_labels=nx.get_edge_attributes(G,'label'), 
+                                     label_pos= 0.7,  pos = pos,
+                                     font_size = 14) # edge_color = colors_edges,  pos = pos)5
 #        fig.canvas.manager.window.attributes('-topmost', 1)
         plt.show()
 
