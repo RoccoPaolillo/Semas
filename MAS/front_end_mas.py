@@ -103,32 +103,13 @@ class main(Agent):
         # pay desires
         pay() / LEDGER(Z, H) >> [show_line("\nSending payment to ",Z, " for ",H," tasks..."), -LEDGER(Z, H), pay()]
         pay() >> [show_line("\nPayments completed.")]
-        
-#        netty() / (CoAuthorship(X, Y)) >> [co_authorshiplink(X,Y), netty()]
-#        netty() / (Affiliation(X, Y)) >> [affiliationlink(X,Y), netty()]
-#        netty() / (TopAuthorship(X, Y)) >> f[topauthorlink(X,Y), netty()]
-#        netty() / (Selectionship(X, Y)) >> [selectforlink(X,Y), netty()]
-#        newlink() >> [new_affiliation()]
-        
-        pubby(X) >> [DesireGoalFor(X)]        
-        
-#        SelectUniversity(X) / (Selectionship(S,U) & CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +AcceptOffer(S,X,U), SelectUniversity(X)]
-#        DesireGoalFor(X) / (Selectionship(S,U) & CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +coauthorIndirect(Z, Y,X), +AcceptOffer(S,X,U), DesireGoalFor(X)]
-#        DesireGoalFor(X) / (Selectionship(S,U) & CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +coauthorIndirect(Z, Y,X), +AcceptOffer(S,X,U), DesireGoalFor(X)]
         DesireGoalFor(X) / (Selectionship(S,U) & TopAuthorship(Y, X) & Affiliation(Y, U)) >> [show_line("Direct match found at ",U,".\n"), -TopAuthorship(Y, X), +ProposeCoauthorship(Y, X), +AcceptOffer(S,X,U), DesireGoalFor(X)]
 
         DesireGoalFor(X) / (Selectionship(S,U) & TopAuthorship(Y, X) & CoAuthorship(Z, Y)  & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +coauthorIndirect(Z, U,Y,X), +AcceptOffer(S,X,U), DesireGoalFor(X)]
 
         
-
-
-        +coauthorIndirect(X,U,Z, Y) >> [show_line(X," at ", U, " is co-author with ",Z,", a top-author in the field of ",Y,".\n")]
-        +ProposeCoauthorship(X,Y) >> [show_line("Propose co-authorship with ",X," as top-author in the field of ",Y,".\n")]
+        +coauthorIndirect(Z, U,Y,X) >> [show_line(Z," at ", U, " is co-author with ",Y,", a top-author in the field of ",X,".\n")]
+        +ProposeCoauthorship(Y,X) >> [show_line("Propose co-authorship with ",Y," as top-author in the field of ",X,".\n")]
         +AcceptOffer(S,X,U) >> [show_line(S," should accept offer from University ",U," with co-authors of top-authors in field of ",X,".\n"),-TRIPLE(S, "hasAffiliationWith", U), +Affiliation(S,U), new_affiliation(S,U), pre_process()]
-
-
-# for i in range(len(agents)):
-#   instance = globals()[agents[i]]()
-#    instance.start()
 
 main().start()
