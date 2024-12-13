@@ -465,7 +465,7 @@ scholars = get_scholars_names()[1:]
 universities = get_universities_names()[1:]
 newcomers = get_newcomers_names()[1:]
 fields = get_fields_names()[1:]
-newcomers = get_newcomers_names()[1:]
+# newcomers = get_newcomers_names()[1:]
 
 
 # Funzione per terminare il thread in sicurezza
