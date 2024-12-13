@@ -56,36 +56,8 @@ PROPERTIES = config.get('CLASSES', 'Properties').split(",")
 DATAS = config.get('CLASSES', 'Data').split(",")
 
 # ---------------------------------------------------------------------
-# Non-ontological rendering variables
-# ---------------------------------------------------------------------
-
-# Coordinates spamming range
-# N = 500
-
-# time-range to get the job done
-#LOWER_BOUND = 0
-#UPPER_BOUND = 3
-
-# Breakdown of steps
-#STEP_BREAKDOWN = 50
-
-# Pause between steps
-#STEP_DURATIN = 0.005
-
-
-# ---------------------------------------------------------------------
 # Ontology section
 # ---------------------------------------------------------------------
-
-# Max work time for a worker (seconds)
-#Max_WorkDay_Time = 27
-# Max work time for a worker (seconds) - MAX_WORKDAY_TIME must be multiple of MAX_WORK_TIME
-#Max_Work_Time = 9
-# Rest time for a worker (seconds)
-# Rest_Time = 3
-# Timer tick
-#TICK = 0.1
-
 
 try:
     my_onto = get_ontology(FILE_NAME).load()
@@ -277,67 +249,6 @@ class assert_beliefs_triples(Action):
             self.assert_belief(TRIPLE(subj, prop, obj))
 
 
-
-# ---------------------------------------------------------------------
-# Sensors section
-# ---------------------------------------------------------------------
-
-#class TaskDetect(Sensor):
-
-#    def on_start(self):
-        # Starting task detection
-#       self.running = True
-
-#    def on_restart(self):
-        # Re-Starting task detection
-#        self.do_restart = True
-
-#    def on_stop(self):
-        #Stopping task detection
-#        self.running = False
-
-#    def sense(self):
-#        while self.running:
-#           time.sleep(TICK)
-
-#           pos_x = random.randint(-N // 2, N // 2)
-#           pos_y = random.randint(-N // 2, N // 2)
-#           print(f"Generating task on position ({pos_x}, {pos_y})...")
-#           self.assert_belief(TASK())
-
-
-
-#class Timer(Sensor):
-
-#    def on_start(self, uTimeout):
-#        evt = threading.Event()
-#        self.event = evt
-#        self.timeout = uTimeout()
-#        self.do_restart = False
-
-
-#    def on_restart(self, uTimeout):
-#        self.do_restart = True
-#        self.event.set()
-
-#    def on_stop(self):
-#        self.do_restart = False
-#        self.event.set()
-
-#    def sense(self):
-#        while True:
-#            time.sleep(self.timeout)
-#            self.event.clear()
-#            if self.do_restart:
-#                self.do_restart = False
-#                continue
-#            elif self.stopped:
-#                self.assert_belief(TIMEOUT("ON"))
-#                return
-#            else:
-#                return
-
-
 # ---------------------------------------------------------------------
 # Agent section
 # ---------------------------------------------------------------------
@@ -363,26 +274,7 @@ def query_thread():
 query_thread_instance = threading.Thread(target=query_thread)
 query_thread_instance.start()
 
-
-# Funzione per ottenere i nomi degli agenti (inviando la query al thread dedicato)
-# def get_agents_names():
-#     agents = []
-#     q = PREFIX + f" SELECT ?subj" + " WHERE { "
-#     q = q + f"?subj rdf:type {ONTO_NAME}:Agent." + "}"
-    
-#     result_event = threading.Event()  # Evento per sincronizzare il risultato
-#     query_queue.put((q, result_event))  # Invia la query al thread dedicato
-
-#     result_event.wait()  # Aspetta che il risultato sia pronto
-
-#     result = result_queue.get()  # Ottieni il risultato dalla coda
-
-#    for res in result:
-#        subj = str(res).split(",")[0]
-#        subj = subj.split("#")[1][:-2]
-#        agents.append(subj)
-    
-#    return agents
+# agents entities are in the config_mas.ini, but we don't actually use here, the function is to add as the following if needed
 
 def get_scholars_names():
     scholars = []
@@ -460,12 +352,10 @@ def get_newcomers_names():
     
     return newcomers
 
-# agents = get_agents_names()[1:]
 scholars = get_scholars_names()[1:]
 universities = get_universities_names()[1:]
 newcomers = get_newcomers_names()[1:]
 fields = get_fields_names()[1:]
-# newcomers = get_newcomers_names()[1:]
 
 
 # Funzione per terminare il thread in sicurezza
@@ -475,90 +365,10 @@ def stop_query_thread():
 
 
 
-# class rest(Action):
-#     """resting for few seconds"""
-#     def execute(self, arg):
-#       rest_time = int(str(arg).split("'")[2][1:-1])
-#       print(f"\nresting for {rest_time} seconds...")
-
-#       for t in dict_turtle:
-#           dict_turtle[t].color("red")
-
-#       time.sleep(rest_time)
-
-#        for t in dict_turtle:
-#           dict_turtle[t].color("black")
-
-
-
-# class UpdateLedger(Action):
-#     """Update completed jobs"""
-#     def execute(self, arg1, arg2):
-
-#       agent = str(arg1).split("'")[3]
-#       jobs = int(str(arg2).split("'")[3])
-#      jobs = jobs + 1
-#       print(f"Updating {agent} ledger: {jobs}")
-#       self.assert_belief(LEDGER(agent, str(jobs)))
-#       self.assert_belief(DUTY(int(agent[-1:])))
-
-
-# class UpdateWorkTime(Action):
-#     """Update completed jobs"""
-#     def execute(self, arg1, arg2):
-
-#         arg1_num = str(arg1).split("'")[2][1:-1]
-#         arg2_num = str(arg2).split("'")[2][1:-1]
-#         arg_num_tot = int(arg1_num)+int(arg2_num)
-#         print("WORKTIME: ",arg_num_tot)
-#         self.assert_belief(WORKTIME(arg_num_tot))
-
-
-# class AssignId(Action):
-#     """Intialize duty flag with ID"""
-#     def execute(self, arg):
-#         entity = str(arg).split("'")[3]
-
-#         self.assert_belief(DUTY(int(entity[-1:])))
-#         self.assert_belief(AGT(entity, int(entity[-1:])))
-
-
-
 # ---------------------------------------------------------------------
-# Turtle section
+# Network section
 # ---------------------------------------------------------------------
 
-
-# class move_turtle(Action):
-#     """moving turtle to coordinates (x,y)"""
-#     def execute(self, arg0, arg1, arg2):
-#         id_turtle = str(arg0).split("'")[3]
-
-#         pos_x = str(arg1).split("'")[2]
-#         pos_y = str(arg2).split("'")[2]
-
-#         pos_x = int(pos_x[1:-1])
-#         pos_y = int(pos_y[1:-1])
-
-        # Recupera la posizione attuale
-#         current_x, current_y = dict_turtle[id_turtle].position()
-
-        # Calcola la distanza da percorrere su ciascun asse
-#         delta_x = (pos_x - current_x) / STEP_BREAKDOWN
-#         delta_y = (pos_y - current_y) / STEP_BREAKDOWN
-
-#         for step in range(STEP_BREAKDOWN):
-            # Sposta la tartaruga di una piccola quantità
-#             current_x += delta_x
-#             current_y += delta_y
-#             dict_turtle[id_turtle].goto(current_x, current_y)
-
-            # Rallenta il movimento
-#             time.sleep(STEP_DURATIN)  # Regola il tempo di pausa per modificare la velocità
-
-        # Pausa finale casuale (se necessaria)
-#         rnd = random.uniform(LOWER_BOUND, UPPER_BOUND)
-#         time.sleep(rnd)
 
 class new_affiliation(Action):
     def execute(self,arg0,arg1):
@@ -611,13 +421,13 @@ def vis_network():
 
         colors_edges = nx.get_edge_attributes(G,"color").values()
         edges = G.edges()
-        weights_edges = [G[u][v]['weight'] for u,v in edges]# nx.get_edge_attributes(G,'weight').values()        
+        weights_edges = [G[u][v]['weight'] for u,v in edges]   
         plt.clf()
         nx.draw(G,with_labels=True, node_color=color_map , edge_color = colors_edges, width = weights_edges ,  pos = pos,
                 font_size = 18)
         nx.draw_networkx_edge_labels(G, edge_labels=nx.get_edge_attributes(G,'label'), 
                                      label_pos= 0.7,  pos = pos,
-                                     font_size = 14) # edge_color = colors_edges,  pos = pos)5
+                                     font_size = 14) 
         plt.show()
 
 

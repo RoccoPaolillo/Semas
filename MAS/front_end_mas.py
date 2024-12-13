@@ -11,7 +11,8 @@ def_vars("X", "Y", "D", "H", "Z", "L", "M", "A", "D", "W","S","U")
 # Agents section
 # ---------------------------------------------------------------------
 
-# agents = get_agents_names()[1:]
+# agents are in config_mas.ini but not actually used, I left for now
+
 scholars = get_scholars_names()[1:]
 universities = get_universities_names()[1:]
 newcomers = get_newcomers_names()[1:]
@@ -34,40 +35,12 @@ class main(Agent):
 
         # Importing related triples
         load() >> [show_line("\nAsserting all OWL 2 triples beliefs...\n"), assert_beliefs_triples(), show_line("\nTurning triples beliefs into Semas beliefs...\n"), pre_process()]
-
-# FOSSR DAYS        
+      
         pre_process() / TRIPLE(X, "coAuthorWith", Y) >> [-TRIPLE(X, "coAuthorWith", Y), +CoAuthorship(X, Y), co_authorshiplink(X,Y), pre_process()]
         pre_process() / TRIPLE(X, "hasAffiliationWith", Y) >> [-TRIPLE(X, "hasAffiliationWith", Y), +Affiliation(X, Y), affiliationlink(X,Y), pre_process()]
         pre_process() / TRIPLE(X, "isTopAuthorIn", Y) >> [-TRIPLE(X, "isTopAuthorIn", Y), +TopAuthorship(X, Y), topauthorlink(X,Y), pre_process()]
         pre_process() / TRIPLE(X, "selectedFor", Y) >> [-TRIPLE(X, "selectedFor", Y), +Selectionship(X, Y), selectforlink(X,Y) , pre_process()]
-# FOSSR DAYS
 
-        # desires
-#        setup() / WORKTIME(W) >> [show_line("Setup worktime again...\n"), load(), -WORKTIME(W), +WORKTIME(0)]
-#        setup() >> [show_line("Setup worktime...\n"), +WORKTIME(0), +MAX_WORK_TIME(Max_Work_Time), +MAX_WORKDAY_TIME(Max_WorkDay_Time), +REST_TIME(Rest_Time)]
-#        work() >> [show_line("Starting task detection...\n"), Timer(Max_Work_Time).start(), TaskDetect().start(), show_line("Workers on duty...")]
-
-        # AssignJob intentions
-#        +TASK(X, Y) / (AGT(A, D) & DUTY(D)) >> [show_line("assigning job to ",A), -DUTY(D), +TASK(X, Y, A)[{'to': A}]]
-
-        # ReceiveCommunication intentions
-#        +COMM(X)[{'from': W}] / LEDGER(W, H) >> [show_line("received job done comm from ", W), -LEDGER(W, H), UpdateLedger(W, H)]
-
-        # Pause work intentions - check if the whole working time belief WORKTIME is greater-equal than MAX_WORKDAY_TIME
-#        +TIMEOUT("ON") / (WORKTIME(X) & MAX_WORKDAY_TIME(Y) & geq(X,Y)) >> [show_line("\nWorkers are very tired. Finishing working day.\n"), TaskDetect().stop(), stopwork()]
-
-        # End work intentions - Add the MAX_WORK_TIME quantity (during the pause) to the whole working time belief WORKTIME
-#        +TIMEOUT("ON") / (WORKTIME(X) & MAX_WORK_TIME(Y)) >> [show_line("\nWorkers are tired, they need some rest.\n"), TaskDetect().stop(), -WORKTIME(X), UpdateWorkTime(X, Y), noduty()]
-#        noduty() / (AGT(A, D) & DUTY(D)) >> [show_line("Putting agent" , A, " to rest..."), -DUTY(D), noduty()]
-#        noduty() / REST_TIME(X) >> [rest(X), work()]
-
-        # Stop work intention
-#        stopwork() / ((AGT(A, D) & DUTY(D))) >> [show_line("\n-------------------------> Stopping ", A), -DUTY(D), stopwork()]
-#        stopwork() >> [show_line("\nAll workers were stopped. Starting payment process."), pay()]
-
-        # pay desires
-#        pay() / LEDGER(Z, H) >> [show_line("\nSending payment to ",Z, " for ",H," tasks..."), -LEDGER(Z, H), pay()]
-#        pay() >> [show_line("\nPayments completed.")]
         DesireGoalFor(X) / (Selectionship(S,U) & TopAuthorship(Y, X) & Affiliation(Y, U)) >> [show_line("Direct match found at ",U,".\n"), -TopAuthorship(Y, X), +ProposeCoauthorship(Y, X), +AcceptOffer(S,X,U), DesireGoalFor(X)]
 
         DesireGoalFor(X) / (Selectionship(S,U) & TopAuthorship(Y, X) & CoAuthorship(Z, Y)  & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +coauthorIndirect(Z, U,Y,X), +AcceptOffer(S,X,U), DesireGoalFor(X)]

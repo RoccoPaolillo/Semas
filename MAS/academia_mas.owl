@@ -69,18 +69,6 @@
   <rdfs:subClassOf rdf:resource="#DESIRE"/>
 </owl:Class>
 
-<owl:Class rdf:about="##">
-  <rdfs:subClassOf rdf:resource="#DESIRE"/>
-</owl:Class>
-
-<owl:Class rdf:about="#BeTopAuthorship">
-  <rdfs:subClassOf rdf:resource="#DESIRE"/>
-</owl:Class>
-
-<owl:Class rdf:about="#SelectUniversity">
-  <rdfs:subClassOf rdf:resource="#DESIRE"/>
-</owl:Class>
-
 <owl:Class rdf:about="#ProposeCoauthorship">
   <rdfs:subClassOf rdf:resource="#INTENTION"/>
 </owl:Class>
