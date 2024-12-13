@@ -4,8 +4,6 @@ import turtle
 import threading
 import queue
 import networkx as nx
-#import matplotlib
-#matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy
 import random
@@ -29,7 +27,7 @@ from phidias.Types import *
 
 import configparser
 from owlready2 import *
-from front_end_mas import *
+from front_end_mas import *  # SHIFT
 
 config = configparser.ConfigParser()
 config.read('config_mas.ini')
@@ -62,179 +60,32 @@ DATAS = config.get('CLASSES', 'Data').split(",")
 # ---------------------------------------------------------------------
 
 # Coordinates spamming range
-N = 500
+# N = 500
 
 # time-range to get the job done
-LOWER_BOUND = 0
-UPPER_BOUND = 3
+#LOWER_BOUND = 0
+#UPPER_BOUND = 3
 
 # Breakdown of steps
-STEP_BREAKDOWN = 50
+#STEP_BREAKDOWN = 50
 
 # Pause between steps
-STEP_DURATIN = 0.005
+#STEP_DURATIN = 0.005
 
-# Worker-Turtle dictionary
-# dict_turtle = {}
-# G = nx.Graph()
-# agents = get_agents_names()[1:]
-# G.add_nodes_from(agents)
-# pos = nx.spring_layout(G, seed=numpy.random.seed(1229))
-# agents = get_agents_names()[1:]
-# G.add_nodes_from(agents)
-# pos = nx.spring_layout(G, seed=231)
 
 # ---------------------------------------------------------------------
 # Ontology section
 # ---------------------------------------------------------------------
 
 # Max work time for a worker (seconds)
-Max_WorkDay_Time = 27
+#Max_WorkDay_Time = 27
 # Max work time for a worker (seconds) - MAX_WORKDAY_TIME must be multiple of MAX_WORK_TIME
-Max_Work_Time = 9
+#Max_Work_Time = 9
 # Rest time for a worker (seconds)
-Rest_Time = 3
+# Rest_Time = 3
 # Timer tick
-TICK = 0.1
+#TICK = 0.1
 
-# ---------------------------------------------------------------------
-# Agent section
-# ---------------------------------------------------------------------
-
-# Thread che esegue le query SPARQL
-def query_thread():
-    my_world = owlready2.World()
-    my_world.get_ontology(FILE_NAME).load()  # path to the owl file
-
-    while True:
-        q, result_event = query_queue.get()  # Ottieni la query e l'evento di sincronizzazione
-
-        if q is None:  # Esci dal ciclo quando ricevi None
-            break
-
-        graph = my_world.as_rdflib_graph()
-        result = list(graph.query(q))  # Esegui la query
-        result_queue.put(result)  # Inserisci il risultato nella coda dei risultati
-        result_event.set()  # Notifica che il risultato è pronto
-
-
-# Avvia il thread delle query
-query_thread_instance = threading.Thread(target=query_thread)
-query_thread_instance.start()
-
-
-# Funzione per ottenere i nomi degli agenti (inviando la query al thread dedicato)
-def get_agents_names():
-    agents = []
-    q = PREFIX + f" SELECT ?subj" + " WHERE { "
-    q = q + f"?subj rdf:type {ONTO_NAME}:Agent." + "}"
-    
-    result_event = threading.Event()  # Evento per sincronizzare il risultato
-    query_queue.put((q, result_event))  # Invia la query al thread dedicato
-
-    result_event.wait()  # Aspetta che il risultato sia pronto
-
-    result = result_queue.get()  # Ottieni il risultato dalla coda
-
-    for res in result:
-        subj = str(res).split(",")[0]
-        subj = subj.split("#")[1][:-2]
-        agents.append(subj)
-    
-#    agents = list(map(lambda x: re.sub(r'[0-9]', '',x), agents))
-
-    return agents
-
-def get_scholars_names():
-    scholars = []
-    q = PREFIX + f" SELECT ?subj" + " WHERE { "
-    q = q + f"?subj rdf:type {ONTO_NAME}:Scholar." + "}"
-
-    result_event = threading.Event()  # Evento per sincronizzare il risultato
-    query_queue.put((q, result_event))  # Invia la query al thread dedicato
-
-    result_event.wait()  # Aspetta che il risultato sia pronto
-
-    result = result_queue.get()  # Ottieni il risultato dalla coda
-
-    for res in result:
-        subj = str(res).split(",")[0]
-        subj = subj.split("#")[1][:-2]
-        scholars.append(subj)
-    
-#    scholars = list(map(lambda x: re.sub(r'[0-9]', '',x), scholars))
-
-    return scholars
-
-def get_universities_names():
-    universities = []
-    q = PREFIX + f" SELECT ?subj" + " WHERE { "
-    q = q + f"?subj rdf:type {ONTO_NAME}:University." + "}"
-
-    result_event = threading.Event()  # Evento per sincronizzare il risultato
-    query_queue.put((q, result_event))  # Invia la query al thread dedicato
-
-    result_event.wait()  # Aspetta che il risultato sia pronto
-
-    result = result_queue.get()  # Ottieni il risultato dalla coda
-
-    for res in result:
-        subj = str(res).split(",")[0]
-        subj = subj.split("#")[1][:-2]
-        universities.append(subj)
-    
-#    universities = list(map(lambda x: re.sub(r'[0-9]', '',x), universities))
-
-    return universities
-
-def get_fields_names():
-    fields = []
-    q = PREFIX + f" SELECT ?subj" + " WHERE { "
-    q = q + f"?subj rdf:type {ONTO_NAME}:Field." + "}"
-
-    result_event = threading.Event()  # Evento per sincronizzare il risultato
-    query_queue.put((q, result_event))  # Invia la query al thread dedicato
-
-    result_event.wait()  # Aspetta che il risultato sia pronto
-
-    result = result_queue.get()  # Ottieni il risultato dalla coda
-
-    for res in result:
-        subj = str(res).split(",")[0]
-        subj = subj.split("#")[1][:-2]
-        fields.append(subj)
-    
-#    fields = list(map(lambda x: re.sub(r'[0-9]', '',x), fields))
-
-    return fields
-
-def get_newcomers_names():
-    newcomers = []
-    q = PREFIX + f" SELECT ?subj" + " WHERE { "
-    q = q + f"?subj rdf:type {ONTO_NAME}:Newcomers." + "}"
-
-    result_event = threading.Event()  # Evento per sincronizzare il risultato
-    query_queue.put((q, result_event))  # Invia la query al thread dedicato
-
-    result_event.wait()  # Aspetta che il risultato sia pronto
-
-    result = result_queue.get()  # Ottieni il risultato dalla coda
-
-    for res in result:
-        subj = str(res).split(",")[0]
-        subj = subj.split("#")[1][:-2]
-        newcomers.append(subj)
-    
-#    newcomers = list(map(lambda x: re.sub(r'[0-9]', '',x), newcomers))
-
-    return newcomers
-
-agents = get_agents_names()[1:]
-scholars = get_scholars_names()[1:]
-universities = get_universities_names()[1:]
-newcomers = get_newcomers_names()[1:]
-fields = get_fields_names()[1:]
-newcomers = get_newcomers_names()[1:]
 
 try:
     my_onto = get_ontology(FILE_NAME).load()
@@ -431,62 +282,190 @@ class assert_beliefs_triples(Action):
 # Sensors section
 # ---------------------------------------------------------------------
 
-class TaskDetect(Sensor):
+#class TaskDetect(Sensor):
 
-    def on_start(self):
+#    def on_start(self):
         # Starting task detection
-       self.running = True
+#       self.running = True
 
-    def on_restart(self):
+#    def on_restart(self):
         # Re-Starting task detection
-        self.do_restart = True
+#        self.do_restart = True
 
-    def on_stop(self):
+#    def on_stop(self):
         #Stopping task detection
-        self.running = False
+#        self.running = False
 
-    def sense(self):
-        while self.running:
-           time.sleep(TICK)
+#    def sense(self):
+#        while self.running:
+#           time.sleep(TICK)
 
-           pos_x = random.randint(-N // 2, N // 2)
-           pos_y = random.randint(-N // 2, N // 2)
-           print(f"Generating task on position ({pos_x}, {pos_y})...")
-           self.assert_belief(TASK())
-
-
-
-class Timer(Sensor):
-
-    def on_start(self, uTimeout):
-        evt = threading.Event()
-        self.event = evt
-        self.timeout = uTimeout()
-        self.do_restart = False
+#           pos_x = random.randint(-N // 2, N // 2)
+#           pos_y = random.randint(-N // 2, N // 2)
+#           print(f"Generating task on position ({pos_x}, {pos_y})...")
+#           self.assert_belief(TASK())
 
 
-    def on_restart(self, uTimeout):
-        self.do_restart = True
-        self.event.set()
 
-    def on_stop(self):
-        self.do_restart = False
-        self.event.set()
+#class Timer(Sensor):
 
-    def sense(self):
-        while True:
-            time.sleep(self.timeout)
-            self.event.clear()
-            if self.do_restart:
-                self.do_restart = False
-                continue
-            elif self.stopped:
-                self.assert_belief(TIMEOUT("ON"))
-                return
-            else:
-                return
+#    def on_start(self, uTimeout):
+#        evt = threading.Event()
+#        self.event = evt
+#        self.timeout = uTimeout()
+#        self.do_restart = False
 
 
+#    def on_restart(self, uTimeout):
+#        self.do_restart = True
+#        self.event.set()
+
+#    def on_stop(self):
+#        self.do_restart = False
+#        self.event.set()
+
+#    def sense(self):
+#        while True:
+#            time.sleep(self.timeout)
+#            self.event.clear()
+#            if self.do_restart:
+#                self.do_restart = False
+#                continue
+#            elif self.stopped:
+#                self.assert_belief(TIMEOUT("ON"))
+#                return
+#            else:
+#                return
+
+
+# ---------------------------------------------------------------------
+# Agent section
+# ---------------------------------------------------------------------
+
+# Thread che esegue le query SPARQL
+def query_thread():
+    my_world = owlready2.World()
+    my_world.get_ontology(FILE_NAME).load()  # path to the owl file
+
+    while True:
+        q, result_event = query_queue.get()  # Ottieni la query e l'evento di sincronizzazione
+
+        if q is None:  # Esci dal ciclo quando ricevi None
+            break
+
+        graph = my_world.as_rdflib_graph()
+        result = list(graph.query(q))  # Esegui la query
+        result_queue.put(result)  # Inserisci il risultato nella coda dei risultati
+        result_event.set()  # Notifica che il risultato è pronto
+
+
+# Avvia il thread delle query
+query_thread_instance = threading.Thread(target=query_thread)
+query_thread_instance.start()
+
+
+# Funzione per ottenere i nomi degli agenti (inviando la query al thread dedicato)
+# def get_agents_names():
+#     agents = []
+#     q = PREFIX + f" SELECT ?subj" + " WHERE { "
+#     q = q + f"?subj rdf:type {ONTO_NAME}:Agent." + "}"
+    
+#     result_event = threading.Event()  # Evento per sincronizzare il risultato
+#     query_queue.put((q, result_event))  # Invia la query al thread dedicato
+
+#     result_event.wait()  # Aspetta che il risultato sia pronto
+
+#     result = result_queue.get()  # Ottieni il risultato dalla coda
+
+#    for res in result:
+#        subj = str(res).split(",")[0]
+#        subj = subj.split("#")[1][:-2]
+#        agents.append(subj)
+    
+#    return agents
+
+def get_scholars_names():
+    scholars = []
+    q = PREFIX + f" SELECT ?subj" + " WHERE { "
+    q = q + f"?subj rdf:type {ONTO_NAME}:Scholar." + "}"
+
+    result_event = threading.Event()  # Evento per sincronizzare il risultato
+    query_queue.put((q, result_event))  # Invia la query al thread dedicato
+
+    result_event.wait()  # Aspetta che il risultato sia pronto
+
+    result = result_queue.get()  # Ottieni il risultato dalla coda
+
+    for res in result:
+        subj = str(res).split(",")[0]
+        subj = subj.split("#")[1][:-2]
+        scholars.append(subj)
+    
+    return scholars
+
+def get_universities_names():
+    universities = []
+    q = PREFIX + f" SELECT ?subj" + " WHERE { "
+    q = q + f"?subj rdf:type {ONTO_NAME}:University." + "}"
+
+    result_event = threading.Event()  # Evento per sincronizzare il risultato
+    query_queue.put((q, result_event))  # Invia la query al thread dedicato
+
+    result_event.wait()  # Aspetta che il risultato sia pronto
+
+    result = result_queue.get()  # Ottieni il risultato dalla coda
+
+    for res in result:
+        subj = str(res).split(",")[0]
+        subj = subj.split("#")[1][:-2]
+        universities.append(subj)
+    
+    return universities
+
+def get_fields_names():
+    fields = []
+    q = PREFIX + f" SELECT ?subj" + " WHERE { "
+    q = q + f"?subj rdf:type {ONTO_NAME}:Field." + "}"
+
+    result_event = threading.Event()  # Evento per sincronizzare il risultato
+    query_queue.put((q, result_event))  # Invia la query al thread dedicato
+
+    result_event.wait()  # Aspetta che il risultato sia pronto
+
+    result = result_queue.get()  # Ottieni il risultato dalla coda
+
+    for res in result:
+        subj = str(res).split(",")[0]
+        subj = subj.split("#")[1][:-2]
+        fields.append(subj)
+    
+    return fields
+
+def get_newcomers_names():
+    newcomers = []
+    q = PREFIX + f" SELECT ?subj" + " WHERE { "
+    q = q + f"?subj rdf:type {ONTO_NAME}:Newcomers." + "}"
+
+    result_event = threading.Event()  # Evento per sincronizzare il risultato
+    query_queue.put((q, result_event))  # Invia la query al thread dedicato
+
+    result_event.wait()  # Aspetta che il risultato sia pronto
+
+    result = result_queue.get()  # Ottieni il risultato dalla coda
+
+    for res in result:
+        subj = str(res).split(",")[0]
+        subj = subj.split("#")[1][:-2]
+        newcomers.append(subj)
+    
+    return newcomers
+
+# agents = get_agents_names()[1:]
+scholars = get_scholars_names()[1:]
+universities = get_universities_names()[1:]
+newcomers = get_newcomers_names()[1:]
+fields = get_fields_names()[1:]
+newcomers = get_newcomers_names()[1:]
 
 
 # Funzione per terminare il thread in sicurezza
@@ -496,52 +475,52 @@ def stop_query_thread():
 
 
 
-class rest(Action):
-    """resting for few seconds"""
-    def execute(self, arg):
-      rest_time = int(str(arg).split("'")[2][1:-1])
-      print(f"\nresting for {rest_time} seconds...")
+# class rest(Action):
+#     """resting for few seconds"""
+#     def execute(self, arg):
+#       rest_time = int(str(arg).split("'")[2][1:-1])
+#       print(f"\nresting for {rest_time} seconds...")
 
-      for t in dict_turtle:
-          dict_turtle[t].color("red")
+#       for t in dict_turtle:
+#           dict_turtle[t].color("red")
 
-      time.sleep(rest_time)
+#       time.sleep(rest_time)
 
-      for t in dict_turtle:
-          dict_turtle[t].color("black")
-
-
-
-class UpdateLedger(Action):
-    """Update completed jobs"""
-    def execute(self, arg1, arg2):
-
-      agent = str(arg1).split("'")[3]
-      jobs = int(str(arg2).split("'")[3])
-      jobs = jobs + 1
-      print(f"Updating {agent} ledger: {jobs}")
-      self.assert_belief(LEDGER(agent, str(jobs)))
-      self.assert_belief(DUTY(int(agent[-1:])))
+#        for t in dict_turtle:
+#           dict_turtle[t].color("black")
 
 
-class UpdateWorkTime(Action):
-    """Update completed jobs"""
-    def execute(self, arg1, arg2):
 
-        arg1_num = str(arg1).split("'")[2][1:-1]
-        arg2_num = str(arg2).split("'")[2][1:-1]
-        arg_num_tot = int(arg1_num)+int(arg2_num)
-        print("WORKTIME: ",arg_num_tot)
-        self.assert_belief(WORKTIME(arg_num_tot))
+# class UpdateLedger(Action):
+#     """Update completed jobs"""
+#     def execute(self, arg1, arg2):
+
+#       agent = str(arg1).split("'")[3]
+#       jobs = int(str(arg2).split("'")[3])
+#      jobs = jobs + 1
+#       print(f"Updating {agent} ledger: {jobs}")
+#       self.assert_belief(LEDGER(agent, str(jobs)))
+#       self.assert_belief(DUTY(int(agent[-1:])))
 
 
-class AssignId(Action):
-    """Intialize duty flag with ID"""
-    def execute(self, arg):
-        entity = str(arg).split("'")[3]
+# class UpdateWorkTime(Action):
+#     """Update completed jobs"""
+#     def execute(self, arg1, arg2):
 
-        self.assert_belief(DUTY(int(entity[-1:])))
-        self.assert_belief(AGT(entity, int(entity[-1:])))
+#         arg1_num = str(arg1).split("'")[2][1:-1]
+#         arg2_num = str(arg2).split("'")[2][1:-1]
+#         arg_num_tot = int(arg1_num)+int(arg2_num)
+#         print("WORKTIME: ",arg_num_tot)
+#         self.assert_belief(WORKTIME(arg_num_tot))
+
+
+# class AssignId(Action):
+#     """Intialize duty flag with ID"""
+#     def execute(self, arg):
+#         entity = str(arg).split("'")[3]
+
+#         self.assert_belief(DUTY(int(entity[-1:])))
+#         self.assert_belief(AGT(entity, int(entity[-1:])))
 
 
 
@@ -550,64 +529,37 @@ class AssignId(Action):
 # ---------------------------------------------------------------------
 
 
-class move_turtle(Action):
-    """moving turtle to coordinates (x,y)"""
-    def execute(self, arg0, arg1, arg2):
-        id_turtle = str(arg0).split("'")[3]
+# class move_turtle(Action):
+#     """moving turtle to coordinates (x,y)"""
+#     def execute(self, arg0, arg1, arg2):
+#         id_turtle = str(arg0).split("'")[3]
 
-        pos_x = str(arg1).split("'")[2]
-        pos_y = str(arg2).split("'")[2]
+#         pos_x = str(arg1).split("'")[2]
+#         pos_y = str(arg2).split("'")[2]
 
-        pos_x = int(pos_x[1:-1])
-        pos_y = int(pos_y[1:-1])
+#         pos_x = int(pos_x[1:-1])
+#         pos_y = int(pos_y[1:-1])
 
         # Recupera la posizione attuale
-        current_x, current_y = dict_turtle[id_turtle].position()
+#         current_x, current_y = dict_turtle[id_turtle].position()
 
         # Calcola la distanza da percorrere su ciascun asse
-        delta_x = (pos_x - current_x) / STEP_BREAKDOWN
-        delta_y = (pos_y - current_y) / STEP_BREAKDOWN
+#         delta_x = (pos_x - current_x) / STEP_BREAKDOWN
+#         delta_y = (pos_y - current_y) / STEP_BREAKDOWN
 
-        for step in range(STEP_BREAKDOWN):
+#         for step in range(STEP_BREAKDOWN):
             # Sposta la tartaruga di una piccola quantità
-            current_x += delta_x
-            current_y += delta_y
-            dict_turtle[id_turtle].goto(current_x, current_y)
+#             current_x += delta_x
+#             current_y += delta_y
+#             dict_turtle[id_turtle].goto(current_x, current_y)
 
             # Rallenta il movimento
-            time.sleep(STEP_DURATIN)  # Regola il tempo di pausa per modificare la velocità
+#             time.sleep(STEP_DURATIN)  # Regola il tempo di pausa per modificare la velocità
 
         # Pausa finale casuale (se necessaria)
-        rnd = random.uniform(LOWER_BOUND, UPPER_BOUND)
-        time.sleep(rnd)
+#         rnd = random.uniform(LOWER_BOUND, UPPER_BOUND)
+#         time.sleep(rnd)
 
-
-
-# def turtle_thread_func():
-#    wn = turtle.Screen()
-#    wn.title("Workers jobs assignment")
-
-#    agents = get_agents_names()[1:]
-
-#    for i in range(len(agents)):
-#       dict_turtle[agents[i]] = turtle.Turtle()
-
-#    wn.mainloop()
-   
-# class network_init(Action):
-#     def execute(self):
-#        dflink = pd.read_csv('links.csv', delimiter = ";") # dataframe links
-         # empty graph
-#         G.remove_edges_from(list(G.edges()))
-#         agents = get_agents_names()[1:]
-#         G.add_nodes_from(agents)
-#         pos = nx.spring_layout(G, seed=231)
-#        pos = nx.spring_layout(G, seed=numpy.random.seed(1229))
-#         vis_network()
-#        plt.clf() 
-#        nx.draw(G,with_labels=True)
-#        plt.show()
-        
 class new_affiliation(Action):
     def execute(self,arg0,arg1):
         node_1 = str(arg0).split("'")[3]
@@ -645,62 +597,27 @@ class selectforlink(Action):
         
 G = nx.Graph()
 
-# G.add_nodes_from(agents)
 G.add_nodes_from(universities)
 G.add_nodes_from(fields)
-G.add_nodes_from(agents)
+G.add_nodes_from(scholars)
 G.add_nodes_from(newcomers)
 
-# color_map = ['red' if node in universities else 'green' if node in fields else 'orange' if node in newcomers else "cyan" for node in G] 
+# color nodes
 color_map = ['orange' if node in newcomers else 'white' for node in G] 
-
-
-#colors_edges = nx.get_edge_attributes(G,"color").values()
-# color_map = ['red' if node in universities elif 'green' if node in fields else "blue" for node in G] 
-
-# color_map = []
-
-# for node in G:
-#     if node in universities:
-#         node.color_map = "red"
-#     elif node in fields:
-#         node.color_map = "green"
-#     else:
-#         node.color_map = "blue"
-        
-        
-        
-        
-#             else 'violet' for node in G]  G.nodes[node]["color"]
-
-#df = pd.read_csv('nodes.csv', delimiter = ";")  # dataframe nodes
-#G.from_pandas_dataframe(df)
-# for node in G.nodes():  # to add attribute color to nodes extracting from the dataframe
-#    G.nodes[node]["color"] = df[(df.node == node)]["color"].item()
-
-# features for the layout of the graph
-
-# colors = [node[1]['color'] for node in G.nodes(data=True)] # color of nodes
-
+# position nodes
 pos = nx.spring_layout(G , seed=numpy.random.seed(5581), scale = 8) # k = 300, iterations = 70)  # 15495 #5581 # 1933
-# G = nx.relabel_nodes(G, lambda x: ''.join([i for i in x if not i.isdigit()]))
 
 def vis_network():
-#        wm = plt.get_current_fig_manager() 
-#        wm.window.attributes('-topmost', 1)
-#        wm.window.attributes('-topmost', 0)
-#        plt.gcf().canvas.get_tk_widget().focus_force() 
+
         colors_edges = nx.get_edge_attributes(G,"color").values()
         edges = G.edges()
         weights_edges = [G[u][v]['weight'] for u,v in edges]# nx.get_edge_attributes(G,'weight').values()        
         plt.clf()
-#        fig = plt.figure()
         nx.draw(G,with_labels=True, node_color=color_map , edge_color = colors_edges, width = weights_edges ,  pos = pos,
                 font_size = 18)
         nx.draw_networkx_edge_labels(G, edge_labels=nx.get_edge_attributes(G,'label'), 
                                      label_pos= 0.7,  pos = pos,
                                      font_size = 14) # edge_color = colors_edges,  pos = pos)5
-#        fig.canvas.manager.window.attributes('-topmost', 1)
         plt.show()
 
 
