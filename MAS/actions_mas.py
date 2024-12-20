@@ -153,8 +153,14 @@ class init(Procedure): pass
 class load(Procedure): pass
 # Turning triples to beliefs
 class pre_process(Procedure): pass
-
-
+# report measures
+class report(Procedure): pass
+# plot centrality
+class plotmeasurecn(Procedure): pass
+# plot clustering
+class plotmeasurecl(Procedure): pass
+# plot betweeness
+class plotmeasurebt(Procedure): pass
 
 class initWorld(Action):
     """World entities initialization"""
@@ -417,6 +423,46 @@ color_map = ['orange' if node in newcomers else 'white' for node in G]
 # position nodes
 pos = nx.spring_layout(G , seed=numpy.random.seed(5581), scale = 8) # k = 300, iterations = 70)  # 15495 #5581 # 1933
 
+class measures(Action):
+    def execute(self):
+        print(nx.degree_centrality(G))
+        df = pd.DataFrame.from_dict(data=nx.degree_centrality(G), orient='index')
+        print(df.head())
+        df.to_csv('dict_file.csv', header=False)
+        
+class plot_centrality(Action):
+    def execute(self,arg0):
+        dct = nx.degree_centrality(G)
+        dctsub = {k: v for k, v in dct.items() if k in str(arg0)}
+        names = list(dctsub.keys())
+        values = list(dctsub.values())
+        plt.bar(range(len(dctsub)), values, tick_label=names)
+        plt.xticks(rotation=30)
+        plt.title("Centrality")
+        plt.show()
+
+class plot_clustering(Action):
+    def execute(self,arg0):
+        dct = nx.clustering(G)
+        dctsub = {k: v for k, v in dct.items() if k in str(arg0)}
+        names = list(dctsub.keys())
+        values = list(dctsub.values())
+        plt.bar(range(len(dctsub)), values, tick_label=names)
+        plt.xticks(rotation=30)
+        plt.title("Clustering")
+        plt.show()
+        
+class plot_betweeness(Action):
+    def execute(self,arg0):
+        dct = nx.betweenness_centrality(G)
+        dctsub = {k: v for k, v in dct.items() if k in str(arg0)}
+        names = list(dctsub.keys())
+        values = list(dctsub.values())
+        plt.bar(range(len(dctsub)), values, tick_label=names)
+        plt.xticks(rotation=30)
+        plt.title("Betweeness")
+        plt.show()
+
 def vis_network():
 
         colors_edges = nx.get_edge_attributes(G,"color").values()
@@ -429,7 +475,7 @@ def vis_network():
                                      label_pos= 0.7,  pos = pos,
                                      font_size = 14) 
         plt.show()
-
+        
 
 # Avviare il thread del network
 ntw_thread = threading.Thread(target=vis_network)
