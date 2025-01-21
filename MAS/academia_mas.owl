@@ -17,6 +17,10 @@
 
 <owl:ObjectProperty rdf:about="#selectedFor"/>
 
+<owl:ObjectProperty rdf:about="#hasInterest"/>
+
+<owl:ObjectProperty rdf:about="#isAffiliated"/>
+
 <owl:Class rdf:about="#ENTITY">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
 </owl:Class>
@@ -53,6 +57,14 @@
   <rdfs:subClassOf rdf:resource="#BELIEF"/>
 </owl:Class>
 
+<owl:Class rdf:about="#HasInterest">
+  <rdfs:subClassOf rdf:resource="#BELIEF"/>
+</owl:Class>
+
+<owl:Class rdf:about="#IsAffiliated">
+  <rdfs:subClassOf rdf:resource="#BELIEF"/>
+</owl:Class>
+
 <owl:Class rdf:about="## TASK">
   <rdfs:subClassOf rdf:resource="#REACTOR"/>
 </owl:Class>
@@ -65,7 +77,11 @@
   <rdfs:subClassOf rdf:resource="#REACTOR"/>
 </owl:Class>
 
-<owl:Class rdf:about="#DesireGoalFor">
+<owl:Class rdf:about="#DesireGoalForDir">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#DesireGoalForIndir">
   <rdfs:subClassOf rdf:resource="#DESIRE"/>
 </owl:Class>
 
@@ -78,6 +94,10 @@
 </owl:Class>
 
 <owl:Class rdf:about="#AcceptOffer">
+  <rdfs:subClassOf rdf:resource="#INTENTION"/>
+</owl:Class>
+
+<owl:Class rdf:about="#AcceptOffer2">
   <rdfs:subClassOf rdf:resource="#INTENTION"/>
 </owl:Class>
 
@@ -105,12 +125,17 @@
   <rdfs:subClassOf rdf:resource="#ENTITY"/>
 </owl:Class>
 
+<owl:Class rdf:about="#Cattegories">
+  <rdfs:subClassOf rdf:resource="#ENTITY"/>
+</owl:Class>
+
 <owl:NamedIndividual rdf:about="#Warehouse">
   <rdf:type rdf:resource="#Agent"/>
   <rdf:type rdf:resource="#Scholar"/>
   <rdf:type rdf:resource="#Field"/>
   <rdf:type rdf:resource="#University"/>
   <rdf:type rdf:resource="#Newcomers"/>
+  <rdf:type rdf:resource="#Cattegories"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Fabio">
@@ -259,6 +284,12 @@
   <rdf:type rdf:resource="#Newcomers"/>
   <selectedFor rdf:resource="#Univ-Bologna"/>
   <selectedFor rdf:resource="#Univ-Turin"/>
+  <hasInterest rdf:resource="#Informatics"/>
+  <isAffiliated rdf:resource="#Nope"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Nope">
+  <rdf:type rdf:resource="#Cattegories"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Mandy">
@@ -266,13 +297,17 @@
   <rdf:type rdf:resource="#Newcomers"/>
   <selectedFor rdf:resource="#Univ-Messina"/>
   <selectedFor rdf:resource="#Univ-Turin"/>
+  <hasInterest rdf:resource="#Informatics"/>
+  <isAffiliated rdf:resource="#Nope"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Bibo">
   <rdf:type rdf:resource="#Agent"/>
   <rdf:type rdf:resource="#Newcomers"/>
-  <selectedFor rdf:resource="#Univ-Bologna"/>
+  <selectedFor rdf:resource="#Univ-Catania"/>
   <selectedFor rdf:resource="#Univ-Turin"/>
+  <hasInterest rdf:resource="#Informatics"/>
+  <isAffiliated rdf:resource="#Nope"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Anto">
@@ -280,6 +315,8 @@
   <rdf:type rdf:resource="#Newcomers"/>
   <selectedFor rdf:resource="#Univ-Bologna"/>
   <selectedFor rdf:resource="#Univ-Turin"/>
+  <hasInterest rdf:resource="#Philosophy"/>
+  <isAffiliated rdf:resource="#Nope"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Felix">
@@ -287,11 +324,61 @@
   <rdf:type rdf:resource="#Newcomers"/>
   <selectedFor rdf:resource="#Univ-Bologna"/>
   <selectedFor rdf:resource="#Univ-Turin"/>
+  <hasInterest rdf:resource="#Philosophy"/>
+  <isAffiliated rdf:resource="#Nope"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Demography">
   <rdf:type rdf:resource="#Field"/>
 </owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Yep">
+  <rdf:type rdf:resource="#Cattegories"/>
+</owl:NamedIndividual>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
+
+<swrl:Imp/>
 
 <swrl:Imp/>
 

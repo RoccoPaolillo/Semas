@@ -12,6 +12,9 @@ import csv
 import pandas as pd
 import re
 import math
+import warnings
+
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 # Coda per inviare richieste di query
 query_queue = queue.Queue()
@@ -28,6 +31,7 @@ from phidias.Types import *
 import configparser
 from owlready2 import *
 from front_end_mas import *  # SHIFT
+
 
 config = configparser.ConfigParser()
 config.read('config_mas.ini')
@@ -155,6 +159,10 @@ class load(Procedure): pass
 class pre_process(Procedure): pass
 # report measures
 class report(Procedure): pass
+# report only for universities
+class reportuniv(Procedure): pass
+# report affil
+class reportaffil(Procedure): pass
 # plot centrality
 class plotmeasurecn(Procedure): pass
 # plot clustering
@@ -358,11 +366,30 @@ def get_newcomers_names():
     
     return newcomers
 
+def get_categories_names():
+    categories = []
+    q = PREFIX + f" SELECT ?subj" + " WHERE { "
+    q = q + f"?subj rdf:type {ONTO_NAME}:Cattegories." + "}"
+
+    result_event = threading.Event()  # Evento per sincronizzare il risultato
+    query_queue.put((q, result_event))  # Invia la query al thread dedicato
+
+    result_event.wait()  # Aspetta che il risultato sia pronto
+
+    result = result_queue.get()  # Ottieni il risultato dalla coda
+
+    for res in result:
+        subj = str(res).split(",")[0]
+        subj = subj.split("#")[1][:-2]
+        categories.append(subj)
+    
+    return categories
+
 scholars = get_scholars_names()[1:]
 universities = get_universities_names()[1:]
 newcomers = get_newcomers_names()[1:]
 fields = get_fields_names()[1:]
-
+categories = get_categories_names()[1:]
 
 # Funzione per terminare il thread in sicurezza
 def stop_query_thread():
@@ -381,34 +408,36 @@ class new_affiliation(Action):
         node_1 = str(arg0).split("'")[3]
         node_2 = str(arg1).split("'")[3]
         G.add_edge(node_1, node_2, color = "orange", weight = 4, label = "affil", edgestyle = "solid") # str(arg3).split()[0])
+        NG.add_edge(node_1, node_2, color = "orange", weight = 4, label = "affil", edgestyle = "solid") # str(arg3).split()[0])
         vis_network()
         
 class co_authorshiplink(Action):
     def execute(self,arg0,arg1):
         node_1 = str(arg0).split("'")[3]
         node_2 = str(arg1).split("'")[3]
-        G.add_edge(node_1, node_2, color = "lightgrey", weight = 2, label = "coauthor", edgestyle = "dashed") # str(arg3).split()[0])
+        G.add_edge(node_1, node_2, color = "blue", weight = 2, label = "coauthor", edgestyle = "dashed") # str(arg3).split()[0])
         vis_network()
         
 class affiliationlink(Action):
     def execute(self,arg0,arg1):
         node_1 = str(arg0).split("'")[3]
         node_2 = str(arg1).split("'")[3]
-        G.add_edge(node_1, node_2, color = "lightgrey", weight = 2, label = "affil", edgestyle = "dotted") # str(arg3).split()[0])
+        G.add_edge(node_1, node_2, color = "red", weight = 2, label = "affil", edgestyle = "dotted") # str(arg3).split()[0])
+        NG.add_edge(node_1, node_2, color = "red", weight = 2, label = "affil", edgestyle = "dotted") # str(arg3).split()[0])
         vis_network()
         
 class topauthorlink(Action):
     def execute(self,arg0,arg1):
         node_1 = str(arg0).split("'")[3]
         node_2 = str(arg1).split("'")[3]
-        G.add_edge(node_1, node_2, color = "lightgrey", weight = 2, label = "topauthor", edgestyle = "dashdot") # str(arg3).split()[0])
+        G.add_edge(node_1, node_2, color = "purple", weight = 2, label = "topauthor", edgestyle = "dashdot") # str(arg3).split()[0])
         vis_network()
         
 class selectforlink(Action):
     def execute(self,arg0,arg1):
         node_1 = str(arg0).split("'")[3]
         node_2 = str(arg1).split("'")[3]
-        G.add_edge(node_1, node_2, color = "darkgrey", weight = 4, label  = "selected", edgestyle = "dashed") # str(arg3).split()[0])
+        G.add_edge(node_1, node_2, color = "lightgrey", weight = 4,  edgestyle = "dashed" ) #, label  = "selected") # str(arg3).split()[0])
         vis_network()
         
 G = nx.Graph()
@@ -418,17 +447,55 @@ G.add_nodes_from(fields)
 G.add_nodes_from(scholars)
 G.add_nodes_from(newcomers)
 
+NG = nx.Graph()
+NG.add_nodes_from(universities)
+
 # color nodes
 color_map = ['orange' if node in newcomers else 'white' for node in G] 
 # position nodes
-pos = nx.spring_layout(G , seed=numpy.random.seed(5581), scale = 8) # k = 300, iterations = 70)  # 15495 #5581 # 1933
+# pos = nx.spring_layout(G , seed=numpy.random.seed(5581), scale = 8) # k = 300, iterations = 70)  # 15495 #5581 # 1933
+pos = nx.spring_layout(G , seed=numpy.random.seed(15489), scale = 8) # k = 300, iterations = 70)  # 5578 15490
 
 class measures(Action):
     def execute(self):
-        print(nx.degree_centrality(G))
-        df = pd.DataFrame.from_dict(data=nx.degree_centrality(G), orient='index')
-        print(df.head())
+        print(nx.degree_centrality(NG))
+        df = pd.DataFrame.from_dict(data=nx.degree_centrality(NG), orient='index')
+        print(NG)
+#        print(df.head())
         df.to_csv('dict_file.csv', header=False)
+        
+class measuresuniv(Action):
+    def execute(self):
+        all_edges = []
+#        centrality_index = ()
+        print("Univ-Catania,", len( NG.edges("Univ-Catania")))
+        print("Univ-Bologna, ",len( NG.edges("Univ-Bologna")))
+        print("Univ-Turin, ",len( NG.edges("Univ-Turin")))
+        print("Univ-Messina, ",len( NG.edges("Univ-Messina")))
+        
+        for edgeuniv in universities:
+            all_edges.append(len( NG.edges(edgeuniv)))
+        print(all_edges)
+        print(sum(all_edges))
+        
+        def centralityindex(x):
+            return len(NG.edges(str(x)))/sum(all_edges)
+       
+        centrality_index = dict(zip(universities,list(map(centralityindex, universities))))
+        names = list(centrality_index.keys())
+        values = list(centrality_index.values())
+        plt.rcParams["figure.figsize"] = (6, 3)
+        plt.bar(range(len(centrality_index)), values, tick_label=names)
+#        plt.xticks(rotation=30)
+        plt.title("Centrality Universities")
+        plt.show()
+#v        plt.savefig('centralityuniv.png')
+        
+        print(centrality_index)
+        print("Univ-Catania_centrality,", len( NG.edges("Univ-Catania"))/sum(all_edges))
+        print("Univ-Bologna_centrality, ",len( NG.edges("Univ-Bologna"))/sum(all_edges))
+        print("Univ-Turin_centrality, ",len( NG.edges("Univ-Turin"))/sum(all_edges))
+        print("Univ-Messina_centrality, ",len( NG.edges("Univ-Messina"))/sum(all_edges))
         
 class plot_centrality(Action):
     def execute(self,arg0):
@@ -464,11 +531,12 @@ class plot_betweeness(Action):
         plt.show()
 
 def vis_network():
-
+    
         colors_edges = nx.get_edge_attributes(G,"color").values()
         edges = G.edges()
         weights_edges = [G[u][v]['weight'] for u,v in edges]   
         plt.clf()
+        warnings.filterwarnings("ignore")
         nx.draw(G,with_labels=True, node_color=color_map , edge_color = colors_edges, width = weights_edges ,  pos = pos,
                 font_size = 18)
         nx.draw_networkx_edge_labels(G, edge_labels=nx.get_edge_attributes(G,'label'), 
