@@ -50,7 +50,8 @@ class main(Agent):
 #        DesireGoalFor(X) / (Selectionship(S,U) & TopAuthorship(Y, X) & CoAuthorship(Z, Y)  & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +coauthorIndirect(Z, U,Y,X), +AcceptOffer(S,X,U), DesireGoalFor(X)]
 
 #        DesireGoalFor(X) / (Selectionship(S,U) & TopAuthorship(Y, X) & CoAuthorship(Z, Y)  & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"),  -CoAuthorship(Z, Y), +coauthorIndirect(Z, U,Y,X), +AcceptOffer(S,X,U), DesireGoalFor(X)]
-        DesireGoalForDir(X) / (IsAffiliated(S, D) & HasInterest(S,X) & Selectionship(S,U) & TopAuthorship(Y, X) & Affiliation(Y, U)) >> [show_line("Direct match found at ",U,".\n"), -TopAuthorship(Y, X),  +AcceptOffer2(S,X,U), -IsAffiliated(S,D),  DesireGoalForDir(X)]
+        DesireGoalForDir(X) / (IsAffiliated(S, D) & HasInterest(S,X) & Selectionship(S,U) & TopAuthorship(Y, X) & Affiliation(Y, U) & (lambda: random.random() <= 0.6)) >> [
+            show_line("Direct match found at ",U,".\n"), -TopAuthorship(Y, X),+AcceptOffer2(S,X,U), -IsAffiliated(S,D),  DesireGoalForDir(X)]
         DesireGoalForIndir(X) / (IsAffiliated(S, D) & HasInterest(S,X) & Selectionship(S,U) & TopAuthorship(Y, X) & CoAuthorship(Z, Y)  & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"),  -CoAuthorship(Z, Y), +AcceptOffer(S,X,U), -IsAffiliated(S,D), DesireGoalForIndir(X)]
             
 
