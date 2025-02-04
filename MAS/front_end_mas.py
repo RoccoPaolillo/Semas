@@ -45,14 +45,18 @@ class main(Agent):
         pre_process() / TRIPLE(X, "isTopAuthorIn", Y) >> [-TRIPLE(X, "isTopAuthorIn", Y), +TopAuthorship(X, Y), topauthorlink(X,Y), pre_process()]
         pre_process() / TRIPLE(X, "selectedFor", Y) >> [-TRIPLE(X, "selectedFor", Y), +Selectionship(X, Y), selectforlink(X,Y), pre_process()]
         pre_process() / TRIPLE(X, "hasInterest", Y) >> [-TRIPLE(X, "hasInterest", Y), +HasInterest(X, Y), pre_process()]
+        pre_process() / TRIPLE(X, "hasGender", Y) >> [-TRIPLE(X, "hasGender", Y), +HasGender(X, Y), pre_process()]
 
 #        DesireGoalFor(X) / (Selectionship(S,U) & TopAuthorship(Y, X) & Affiliation(Y, U)) >> [show_line("Direct match found at ",U,".\n"), -TopAuthorship(Y, X), +ProposeCoauthorship(Y, X), +AcceptOffer(S,X,U),  DesireGoalFor(X)]
 #        DesireGoalFor(X) / (Selectionship(S,U) & TopAuthorship(Y, X) & CoAuthorship(Z, Y)  & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +coauthorIndirect(Z, U,Y,X), +AcceptOffer(S,X,U), DesireGoalFor(X)]
 
 #        DesireGoalFor(X) / (Selectionship(S,U) & TopAuthorship(Y, X) & CoAuthorship(Z, Y)  & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"),  -CoAuthorship(Z, Y), +coauthorIndirect(Z, U,Y,X), +AcceptOffer(S,X,U), DesireGoalFor(X)]
-        DesireGoalForDir(X) / (IsAffiliated(S, D) & HasInterest(S,X) & Selectionship(S,U) & TopAuthorship(Y, X) & Affiliation(Y, U)) >> [show_line("Direct match found at ",U,".\n"), -TopAuthorship(Y, X),  +AcceptOffer2(S,X,U), -IsAffiliated(S,D),  DesireGoalForDir(X)]
-        DesireGoalForIndir(X) / (IsAffiliated(S, D) & HasInterest(S,X) & Selectionship(S,U) & TopAuthorship(Y, X) & CoAuthorship(Z, Y)  & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"),  -CoAuthorship(Z, Y), +AcceptOffer(S,X,U), -IsAffiliated(S,D), DesireGoalForIndir(X)]
-            
+        DesireGoalForDir(X,L,1) / (IsAffiliated(S, D) & HasInterest(S,X) & Selectionship(S,U) & TopAuthorship(Y, X) & 
+                                   Affiliation(Y, U) & HasGender(S,L)  & (lambda: random.random() <= 1)) >> [
+            show_line("Direct match found at ",U,".\n"), -TopAuthorship(Y, X),+AcceptOffer2(S,X,U), -IsAffiliated(S,D),  DesireGoalForDir(X)]
+        DesireGoalForIndir(X,L,1) / (IsAffiliated(S, D) & HasInterest(S,X) & Selectionship(S,U) & TopAuthorship(Y, X) & CoAuthorship(Z, Y)  & 
+                                   Affiliation(Z, U) & HasGender(S,L) & (lambda:random.random() <= 1)) >> \
+        [show_line("Indirect match found at ",U,".\n"),  -CoAuthorship(Z, Y), +AcceptOffer(S,X,U), -IsAffiliated(S,D), DesireGoalForIndir(X,L,1)]            
 
         report() >> [measures()]
         reportuniv() >> [measuresuniv()]

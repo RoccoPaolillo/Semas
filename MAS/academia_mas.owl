@@ -21,6 +21,8 @@
 
 <owl:ObjectProperty rdf:about="#isAffiliated"/>
 
+<owl:ObjectProperty rdf:about="#hasGender"/>
+
 <owl:Class rdf:about="#ENTITY">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
 </owl:Class>
@@ -62,6 +64,10 @@
 </owl:Class>
 
 <owl:Class rdf:about="#IsAffiliated">
+  <rdfs:subClassOf rdf:resource="#BELIEF"/>
+</owl:Class>
+
+<owl:Class rdf:about="#HasGender">
   <rdfs:subClassOf rdf:resource="#BELIEF"/>
 </owl:Class>
 
@@ -129,6 +135,10 @@
   <rdfs:subClassOf rdf:resource="#ENTITY"/>
 </owl:Class>
 
+<owl:Class rdf:about="#Gender">
+  <rdfs:subClassOf rdf:resource="#ENTITY"/>
+</owl:Class>
+
 <owl:NamedIndividual rdf:about="#Warehouse">
   <rdf:type rdf:resource="#Agent"/>
   <rdf:type rdf:resource="#Scholar"/>
@@ -136,6 +146,7 @@
   <rdf:type rdf:resource="#University"/>
   <rdf:type rdf:resource="#Newcomers"/>
   <rdf:type rdf:resource="#Cattegories"/>
+  <rdf:type rdf:resource="#Gender"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Fabio">
@@ -145,6 +156,7 @@
   <coAuthorWith rdf:resource="#Petra"/>
   <hasAffiliationWith rdf:resource="#Univ-Catania"/>
   <isTopAuthorIn rdf:resource="#Informatics"/>
+  <hasGender rdf:resource="#Male"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Rocco">
@@ -154,6 +166,7 @@
   <coAuthorWith rdf:resource="#Fabio"/>
   <hasAffiliationWith rdf:resource="#Univ-Bologna"/>
   <isTopAuthorIn rdf:resource="#Philosophy"/>
+  <hasGender rdf:resource="#Male"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Petra">
@@ -161,6 +174,7 @@
   <rdf:type rdf:resource="#Scholar"/>
   <hasAffiliationWith rdf:resource="#Univ-Catania"/>
   <isTopAuthorIn rdf:resource="#Informatics"/>
+  <hasGender rdf:resource="#Female"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Univ-Catania">
@@ -171,11 +185,16 @@
   <rdf:type rdf:resource="#Field"/>
 </owl:NamedIndividual>
 
+<owl:NamedIndividual rdf:about="#Male">
+  <rdf:type rdf:resource="#Gender"/>
+</owl:NamedIndividual>
+
 <owl:NamedIndividual rdf:about="#Misael">
   <rdf:type rdf:resource="#Agent"/>
   <rdf:type rdf:resource="#Scholar"/>
   <hasAffiliationWith rdf:resource="#Univ-Catania"/>
   <isTopAuthorIn rdf:resource="#Informatics"/>
+  <hasGender rdf:resource="#Male"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Univ-Bologna">
@@ -186,12 +205,17 @@
   <rdf:type rdf:resource="#Field"/>
 </owl:NamedIndividual>
 
+<owl:NamedIndividual rdf:about="#Female">
+  <rdf:type rdf:resource="#Gender"/>
+</owl:NamedIndividual>
+
 <owl:NamedIndividual rdf:about="#Albert">
   <rdf:type rdf:resource="#Agent"/>
   <rdf:type rdf:resource="#Scholar"/>
   <coAuthorWith rdf:resource="#Michael"/>
   <hasAffiliationWith rdf:resource="#Univ-Turin"/>
   <isTopAuthorIn rdf:resource="#Mathematics"/>
+  <hasGender rdf:resource="#Male"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Michael">
@@ -201,6 +225,7 @@
   <coAuthorWith rdf:resource="#Petra"/>
   <hasAffiliationWith rdf:resource="#Univ-Bologna"/>
   <isTopAuthorIn rdf:resource="#Philosophy"/>
+  <hasGender rdf:resource="#Male"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Univ-Turin">
@@ -216,6 +241,7 @@
   <rdf:type rdf:resource="#Scholar"/>
   <hasAffiliationWith rdf:resource="#Univ-Catania"/>
   <isTopAuthorIn rdf:resource="#Informatics"/>
+  <hasGender rdf:resource="#Female"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Jenny">
@@ -224,6 +250,7 @@
   <coAuthorWith rdf:resource="#Petra"/>
   <hasAffiliationWith rdf:resource="#Univ-Bologna"/>
   <isTopAuthorIn rdf:resource="#Philosophy"/>
+  <hasGender rdf:resource="#Female"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Esther">
@@ -234,6 +261,7 @@
   <coAuthorWith rdf:resource="#Misael"/>
   <hasAffiliationWith rdf:resource="#Univ-Bologna"/>
   <isTopAuthorIn rdf:resource="#Philosophy"/>
+  <hasGender rdf:resource="#Female"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Carlo">
@@ -242,6 +270,7 @@
   <coAuthorWith rdf:resource="#Rocco"/>
   <hasAffiliationWith rdf:resource="#Univ-Turin"/>
   <isTopAuthorIn rdf:resource="#Mathematics"/>
+  <hasGender rdf:resource="#Male"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Paola">
@@ -249,6 +278,7 @@
   <rdf:type rdf:resource="#Scholar"/>
   <hasAffiliationWith rdf:resource="#Univ-Turin"/>
   <isTopAuthorIn rdf:resource="#Mathematics"/>
+  <hasGender rdf:resource="#Female"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Isaac">
@@ -257,6 +287,7 @@
   <coAuthorWith rdf:resource="#Misael"/>
   <hasAffiliationWith rdf:resource="#Univ-Messina"/>
   <isTopAuthorIn rdf:resource="#Philosophy"/>
+  <hasGender rdf:resource="#Male"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Univ-Messina">
@@ -269,6 +300,7 @@
   <coAuthorWith rdf:resource="#Anna"/>
   <hasAffiliationWith rdf:resource="#Univ-Messina"/>
   <isTopAuthorIn rdf:resource="#Philosophy"/>
+  <hasGender rdf:resource="#Male"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Jack">
@@ -277,6 +309,7 @@
   <coAuthorWith rdf:resource="#Fabio"/>
   <hasAffiliationWith rdf:resource="#Univ-Messina"/>
   <isTopAuthorIn rdf:resource="#Mathematics"/>
+  <hasGender rdf:resource="#Male"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Stefano">
@@ -286,6 +319,7 @@
   <selectedFor rdf:resource="#Univ-Turin"/>
   <hasInterest rdf:resource="#Informatics"/>
   <isAffiliated rdf:resource="#Nope"/>
+  <hasGender rdf:resource="#Male"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Nope">
@@ -299,6 +333,7 @@
   <selectedFor rdf:resource="#Univ-Turin"/>
   <hasInterest rdf:resource="#Informatics"/>
   <isAffiliated rdf:resource="#Nope"/>
+  <hasGender rdf:resource="#Female"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Bibo">
@@ -308,6 +343,7 @@
   <selectedFor rdf:resource="#Univ-Turin"/>
   <hasInterest rdf:resource="#Informatics"/>
   <isAffiliated rdf:resource="#Nope"/>
+  <hasGender rdf:resource="#Male"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Anto">
@@ -317,6 +353,7 @@
   <selectedFor rdf:resource="#Univ-Turin"/>
   <hasInterest rdf:resource="#Philosophy"/>
   <isAffiliated rdf:resource="#Nope"/>
+  <hasGender rdf:resource="#Male"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Felix">
@@ -326,6 +363,7 @@
   <selectedFor rdf:resource="#Univ-Turin"/>
   <hasInterest rdf:resource="#Philosophy"/>
   <isAffiliated rdf:resource="#Nope"/>
+  <hasGender rdf:resource="#Male"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Demography">
@@ -335,74 +373,6 @@
 <owl:NamedIndividual rdf:about="#Yep">
   <rdf:type rdf:resource="#Cattegories"/>
 </owl:NamedIndividual>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
 
 <swrl:Imp/>
 
