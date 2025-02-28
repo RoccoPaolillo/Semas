@@ -1,6 +1,17 @@
-from phidias.Types import *
 import configparser
 from owlready2 import *
+import os
+import threading
+from phidias.Types import *
+import xml.etree.ElementTree as ET
+from phidias.Main import *
+
+
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+os.environ['FLASK_ENV'] = 'production'
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -8,6 +19,9 @@ config.read('config.ini')
 # ONTOLOGY section
 FILE_NAME = config.get('ONTOLOGY', 'FILE_NAME')
 ONTO_NAME = config.get('ONTOLOGY', 'ONTO_NAME')
+
+# RESTful service
+REST_ACTIVE = config.getboolean('REST', 'REST_ACTIVE')
 
 # REASONING Section
 REASONING_ACTIVE = config.getboolean('REASONING', 'ACTIVE')
@@ -35,6 +49,11 @@ except IOError:
     print("\nPlease Re-Run Semas.")
     my_onto.save(file=FILE_NAME, format="rdfxml")
     exit()
+
+class start_rest(Procedure): pass
+
+if REST_ACTIVE:
+    PHIDIAS.achieve(start_rest(), "main")
 
 
 # instances name/instances dictionary
@@ -68,8 +87,9 @@ with my_onto:
     for i in range(len(PROPERTIES)):
         globals()[PROPERTIES[i].strip()] = type(PROPERTIES[i].strip(), (ObjectProperty,), {})
         istanza = globals()[PROPERTIES[i].strip()]()
-
         dict_prop[PROPERTIES[i].strip()] = istanza
+
+
 
 
 
@@ -131,18 +151,6 @@ class initWorld(Action):
 
 
 
-# class WFR(ActiveBelief):
-#     """check if R is a Well Formed Rule"""
-#     def evaluate(self, arg):
-#
-#         rule = str(arg).split("'")[3]
-#
-#         if rule[0] != "-" and rule[-1] != ">":
-#             return True
-#         else:
-#             return False
-
-
 class declareRules(Action):
     """assert an SWRL rule"""
     def execute(self):
@@ -172,22 +180,17 @@ class saveOnto(Action):
 # ----------------------------------
 
 
-class process_belief(Action):
-    """create sparql query from MST"""
-    def execute(self, arg1):
-        print("\n--------- Processing belief Info---------\n ")
-
-        info = str(arg1).split("'")[3]
-        print(f"Operations on belief {info}...")
-
-
-
 class assert_beliefs_triples(Action):
     """create sparql query from MST"""
     def execute(self):
 
         q = PREFIX + f" SELECT ?subj ?prop ?obj" + " WHERE { "
-        q = q + f"?subj ?prop ?obj. ?subj rdf:type/rdfs:subClassOf* {ONTO_NAME}:ENTITY. ?obj rdf:type/rdfs:subClassOf* {ONTO_NAME}:ENTITY." + "}"
+        # q = q + f"?subj ?prop ?obj. ?subj rdf:type/rdfs:subClassOf* {ONTO_NAME}:ENTITY. ?obj rdf:type/rdfs:subClassOf* {ONTO_NAME}:ENTITY." + "}"
+
+        q = q + (f"?subj rdf:type ?subclass .  ?subclass rdfs:subClassOf+ <http://www.co-ode.org/ontologies/ont.owl#ENTITY> ."
+                 f"  ?subj ?prop ?obj ."
+                 f" ?obj rdf:type ?subclass2 .  ?subclass2 rdfs:subClassOf+ <http://www.co-ode.org/ontologies/ont.owl#ENTITY> .") + "}"
+        print(f"\nQUERY: {q}")
 
         my_world = owlready2.World()
         my_world.get_ontology(FILE_NAME).load()  # path to the owl file is given here
@@ -200,15 +203,173 @@ class assert_beliefs_triples(Action):
         graph = my_world.as_rdflib_graph()
         result = list(graph.query(q))
 
+        print(f"\n\n#Triples: {len(result)}")
+
         for res in result:
 
             subj = str(res).split(",")[0]
-            subj = subj.split("#")[1][:-2]
+            subj = subj.split("'")[1]
 
             prop = str(res).split(",")[1]
             prop = prop.split("#")[1][:-2]
 
             obj = str(res).split(",")[2]
-            obj = obj.split("#")[1][:-3]
+            obj = obj.split("'")[1]
 
             self.assert_belief(TRIPLE(subj, prop, obj))
+
+# Funzione per avviare il server Flask in background
+
+
+# ----------------------------------
+# --------- RESTful Section ---------
+# ----------------------------------
+
+class load(Procedure): pass
+class start_rest(Procedure): pass
+
+def avvia_flask():
+    app.run(port=5000)
+
+flask_thread = threading.Thread(target=avvia_flask)
+
+json_response = {"Response": []}
+
+
+# For FIPA RESTful beliefs exchange service (must be included into the ontology)
+class author(Belief): pass
+
+
+class start_rest_service(Action):
+    """create sparql query from MST"""
+    def execute(self):
+        flask_thread.daemon = True  # Rende il thread daemon, così si chiude quando il programma principale termina
+        flask_thread.start()
+
+
+
+class build_json_response(Action):
+    """build json response"""
+    def execute(self, arg1, arg2):
+       arg1 = str(arg1).split("'")[3]
+       arg2 = str(arg2).split("'")[3]
+
+       global json_response
+       print("Setting json_response...")
+
+       new_item = {
+           arg1: arg2,
+       }
+       json_response['Response'].append(new_item)
+
+
+
+
+# curl -X POST http://localhost:5000/build_publicationship -H "Content-Type: application/json" -d '{"testo": "Artificial-Intelligence"}'
+
+@app.route('/build_publicationship', methods=['POST'])
+def build_publicationship():
+    # Verifica che il corpo della richiesta sia presente
+    if not request.data:
+        return jsonify({'errore': 'Richiesta vuota'}), 400
+
+    # Tenta di elaborare la richiesta come JSON
+    try:
+        if request.is_json:
+            testo = request.json['testo']
+        else:
+            # Se non è JSON, interpreta il corpo come stringa
+            testo = request.data.decode('utf-8')
+    except Exception as e:
+        return jsonify({'errore': 'Formato non valido'}), 400
+
+    PHIDIAS.achieve(Publicationship(testo), "main")
+
+    json_subset = [item for item in json_response["Response"] if testo in item]
+
+    # Crea e ritorna una risposta JSON con il testo elaborato
+    return jsonify(json_subset), 200
+
+
+
+# curl -X POST http://localhost:5000/get_publicationship -H "Content-Type: application/json" -d '{"testo": "Artificial-Intelligence"}'
+
+@app.route('/get_publicationship', methods=['POST'])
+def get_publicationship():
+    # Verifica che il corpo della richiesta sia presente
+    if not request.data:
+        return jsonify({'errore': 'Richiesta vuota'}), 400
+
+    # Tenta di elaborare la richiesta come JSON
+    try:
+        if request.is_json:
+            testo = request.json['testo']
+        else:
+            # Se non è JSON, interpreta il corpo come stringa
+            testo = request.data.decode('utf-8')
+    except Exception as e:
+        return jsonify({'errore': 'Formato non valido'}), 400
+
+    json_subset = [item for item in json_response["Response"] if testo in item]
+
+    # Crea e ritorna una risposta JSON con il testo elaborato
+    return jsonify(json_subset), 200
+
+
+
+@app.route('/send_fipa_belief', methods=['POST'])
+def send_fipa_belief():
+    # Ricevi il payload XML dalla richiesta POST
+    rdf_data = request.data.decode('utf-8')
+
+    # Parse del contenuto XML
+    root = ET.fromstring(rdf_data)
+
+    # Namespaces da gestire
+    namespaces = {
+        'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
+        'fipa': 'http://www.fipa.org/schemas/fipa-rdf0#'
+    }
+
+    # Estrai le informazioni
+    subj = root.find('.//rdf:subject', namespaces).text
+    predicate = root.find('.//rdf:predicate', namespaces).attrib['{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource'].split('#')[-1]
+    obj = root.find('.//rdf:object', namespaces).text
+    belief = root.find('.//fipa:belief', namespaces).text
+
+    # Restituisci i dati in formato JSON
+
+    semas_belief = f"{predicate}('{subj}', '{obj}')"
+
+    response = {
+        'subject': subj,
+        'predicate': predicate,
+        'object': obj,
+        'belief': belief,
+        'semas': semas_belief
+    }
+
+    if belief == "true":
+        PHIDIAS.assert_belief(author(subj, obj), "main")
+    else:
+        PHIDIAS.retract_belief(author(subj, obj), "main")
+
+    return jsonify(response)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+
+# curl -X POST http://localhost:5000/send_fipa_belief \
+# -H "Content-Type: application/xml" \
+# -d '<?xml version="1.0"?>
+# <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+# xmlns:fipa="http://www.fipa.org/schemas/fipa-rdf0#">
+# <fipa:Proposition>
+# <rdf:subject>TCP/IP Illustrated</rdf:subject>
+# <rdf:predicate rdf:resource="http://description.org/schema#author"/>
+# <rdf:object>W. Richard Stevens</rdf:object>
+# <fipa:belief>true</fipa:belief>
+# </fipa:Proposition>
+# </rdf:RDF>'

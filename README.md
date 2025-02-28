@@ -238,4 +238,172 @@ TopAuthorship('Fabio', 'Artificial-Intelligence')TopAuthorship('Misael', 'Artifi
 TopAuthorship('Rocco', 'Applied-Ontology')Selectionship('Fabio', 'University-of-Catania')
 ```
 
-#### Semas inference and case study academia to add
+#### SEMAS inference
+
+---------------
+To achieve inference, one of the defined DESIRES must be employed as PHIDIAS Procedure, which are: *Publicationship()*
+and *BeTopAuthorship()*. Both of them can be used with one or more arguments. For instance, supposing one want
+to publish in the field of *Applied Ontology* a minimal usage is: *Publicationship("Applied-Ontology")*, whom will match (or not) with
+the following defined rule in [front_end.py](front_end.py): <br>
+
+```sh
+Publicationship(X) / (CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +ProposeCoauthorship(Z, X), Publicationship(X)]
+Publicationship(X) / (TopAuthorship(Y, X) & Affiliation(Y, U)) >> [show_line("Direct match found at ",U,".\n"), -TopAuthorship(Y, X), +ProposeCoauthorship(Y, X), Publicationship(X)]
+
++ProposeCoauthorship(X, Y) >> [show_line("Propose co-authorship with ",X," to publish in the field of ",Y,".\n")]
+```
+
+the outcome will be as follows:
+
+```sh
+eShell: main > Publicationship("Applied-Ontology")
+
+Indirect match found at University-of-Catania.
+
+Direct match found at Alma-Mater-Bologna.
+
+Propose co-authorship with Misael to publish in the field of Applied-Ontology.
+
+Propose co-authorship with Rocco to publish in the field of Applied-Ontology.
+```
+
+### RESTful services
+
+Since Semas is endowed of REST interface, BDI desires can be also be invoked remotely in a two-stage process. In the first stage, reasoning is performed on the beliefs obtained from the triples
+in the triple-store, following the declared production rules. In the second stage, based on the new beliefs generated during the first step, the result of the desire is returned.
+To activate the RESTful service and start the flask server, the procedure _start_rest()_ must be used in the PHIDIAS shell as follows:
+
+```sh
+eShell: main > start_rest()
+
+Starting RESTful service...
+
+eShell: main >  * Serving Flask app 'actions'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+```
+Before whatever operation, Semas kb must be fed with triples turned in beliefs (the related SPARQL query is in the class _assert_beliefs_triples_), with the above
+seen procedure _load()_. The first stage of querying the RESTful service, for instance, regarding the desire-procedure Publicationship("Artificial-Inbelligence"), is achieved
+with command-line _curl_ in the linux/windows prompt and the flask function _build_publicationship_ as follow:
+
+```sh
+fabio@midian:~$ curl -X POST http://localhost:5000/build_publicationship -H "Content-Type: application/json" -d '{"testo": "Artificial-Intelligence"}'
+curl: /home/fabio/anaconda3/lib/libcurl.so.4: no version information available (required by curl)
+[]
+```
+
+The result is [] because the output of _build_publicationship_ is put before Publicationship("Artificial-Inbelligence") in the PHIDIAS queue. In order
+to achieve the final result, the function _get_publicationship_ must be used in the linux/windows prompt as follows
+
+```sh
+fabio@midian:~$ curl -X POST http://localhost:5000/get_publicationship -H "Content-Type: application/json" -d '{"testo": "Artificial-Intelligence"}'
+curl: /home/fabio/anaconda3/lib/libcurl.so.4: no version information available (required by curl)
+[{"Artificial-Intelligence":"Rocco"},{"Artificial-Intelligence":"Misael"}]
+```
+
+which is similar to what can be achieved from the PHIDIAS shell, i.e.:
+
+```sh
+Propose co-authorship with Rocco to publish in the field of Artificial-Intelligence.
+
+Propose co-authorship with Misael to publish in the field of Artificial-Intelligence.
+```
+
+
+## Multi-Agent Systems
+
+The key of the SEMAS Multi-Agent Systems (MAS), which is mostly inhrerited from PHIDIAS, is that together with the "Main"
+agent (referred by the prior section), more agents can be instanced. As reported [here](https://ceur-ws.org/Vol-2502/paper5.pdf),
+agents can communicate with each other by the means of inner messaging, i.e., by asserting beliefs (or reactors) into other agents' KB,
+thus interacting with other agent's production rules (as depicted in the figure below). 
+
+![Image 5](images/schema_mas.jpg)
+
+To inspect other agents' KB than respect to main, the above seen command "kb" must be preceded by the command "agent"
+to change the agent's scope. For instance, by supposing one wants to inspect the "worker" KB (which in this case is empty):
+
+```sh
+eShell: main > agent worker
+eShell: worker > kb
+eShell: worker >
+```
+
+In the same way, the scope can be changed back to main (default) as follows:
+
+```sh
+eShell: worker > agent main
+eShell: main >
+```
+
+
+
+### Case-study: Warehouse management
+
+---------------
+
+As case-study, let us consider the toy [instance](MAS/semas_mas.py) related to a *Warehouse*, whose chief has the task
+to assign work to two employees (worker1 and worker2). The workflow is depicted at runtime in a Canvas. The involved variables are:
+
+* TICK: time between each job generation
+* MAX_WORK_TIME: the maximum amount of duty time (in seconds) before a pause
+* REST_TIME: the amount of time of resting during each pause
+* MAX_WORKDAY_TIME: the amount of duty time (in seconds) before finishing the working day
+
+The procedure *setup* and *work* are implemented to let the chief set the jobs ledger and begin to assign tasks to available workers. Each task
+ consists of taking the goods, going to specific location within the warehouse and placing the goods on the shelves. Locations are randomly
+generated in the range of the canvas. The time to put goods in the shelves is also randomly generated (in the range [LOWER_BOUND, UPPER_BOUND]). During a task a worker is not available,
+thus the chief must wait to assign a new task to a free worker. After each job done, the warehouse ledger is udpated by the chief. When the time
+exceeds *MAX_WORK_TIME*, all agents are put to rest for *REST_TIME* by retracting the belief *DUTY(id)* (with *id*=1 or 2) for each agent (their color
+in the canvas changes to red). When the overall time exceeds *MAX_WORKDAY_TIME*, the working day ends and each agent get paid considering the
+jobs done reported in the ledger.
+
+* Choose the owl file name, by setting the variable FILE_NAME (ONTOLOGY Section) in the config.ini (*warehouse.owl* for instance)
+* Execute semas_mas.py
+
+```sh
+Creating new warehouse.owl file...
+
+Please Re-Run Semas.
+
+Process finished with exit code 0
+```
+
+#### Ontology initialization
+
+---------------
+As with mono-agent mode, the details of the above formalization are all defined in config_mas.ini. Both OWL 2 ontology and PHIDIAS classes can be initialised with the command *init()* as follows:
+
+```sh
+eShell: main > init()
+eShell: main > setup()
+Setup jobs ledger...
+eShell: main > work()
+Starting task detection...
+
+Workers on duty...
+eShell: main > assigning job to worker1
+
+Worker1 moving to (-240,-49), received task from main
+assigning job to worker2
+
+Worker2 moving to (-15,-210), received task from main
+received job done comm from worker1
+Updating worker1 ledger: 1
+assigning job to worker1
+..........................
+..........................
+..........................
+```
+
+![Image 6](images/workers.jpg)
+
+### Semantic Web MAS interaction
+
+---------------
+
+As seen in the case of mono-agent code, triples from ontologies (Semantic Web) can be imported and turned into beliefs interacting with
+the SEMAS production rules system. The code [semas_mas.py](semas_mas.py) implements the above *Warehouse* case-study including the already
+seen procedure *init()* and *load()* to initialize the ontology described in [config_mas.ini](config_mas.ini) and import
+its triples into the SEMAS KB. The interaction between *belief-from-triples* and production rules is left to the developer.
