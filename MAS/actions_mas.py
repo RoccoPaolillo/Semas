@@ -104,7 +104,6 @@ dict_prop = {}
 class TRIPLE(Belief):
     pass
 
-
 with my_onto:
 
     class ENTITY(Thing):
@@ -177,6 +176,7 @@ class load(Procedure): pass
 # Turning triples to beliefs
 class turn(Procedure): pass
 
+class updatekb(Procedure): pass
 
 
 class initWorld(Action):
@@ -276,6 +276,9 @@ class assert_beliefs_triples(Action):
 # ---------------------------------------------------------------------
 # Sensors section
 # ---------------------------------------------------------------------
+
+ 
+
 
 class TaskDetect(Sensor):
 

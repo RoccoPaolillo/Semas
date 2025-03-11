@@ -23,7 +23,11 @@ def create_agents(class_name):
     def main(self):
         # MoveAndCompleteJob intention
         +TASK(X, Y, A)[{'from': M}] >> [show_line("\n",A," is moving to (", X, ",", Y, "), received task from ", M), move_turtle(A, X, Y), +COMM("DONE")[{'to': 'main'}]]
+        
+        init() >> [show_line("\nInitialiting Ontology...\n"), initWorld(), declareRules(), saveOnto()]
 
+        load() >> [show_line("\nAsserting all OWL 2 triples beliefs...\n"), assert_beliefs_triples(), show_line("\nTurning triples beliefs into Semas beliefs...\n"), turn()]
+        
     return type(class_name, (Agent,), {"main": main})
 
 
@@ -31,6 +35,9 @@ def create_custom_agent(class_name):
     def main(self):
         # MoveAndCompleteJob intention
         +TASK(X, Y, A)[{'from': M}] >> [show_line("\n",A," is moving to (", X, ",", Y, "), received task from ", M), move_turtle(A, X, Y), +COMM("DONE")[{'to': 'main'}]]
+        init() >> [show_line("\nInitialiting Ontology...\n"), initWorld(), declareRules(), saveOnto()]
+
+        load() >> [show_line("\nAsserting all OWL 2 triples beliefs...\n"), assert_beliefs_triples(), show_line("\nTurning triples beliefs into Semas beliefs...\n"), turn()]
 
     return type(class_name, (Agent,), {"main": main})
 
@@ -64,7 +71,7 @@ class main(Agent):
         setup() / WORKTIME(W) >> [show_line("Setup worktime again...\n"), load(), -WORKTIME(W), +WORKTIME(0)]
         setup() >> [show_line("Setup worktime...\n"), +WORKTIME(0), +MAX_WORK_TIME(Max_Work_Time), +MAX_WORKDAY_TIME(Max_WorkDay_Time), +REST_TIME(Rest_Time)]
         work() >> [show_line("Starting task detection...\n"), Timer(Max_Work_Time).start(), TaskDetect().start(), show_line("Workers on duty...")]
-
+        
         # AssignJob intentions
         +TASK(X, Y) / (AGT(A, D) & DUTY(D)) >> [show_line("assigning job to ",A), -DUTY(D), +TASK(X, Y, A)[{'to': A}]]
 
