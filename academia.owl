@@ -1,0 +1,191 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xml:base="http://test.org/academia.owl"
+         xmlns="http://test.org/academia.owl#"
+         xmlns:swrl="http://www.w3.org/2003/11/swrl#">
+
+<owl:Ontology rdf:about="http://test.org/academia.owl"/>
+
+<owl:ObjectProperty rdf:about="#coAuthorWith"/>
+
+<owl:ObjectProperty rdf:about="#hasAffiliationWith"/>
+
+<owl:ObjectProperty rdf:about="#isTopAuthorIn"/>
+
+<owl:ObjectProperty rdf:about="#selectedFor"/>
+
+<owl:ObjectProperty rdf:about="#considerTopAuthor"/>
+
+<owl:Class rdf:about="#ENTITY">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#BELIEF">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#DESIRE">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#INTENTION">
+  <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+</owl:Class>
+
+<owl:Class rdf:about="#CoAuthorship">
+  <rdfs:subClassOf rdf:resource="#BELIEF"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Affiliation">
+  <rdfs:subClassOf rdf:resource="#BELIEF"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Selectionship">
+  <rdfs:subClassOf rdf:resource="#BELIEF"/>
+</owl:Class>
+
+<owl:Class rdf:about="#TopAuthorship">
+  <rdfs:subClassOf rdf:resource="#BELIEF"/>
+</owl:Class>
+
+<owl:Class rdf:about="#ConsiderTopAuthor">
+  <rdfs:subClassOf rdf:resource="#BELIEF"/>
+</owl:Class>
+
+<owl:Class rdf:about="#BeTopAuthorship">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Publicationship">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#FindRelated">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#BeTopAuthorship2">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#ProposeCoauthorship">
+  <rdfs:subClassOf rdf:resource="#INTENTION"/>
+</owl:Class>
+
+<owl:Class rdf:about="#AcceptOffer">
+  <rdfs:subClassOf rdf:resource="#INTENTION"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Scholar">
+  <rdfs:subClassOf rdf:resource="#ENTITY"/>
+</owl:Class>
+
+<owl:Class rdf:about="#Field">
+  <rdfs:subClassOf rdf:resource="#ENTITY"/>
+</owl:Class>
+
+<owl:Class rdf:about="#University">
+  <rdfs:subClassOf rdf:resource="#ENTITY"/>
+</owl:Class>
+
+<owl:NamedIndividual rdf:about="#Fabio">
+  <rdf:type rdf:resource="#Scholar"/>
+  <coAuthorWith rdf:resource="#Misael"/>
+  <selectedFor rdf:resource="#University-of-Catania"/>
+  <isTopAuthorIn rdf:resource="#Artificial-Intelligence"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Rocco">
+  <rdf:type rdf:resource="#Scholar"/>
+  <hasAffiliationWith rdf:resource="#Alma-Mater-Bologna"/>
+  <isTopAuthorIn rdf:resource="#Applied-Ontology"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Misael">
+  <rdf:type rdf:resource="#Scholar"/>
+  <coAuthorWith rdf:resource="#Rocco"/>
+  <hasAffiliationWith rdf:resource="#University-of-Catania"/>
+  <isTopAuthorIn rdf:resource="#Artificial-Intelligence"/>
+  <considerTopAuthor rdf:resource="#Fabio"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Artificial-Intelligence">
+  <rdf:type rdf:resource="#Field"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Machine-Learning">
+  <rdf:type rdf:resource="#Field"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Applied-Ontology">
+  <rdf:type rdf:resource="#Field"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#University-of-Catania">
+  <rdf:type rdf:resource="#University"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#University-of-Messina">
+  <rdf:type rdf:resource="#University"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Alma-Mater-Bologna">
+  <rdf:type rdf:resource="#University"/>
+</owl:NamedIndividual>
+
+<swrl:Variable rdf:about="urn:swrl#x"/>
+
+<swrl:Variable rdf:about="urn:swrl#y"/>
+
+<swrl:Imp>
+  <swrl:body>
+    <rdf:Description>
+      <rdf:first>
+        <swrl:ClassAtom>
+          <swrl:classPredicate rdf:resource="#Scholar"/>
+          <swrl:argument1 rdf:resource="urn:swrl#x"/>
+        </swrl:ClassAtom>
+      </rdf:first>
+      <rdf:rest>
+        <rdf:Description>
+          <rdf:first>
+            <swrl:IndividualPropertyAtom>
+              <swrl:propertyPredicate rdf:resource="#coAuthorWith"/>
+              <swrl:argument1 rdf:resource="urn:swrl#x"/>
+              <swrl:argument2 rdf:resource="urn:swrl#y"/>
+            </swrl:IndividualPropertyAtom>
+          </rdf:first>
+          <rdf:rest>
+            <rdf:Description>
+              <rdf:first>
+                <swrl:ClassAtom>
+                  <swrl:classPredicate rdf:resource="#Scholar"/>
+                  <swrl:argument1 rdf:resource="urn:swrl#y"/>
+                </swrl:ClassAtom>
+              </rdf:first>
+              <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+            </rdf:Description>
+          </rdf:rest>
+        </rdf:Description>
+      </rdf:rest>
+    </rdf:Description>
+  </swrl:body>
+  <swrl:head>
+    <rdf:Description>
+      <rdf:first>
+        <swrl:IndividualPropertyAtom>
+          <swrl:propertyPredicate rdf:resource="#coAuthorWith"/>
+          <swrl:argument1 rdf:resource="urn:swrl#y"/>
+          <swrl:argument2 rdf:resource="urn:swrl#x"/>
+        </swrl:IndividualPropertyAtom>
+      </rdf:first>
+      <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+    </rdf:Description>
+  </swrl:head>
+</swrl:Imp>
+
+
+</rdf:RDF>
