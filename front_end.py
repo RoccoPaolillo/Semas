@@ -6,7 +6,7 @@ from phidias.Types import *
 # PHIDIAS rules variable declaration
 # ---------------------------------------------------------------------
 
-def_vars('X', 'Y', 'Z', 'U')
+def_vars('X', 'Y', 'Z', 'U','S')
 
 # Ontology intialization
 class init(Procedure): pass
@@ -14,7 +14,6 @@ class init(Procedure): pass
 # Processing beliefs
 class load_subj(Procedure): pass
 class load_obj(Procedure): pass
-class load_local(Procedure): pass
 
 # Import OWL triples
 class pre_process(Procedure): pass
@@ -24,13 +23,13 @@ class REST(Belief): pass
 
 # World initialization (only for local usage ontologies)
 init() >> [show_line("\nInitialiting Ontology...\n"), initWorld(), declareRules(), saveOnto()]
+load() >> [show_line("\nAsserting all OWL 2 beliefs...\n"), assert_beliefs_local_triples(), pre_process()]
 
 # Importing all related triples
 # Importing filtered triples
 load_subj(X, Y) >> [show_line("\nAsserting all OWL 2 beliefs related to ",X," (subj) and ",Y," from triple-store...\n"), assert_beliefs_triples_subj(X, Y), pre_process()]
 load_obj(X, Y) >> [show_line("\nAsserting all OWL 2 beliefs related to ",X," (obj) and ",Y," from triple-store...\n"), assert_beliefs_triples_obj(X, Y), pre_process()]
-load() >> [show_line("\nAsserting all OWL 2 beliefs from triple-store...\n"), assert_beliefs_triples_subj(), pre_process()]
-load_local() >> [show_line("\nAsserting all OWL 2 beliefs...\n"), assert_beliefs_local_triples(), pre_process()]
+
 
 
 # Starting RESTful flask service
@@ -48,23 +47,28 @@ pre_process() >> [show_line("\nAsserting triples ended.\n")]
 
 # Publish in the field X
 # e.g. BeTopAuthorship('http://fossr.eu/kg/data/topics/2003') ----> Finance
+# BeTopAuthorship('http://fossr.eu/kg/data/topics/2214') ----> Media Technology
+# Assert in shell to handle Selectionshìp beliefs: e.g. +Selectionship('http://fossr.eu/kg/data/authors/57201117401','http://fossr.eu/kg/data/organizations/60000481') ---> Università degli Studi di Padova
+#  +Selectionship('http://fossr.eu/kg/data/authors/57201117401','http://fossr.eu/kg/data/organizations/105937250') ---> Università degli Studi di Milano Statale
+# authors/57201117401 has affiliation from KG time 0 with "http://fossr.eu/kg/data/organizations/60024690" --> "University of Ferrara"
 
 BeTopAuthorship(X) >> [show_line("\nPlanning to be top-author in ",X,"..."), load_obj("acad:isTopAuthorIn", X), FindRelated(), Publicationship(X)]
-
-BeTopAuthorship2(X) / Selectionship(S,U) >> [show_line("\nPlanning to be top-author in ",X,"..."), load_obj("acad:isTopAuthorIn", X), FindRelated(), Publicationship(X)]
 
 FindRelated() / ConsiderTopAuthor(X, Y) >> [-ConsiderTopAuthor(X, Y), +TopAuthorship(X, Y), show_line("\nFinding triples related with ",X,"..."), load_subj("acad:hasAffiliationWith", X), load_subj("acad:coAuthorWith", X), load_obj("acad:coAuthorWith", X), FindRelated()]
 FindRelated() >> [show_line("\nRelated triples retrived."), ]
 
-Publicationship(X) / (CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +ProposeCoauthorship(Z, X), Publicationship(X)]
-Publicationship(X) / (TopAuthorship(Y, X) & Affiliation(Y, U)) >> [show_line("Direct match found at ",U,".\n"), -TopAuthorship(Y, X), +ProposeCoauthorship(Y, X), Publicationship(X)]
+# comment in case of Selectionship handling
+# Publicationship(X) / (TopAuthorship(Y, X) & Affiliation(Y, U)) >> [-TopAuthorship(Y, X), +ProposeCoauthorship(Y, X, U),  Publicationship(X)]
+# +ProposeCoauthorship(X, Y,U) >> [show_line("Found top-author ",X," in the Organization ", U, " as top-publisher in the topic ",Y,".\n")]
 
-Publicationship(X) / (Selectionship(S,U) & TopAuthorship(Y, X) & Affiliation(Y, U)) >> [show_line("Direct match found at ",U,".\n"), -TopAuthorship(Y, X), +ProposeCoauthorship(Y, X), +AcceptOffer(S,X,U), Publicationship(X)]
+
+# comment in case of no Selectionship handling
+Publicationship(X) / (CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U) & Selectionship(S,U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +ProposeCoauthorship(Z,U,Y,X,S), Publicationship(X)]
++ProposeCoauthorship(Z,U,Y,X,S) >> [show_line(Z, " at Organization ", U, " is co-author with ", Y, " top-author in the topic ", X, " .\n"), -Selectionship(S,U),+Affiliation(S,U)] #,-Affiliation(S,H),+Affiliation(S,U)
 
 
-+ProposeCoauthorship(X, Y) / REST("ACTIVE") >> [show_line("Propose co-authorship with ",X," to publish in the field of ",Y,".\n"), build_json_response(Y, X)]
-+ProposeCoauthorship(X, Y) >> [show_line("Propose co-authorship with ",X," to publish in the field of ",Y,".\n")]
-+AcceptOffer(S,X,U) >> [show_line(S," should accept offer from University ",U," with co-authors of top-authors in field of ",X,".\n"),-TRIPLE(S, "hasAffiliationWith", U), +Affiliation(S,U)]
+
+# +ProposeCoauthorship(X, Y) / REST("ACTIVE") >> [show_line("Propose co-authorship with ",X," to publish in the field of ",Y,".\n"), build_json_response(Y, X)]
 
 # Put here desires to automatically execute on start-up
 
