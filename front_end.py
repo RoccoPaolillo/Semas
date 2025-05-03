@@ -57,12 +57,12 @@ BeTopAuthorship(X) >> [show_line("\nPlanning to be top-author in ",X,"..."), loa
 FindRelated() / ConsiderTopAuthor(X, Y) >> [-ConsiderTopAuthor(X, Y), +TopAuthorship(X, Y), show_line("\nFinding triples related with ",X,"..."), load_subj("acad:hasAffiliationWith", X), load_subj("acad:coAuthorWith", X), load_obj("acad:coAuthorWith", X), FindRelated()]
 FindRelated() >> [show_line("\nRelated triples retrived."), ]
 
-# comment in case of Selectionship handling
+# comment in case of Selectionship handling (fig. 8)
 # Publicationship(X) / (TopAuthorship(Y, X) & Affiliation(Y, U)) >> [-TopAuthorship(Y, X), +ProposeCoauthorship(Y, X, U),  Publicationship(X)]
 # +ProposeCoauthorship(X, Y,U) >> [show_line("Found top-author ",X," in the Organization ", U, " as top-publisher in the topic ",Y,".\n")]
 
 
-# comment in case of no Selectionship handling
+# comment in case of no Selectionship handling (fig. 9, 10, 11)
 Publicationship(X) / (CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U) & Selectionship(S,U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +ProposeCoauthorship(Z,U,Y,X,S), Publicationship(X)]
 +ProposeCoauthorship(Z,U,Y,X,S) >> [show_line(Z, " at Organization ", U, " is co-author with ", Y, " top-author in the topic ", X, " .\n"), -Selectionship(S,U),+Affiliation(S,U)] #,-Affiliation(S,H),+Affiliation(S,U)
 
