@@ -2,7 +2,7 @@ from phidias.Main import *
 from phidias.Types import *
 
 
-def_vars('X', 'Y', 'Z', 'U','S')
+def_vars('X', 'Y', 'Z', 'U','S','P','T')
 
 from actions import *
 from front_end import *
