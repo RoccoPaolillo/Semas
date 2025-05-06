@@ -66,8 +66,8 @@ FindRelated() >> [show_line("\nRelated triples retrived."), ]
 
 
 # comment in case of no Selectionship handling (fig. 9, 10, 11)
-Publicationship(X) / (CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U) & Selectionship(S,U) & Affiliation(S,T)) >> [-CoAuthorship(Z, Y), +ProposeCoauthorship(Z,U,Y,X,S,T),Publicationship(X), DeleteAlternative(S)]
-+ProposeCoauthorship(Z,U,Y,X,S,T) >> [show_line(Z, " at Organization ", U, " is co-author with ", Y, " top-author in the topic ", X, "\n"), -Affiliation(S,T) ,-Selectionship(S,U), +Affiliation(S,U)] 
+Publicationship(X) / (CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U) & Selectionship(S,U) & Affiliation(S,T)) >> [-CoAuthorship(Z, Y), +ProposeCoauthorship(Z,U,Y,X,S,T),Publicationship(X)]
++ProposeCoauthorship(Z,U,Y,X,S,T) >> [show_line(Z, " at Organization ", U, " is co-author with ", Y, " top-author in the topic ", X, "\n"), -Affiliation(S,T) ,-Selectionship(S,U), +Affiliation(S,U), DeleteAlternative(S)] 
 DeleteAlternative(S) / (Selectionship(S,P)) >> [-Selectionship(S,P), DeleteAlternative(S)]
 
 # Publicationship(X) / (CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U) & Affiliation(S,U) & Selectionship(S,P)) >> [-Selectionship(S,P)] 
