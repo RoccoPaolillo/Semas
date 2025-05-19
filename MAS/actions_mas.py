@@ -1,20 +1,10 @@
 import sys
 import random
 import turtle
+import tkinter as tk
+from tkinter import messagebox
 import threading
 import queue
-import networkx as nx
-import matplotlib.pyplot as plt
-import numpy
-import random
-import os
-import csv
-import pandas as pd
-import re
-import math
-import warnings
-
-warnings.filterwarnings("ignore", category=FutureWarning)
 
 # Coda per inviare richieste di query
 query_queue = queue.Queue()
@@ -30,8 +20,6 @@ from phidias.Types import *
 
 import configparser
 from owlready2 import *
-from front_end_mas import *  # SHIFT
-
 
 config = configparser.ConfigParser()
 config.read('config_mas.ini')
@@ -60,8 +48,40 @@ PROPERTIES = config.get('CLASSES', 'Properties').split(",")
 DATAS = config.get('CLASSES', 'Data').split(",")
 
 # ---------------------------------------------------------------------
+# Non-ontological rendering variables
+# ---------------------------------------------------------------------
+
+# Coordinates spamming range
+N = 500
+
+# time-range to get the job done
+LOWER_BOUND = 2
+UPPER_BOUND = 3
+
+# Breakdown of steps
+STEP_BREAKDOWN = 50
+
+# Pause between steps
+STEP_DURATION = 0.005
+
+# Worker-Turtle dictionary
+dict_turtle = {}
+
+
+# ---------------------------------------------------------------------
 # Ontology section
 # ---------------------------------------------------------------------
+
+# Max work time for a worker (seconds)
+Max_WorkDay_Time = 27
+# Max work time for a worker (seconds) - MAX_WORKDAY_TIME must be multiple of MAX_WORK_TIME
+Max_Work_Time = 9
+# Rest time for a worker (seconds)
+Rest_Time = 3
+# Timer tick (time between each job generation)
+TICK = 0.1
+
+
 
 try:
     my_onto = get_ontology(FILE_NAME).load()
@@ -156,19 +176,12 @@ class init(Procedure): pass
 # Import OWL triples
 class load(Procedure): pass
 # Turning triples to beliefs
-class pre_process(Procedure): pass
-# report measures
-class report(Procedure): pass
-# report only for universities
-class reportuniv(Procedure): pass
-# report affil
-class reportaffil(Procedure): pass
-# plot centrality
-class plotmeasurecn(Procedure): pass
-# plot clustering
-class plotmeasurecl(Procedure): pass
-# plot betweeness
-class plotmeasurebt(Procedure): pass
+class turn(Procedure): pass
+
+class send(Procedure): pass
+
+class send_all_triples(Procedure): pass
+
 
 class initWorld(Action):
     """World entities initialization"""
@@ -263,6 +276,67 @@ class assert_beliefs_triples(Action):
             self.assert_belief(TRIPLE(subj, prop, obj))
 
 
+
+# ---------------------------------------------------------------------
+# Sensors section
+# ---------------------------------------------------------------------
+
+class TaskDetect(Sensor):
+
+    def on_start(self):
+        # Starting task detection
+       self.running = True
+
+    def on_restart(self):
+        # Re-Starting task detection
+        self.do_restart = True
+
+    def on_stop(self):
+        #Stopping task detection
+        self.running = False
+
+    def sense(self):
+        while self.running:
+           time.sleep(TICK)
+
+           pos_x = random.randint(-N // 2, N // 2)
+           pos_y = random.randint(-N // 2, N // 2)
+           print(f"Generating task on position ({pos_x}, {pos_y})...")
+           self.assert_belief(TASK(pos_x, pos_y))
+
+
+
+class Timer(Sensor):
+
+    def on_start(self, uTimeout):
+        evt = threading.Event()
+        self.event = evt
+        self.timeout = uTimeout()
+        self.do_restart = False
+
+
+    def on_restart(self, uTimeout):
+        self.do_restart = True
+        self.event.set()
+
+    def on_stop(self):
+        self.do_restart = False
+        self.event.set()
+
+    def sense(self):
+        while True:
+            time.sleep(self.timeout)
+            self.event.clear()
+            if self.do_restart:
+                self.do_restart = False
+                continue
+            elif self.stopped:
+                self.assert_belief(TIMEOUT("ON"))
+                return
+            else:
+                return
+
+
 # ---------------------------------------------------------------------
 # Agent section
 # ---------------------------------------------------------------------
@@ -288,12 +362,12 @@ def query_thread():
 query_thread_instance = threading.Thread(target=query_thread)
 query_thread_instance.start()
 
-# agents entities are in the config_mas.ini, but we don't actually use here, the function is to add as the following if needed
 
-def get_scholars_names():
-    scholars = []
+# Funzione per ottenere i nomi degli agenti (inviando la query al thread dedicato)
+def get_agents_names():
+    agents = []
     q = PREFIX + f" SELECT ?subj" + " WHERE { "
-    q = q + f"?subj rdf:type {ONTO_NAME}:Scholar." + "}"
+    q = q + f"?subj rdf:type {ONTO_NAME}:Agent." + "}"
 
     result_event = threading.Event()  # Evento per sincronizzare il risultato
     query_queue.put((q, result_event))  # Invia la query al thread dedicato
@@ -305,111 +379,10 @@ def get_scholars_names():
     for res in result:
         subj = str(res).split(",")[0]
         subj = subj.split("#")[1][:-2]
-        scholars.append(subj)
-    
-    return scholars
+        agents.append(subj)
 
-def get_universities_names():
-    universities = []
-    q = PREFIX + f" SELECT ?subj" + " WHERE { "
-    q = q + f"?subj rdf:type {ONTO_NAME}:University." + "}"
+    return agents
 
-    result_event = threading.Event()  # Evento per sincronizzare il risultato
-    query_queue.put((q, result_event))  # Invia la query al thread dedicato
-
-    result_event.wait()  # Aspetta che il risultato sia pronto
-
-    result = result_queue.get()  # Ottieni il risultato dalla coda
-
-    for res in result:
-        subj = str(res).split(",")[0]
-        subj = subj.split("#")[1][:-2]
-        universities.append(subj)
-    
-    return universities
-
-def get_fields_names():
-    fields = []
-    q = PREFIX + f" SELECT ?subj" + " WHERE { "
-    q = q + f"?subj rdf:type {ONTO_NAME}:Field." + "}"
-
-    result_event = threading.Event()  # Evento per sincronizzare il risultato
-    query_queue.put((q, result_event))  # Invia la query al thread dedicato
-
-    result_event.wait()  # Aspetta che il risultato sia pronto
-
-    result = result_queue.get()  # Ottieni il risultato dalla coda
-
-    for res in result:
-        subj = str(res).split(",")[0]
-        subj = subj.split("#")[1][:-2]
-        fields.append(subj)
-    
-    return fields
-
-def get_newcomers_names():
-    newcomers = []
-    q = PREFIX + f" SELECT ?subj" + " WHERE { "
-    q = q + f"?subj rdf:type {ONTO_NAME}:Newcomers." + "}"
-
-    result_event = threading.Event()  # Evento per sincronizzare il risultato
-    query_queue.put((q, result_event))  # Invia la query al thread dedicato
-
-    result_event.wait()  # Aspetta che il risultato sia pronto
-
-    result = result_queue.get()  # Ottieni il risultato dalla coda
-
-    for res in result:
-        subj = str(res).split(",")[0]
-        subj = subj.split("#")[1][:-2]
-        newcomers.append(subj)
-    
-    return newcomers
-
-def get_categories_names():
-    categories = []
-    q = PREFIX + f" SELECT ?subj" + " WHERE { "
-    q = q + f"?subj rdf:type {ONTO_NAME}:Cattegories." + "}"
-
-    result_event = threading.Event()  # Evento per sincronizzare il risultato
-    query_queue.put((q, result_event))  # Invia la query al thread dedicato
-
-    result_event.wait()  # Aspetta che il risultato sia pronto
-
-    result = result_queue.get()  # Ottieni il risultato dalla coda
-
-    for res in result:
-        subj = str(res).split(",")[0]
-        subj = subj.split("#")[1][:-2]
-        categories.append(subj)
-    
-    return categories
-
-def get_genders_names():
-    genders = []
-    q = PREFIX + f" SELECT ?subj" + " WHERE { "
-    q = q + f"?subj rdf:type {ONTO_NAME}:Gender." + "}"
-
-    result_event = threading.Event()  # Evento per sincronizzare il risultato
-    query_queue.put((q, result_event))  # Invia la query al thread dedicato
-
-    result_event.wait()  # Aspetta che il risultato sia pronto
-
-    result = result_queue.get()  # Ottieni il risultato dalla coda
-
-    for res in result:
-        subj = str(res).split(",")[0]
-        subj = subj.split("#")[1][:-2]
-        categories.append(subj)
-    
-    return genders
-
-scholars = get_scholars_names()[1:]
-universities = get_universities_names()[1:]
-newcomers = get_newcomers_names()[1:]
-fields = get_fields_names()[1:]
-categories = get_categories_names()[1:]
-genders = get_genders_names()[1:]
 
 # Funzione per terminare il thread in sicurezza
 def stop_query_thread():
@@ -418,154 +391,154 @@ def stop_query_thread():
 
 
 
+class rest(Action):
+    """resting for few seconds"""
+    def execute(self, arg):
+      rest_time = int(str(arg).split("'")[2][1:-1])
+      print(f"\nresting for {rest_time} seconds...")
+
+      for t in dict_turtle:
+          dict_turtle[t].color("red")
+
+      time.sleep(rest_time)
+
+      for t in dict_turtle:
+          dict_turtle[t].color("black")
+
+
+
+class UpdateLedger(Action):
+    """Update completed jobs"""
+    def execute(self, arg1, arg2):
+
+      agent = str(arg1).split("'")[3]
+      jobs = int(str(arg2).split("'")[3])
+      jobs = jobs + 1
+      print(f"Updating {agent} ledger: {jobs}")
+      self.assert_belief(LEDGER(agent, str(jobs)))
+      self.assert_belief(DUTY(int(agent[-1:])))
+
+
+class UpdateWorkTime(Action):
+    """Update completed jobs"""
+    def execute(self, arg1, arg2):
+
+        arg1_num = str(arg1).split("'")[2][1:-1]
+        arg2_num = str(arg2).split("'")[2][1:-1]
+        arg_num_tot = int(arg1_num)+int(arg2_num)
+        print("WORKTIME: ",arg_num_tot)
+        self.assert_belief(WORKTIME(arg_num_tot))
+
+
+class AssignId(Action):
+    """Intialize duty flag with ID"""
+    def execute(self, arg):
+        entity = str(arg).split("'")[3]
+
+        self.assert_belief(DUTY(int(entity[-1:])))
+        self.assert_belief(AGT(entity, int(entity[-1:])))
+
+
+
 # ---------------------------------------------------------------------
-# Network section
+# Turtle section
 # ---------------------------------------------------------------------
 
 
-class new_affiliation(Action):
-    def execute(self,arg0,arg1):
-        node_1 = str(arg0).split("'")[3]
-        node_2 = str(arg1).split("'")[3]
-        G.add_edge(node_1, node_2, color = "orange", weight = 4, label = "affil", edgestyle = "solid") # str(arg3).split()[0])
-        NG.add_edge(node_1, node_2, color = "orange", weight = 4, label = "affil", edgestyle = "solid") # str(arg3).split()[0])
-        vis_network()
-        
-class co_authorshiplink(Action):
-    def execute(self,arg0,arg1):
-        node_1 = str(arg0).split("'")[3]
-        node_2 = str(arg1).split("'")[3]
-        G.add_edge(node_1, node_2, color = "blue", weight = 2, label = "coauthor", edgestyle = "dashed") # str(arg3).split()[0])
-        vis_network()
-        
-class affiliationlink(Action):
-    def execute(self,arg0,arg1):
-        node_1 = str(arg0).split("'")[3]
-        node_2 = str(arg1).split("'")[3]
-        G.add_edge(node_1, node_2, color = "red", weight = 2, label = "affil", edgestyle = "dotted") # str(arg3).split()[0])
-        NG.add_edge(node_1, node_2, color = "red", weight = 2, label = "affil", edgestyle = "dotted") # str(arg3).split()[0])
-        vis_network()
-        
-class topauthorlink(Action):
-    def execute(self,arg0,arg1):
-        node_1 = str(arg0).split("'")[3]
-        node_2 = str(arg1).split("'")[3]
-        G.add_edge(node_1, node_2, color = "purple", weight = 2, label = "topauthor", edgestyle = "dashdot") # str(arg3).split()[0])
-        vis_network()
-        
-class selectforlink(Action):
-    def execute(self,arg0,arg1):
-        node_1 = str(arg0).split("'")[3]
-        node_2 = str(arg1).split("'")[3]
-        G.add_edge(node_1, node_2, color = "lightgrey", weight = 4,  edgestyle = "dashed" ) #, label  = "selected") # str(arg3).split()[0])
-        vis_network()
-        
-G = nx.Graph()
+class move_turtle(Action):
+    """moving turtle to coordinates (x,y)"""
+    def execute(self, arg0, arg1, arg2):
+        id_turtle = str(arg0).split("'")[3]
 
-G.add_nodes_from(universities)
-G.add_nodes_from(fields)
-G.add_nodes_from(scholars)
-G.add_nodes_from(newcomers)
+        pos_x = str(arg1).split("'")[2]
+        pos_y = str(arg2).split("'")[2]
 
-NG = nx.Graph()
-NG.add_nodes_from(universities)
+        pos_x = int(pos_x[1:-1])
+        pos_y = int(pos_y[1:-1])
 
-# color nodes
-color_map = ['orange' if node in newcomers else 'white' for node in G] 
-# position nodes
-# pos = nx.spring_layout(G , seed=numpy.random.seed(5581), scale = 8) # k = 300, iterations = 70)  # 15495 #5581 # 1933
-pos = nx.spring_layout(G , seed=numpy.random.seed(15489), scale = 8) # k = 300, iterations = 70)  # 5578 15490
+        # Recupera la posizione attuale
+        current_x, current_y = dict_turtle[id_turtle].position()
 
-class measures(Action):
-    def execute(self):
-        print(nx.degree_centrality(NG))
-        df = pd.DataFrame.from_dict(data=nx.degree_centrality(NG), orient='index')
-        print(NG)
-#        print(df.head())
-        df.to_csv('dict_file.csv', header=False)
-        
-class measuresuniv(Action):
-    def execute(self):
-        all_edges = []
-#        centrality_index = ()
-        print("Univ-Catania,", len( NG.edges("Univ-Catania")))
-        print("Univ-Bologna, ",len( NG.edges("Univ-Bologna")))
-        print("Univ-Turin, ",len( NG.edges("Univ-Turin")))
-        print("Univ-Messina, ",len( NG.edges("Univ-Messina")))
-        
-        for edgeuniv in universities:
-            all_edges.append(len( NG.edges(edgeuniv)))
-        print(all_edges)
-        print(sum(all_edges))
-        
-        def centralityindex(x):
-            return len(NG.edges(str(x)))/sum(all_edges)
-       
-        centrality_index = dict(zip(universities,list(map(centralityindex, universities))))
-        names = list(centrality_index.keys())
-        values = list(centrality_index.values())
-        plt.rcParams["figure.figsize"] = (6, 3)
-        plt.bar(range(len(centrality_index)), values, tick_label=names)
-#        plt.xticks(rotation=30)
-        plt.title("Centrality Universities")
-        plt.show()
-#v        plt.savefig('centralityuniv.png')
-        
-        print(centrality_index)
-        print("Univ-Catania_centrality,", len( NG.edges("Univ-Catania"))/sum(all_edges))
-        print("Univ-Bologna_centrality, ",len( NG.edges("Univ-Bologna"))/sum(all_edges))
-        print("Univ-Turin_centrality, ",len( NG.edges("Univ-Turin"))/sum(all_edges))
-        print("Univ-Messina_centrality, ",len( NG.edges("Univ-Messina"))/sum(all_edges))
-        
-class plot_centrality(Action):
-    def execute(self,arg0):
-        dct = nx.degree_centrality(G)
-        dctsub = {k: v for k, v in dct.items() if k in str(arg0)}
-        names = list(dctsub.keys())
-        values = list(dctsub.values())
-        plt.bar(range(len(dctsub)), values, tick_label=names)
-        plt.xticks(rotation=30)
-        plt.title("Centrality")
-        plt.show()
+        # Calcola la distanza da percorrere su ciascun asse
+        delta_x = (pos_x - current_x) / STEP_BREAKDOWN
+        delta_y = (pos_y - current_y) / STEP_BREAKDOWN
 
-class plot_clustering(Action):
-    def execute(self,arg0):
-        dct = nx.clustering(G)
-        dctsub = {k: v for k, v in dct.items() if k in str(arg0)}
-        names = list(dctsub.keys())
-        values = list(dctsub.values())
-        plt.bar(range(len(dctsub)), values, tick_label=names)
-        plt.xticks(rotation=30)
-        plt.title("Clustering")
-        plt.show()
-        
-class plot_betweeness(Action):
-    def execute(self,arg0):
-        dct = nx.betweenness_centrality(G)
-        dctsub = {k: v for k, v in dct.items() if k in str(arg0)}
-        names = list(dctsub.keys())
-        values = list(dctsub.values())
-        plt.bar(range(len(dctsub)), values, tick_label=names)
-        plt.xticks(rotation=30)
-        plt.title("Betweeness")
-        plt.show()
+        for step in range(STEP_BREAKDOWN):
+            # Sposta la tartaruga di una piccola quantità
+            current_x += delta_x
+            current_y += delta_y
+            dict_turtle[id_turtle].goto(current_x, current_y)
+            time.sleep(STEP_DURATION)
 
-def vis_network():
-    
-        colors_edges = nx.get_edge_attributes(G,"color").values()
-        edges = G.edges()
-        weights_edges = [G[u][v]['weight'] for u,v in edges]   
-        plt.clf()
-        warnings.filterwarnings("ignore")
-        nx.draw(G,with_labels=True, node_color=color_map , edge_color = colors_edges, width = weights_edges ,  pos = pos,
-                font_size = 18)
-        nx.draw_networkx_edge_labels(G, edge_labels=nx.get_edge_attributes(G,'label'), 
-                                     label_pos= 0.7,  pos = pos,
-                                     font_size = 14) 
-        plt.show()
-        
+        # Pausa finale casuale (se necessaria)
+        rnd = random.uniform(LOWER_BOUND, UPPER_BOUND)
+        time.sleep(rnd)
 
-# Avviare il thread del network
-ntw_thread = threading.Thread(target=vis_network)
-ntw_thread.daemon = True
-ntw_thread.start()
+
+# Funzioni per i pulsanti
+def load_command():
+    PHIDIAS.achieve(load(), "main")
+
+
+def setup_command():
+    PHIDIAS.achieve(setup(), "main")
+
+def work_command():
+    PHIDIAS.achieve(work(), "main")
+
+def init_command():
+    PHIDIAS.achieve(init(), "main")
+    messagebox.showinfo("Informazione", "Chiudere e Riavviare")
+
+
+def kb_command():
+    PHIDIAS.kb("main").show()
+
+
+def turtle_thread_func():
+    wn = turtle.Screen()
+    wn.title("Workers jobs assignment")
+
+    # Mantenere la finestra sempre in primo piano
+    cv = wn.cv
+    rootwindow = cv._rootwindow
+    rootwindow.attributes("-topmost", 1)  # Imposta la finestra sempre in primo piano
+    rootwindow.update()  # Aggiorna la finestra
+
+
+    # Creazione dei pulsanti usando Tkinter
+    button_frame = tk.Frame(rootwindow)
+    button_frame.pack(side=tk.TOP, pady=10)
+
+    agents = get_agents_names()[1:]
+    print("agents ", agents)
+
+    # Pulsante Init, disabilitato se agents è vuota
+    init_state = tk.DISABLED if agents else tk.NORMAL
+    init_button = tk.Button(button_frame, text="Init", command=init_command, state=init_state)
+    init_button.pack(side=tk.LEFT, padx=5)
+
+    load_button = tk.Button(button_frame, text="Load", command=load_command)
+    load_button.pack(side=tk.LEFT, padx=5)
+
+    setup_button = tk.Button(button_frame, text="Setup", command=setup_command)
+    setup_button.pack(side=tk.LEFT, padx=5)
+
+    work_button = tk.Button(button_frame, text="Work", command=work_command)
+    work_button.pack(side=tk.LEFT, padx=5)
+
+    kb_button = tk.Button(button_frame, text="Show kb", command=kb_command)
+    kb_button.pack(side=tk.LEFT, padx=5)
+
+    agents = get_agents_names()[1:]
+
+    for i in range(len(agents)):
+        dict_turtle[agents[i]] = turtle.Turtle()
+
+    wn.mainloop()
+
+
+# Avviare il thread della tartaruga
+turtle_thread = threading.Thread(target=turtle_thread_func)
+turtle_thread.daemon = True
+turtle_thread.start()

@@ -1,30 +1,56 @@
 import time
 from actions_mas import *
-import warnings
-
-warnings.filterwarnings("ignore", category=FutureWarning)
 
 # ---------------------------------------------------------------------
 # PHIDIAS rules variable declaration
 # ---------------------------------------------------------------------
 
-def_vars("X", "Y", "D", "H", "Z", "L", "M", "A", "D", "W","S","U")
+def_vars("X", "Y", "D", "H", "Z", "L", "M", "A", "D", "W")
 
 # ---------------------------------------------------------------------
 # Agents section
 # ---------------------------------------------------------------------
 
-# agents are in config_mas.ini but not actually used, I left for now
+agents = get_agents_names()[1:]
 
-scholars = get_scholars_names()[1:]
-universities = get_universities_names()[1:]
-newcomers = get_newcomers_names()[1:]
-categories = get_categories_names()[1:]
+if len(agents) == 0:
+   print("\nWARNING: Agents list is empty. Please initialize the ontology with init() from the eShell, then restart Semas.")
+else:
+   print("Agents list: ", agents)
 
-#if len(agents)==0:
-#   print("\nWARNING: Agents list is empty. Please initialize the ontology with init() from the eShell then restart.")
-#else:
-#   print("Agents list: ", agents)
+
+def create_agents(class_name):
+    def main(self):
+        # MoveAndCompleteJob intention
+#        +TASK(X, Y, A)[{'from': M}] >> [show_line("\n",A," is moving to (", X, ",", Y, "), received task from ", M), move_turtle(A, X, Y), +COMM("DONE")[{'to': 'main'}]]
+#        +TASK(X)[{'from': A}] >> [show_line("\nReceived belief TASK(",X,") from ", A), +TRIPLE(X,X,X), +TASK(X)[{'to': 'main'}]]
+        load() >> [show_line("\nAsserting all OWL 2 triples beliefs...\n"), assert_beliefs_triples(), show_line("\nTurning triples beliefs into Semas beliefs...\n"), turn()]
+        send(A, X,L) >> [show_line("Sending belief TASK(",X,") to agent ", A), +AGT(A), +TASK(X,L)]
+        
+        +TASK(X,L) / AGT(A) >> [-AGT(A), +TASK(X,L)[{'to': A}]]
+        +TASK(X,L)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(X,L,W)]
+
+    return type(class_name, (Agent,), {"main": main})
+
+
+def create_custom_agent(class_name):
+    def main(self):
+        # Custom intention
+        +TASK(X,L)[{'from': A}] >> [show_line("\nReceived belief TASK(",X,") from ", A), +TRIPLE(X,L,A), +TASK(X)[{'to': 'main'}]]
+
+    return type(class_name, (Agent,), {"main": main})
+
+# General agents from OWL
+for i in range(len(agents)):
+    globals()[agents[i]] = create_agents(agents[i])
+
+for i in range(len(agents)):
+    instance = globals()[agents[i]]()
+
+# custom agent rocco
+globals()["rocco"] = create_custom_agent("rocco")
+globals()["anna"] = create_custom_agent("anna")
+instance = globals()["rocco"]()
 
 # ---------------------------------------------------------------------
 # Agent 'main'
@@ -37,38 +63,56 @@ class main(Agent):
         init() >> [show_line("\nInitialiting Ontology...\n"), initWorld(), declareRules(), saveOnto()]
 
         # Importing related triples
-        load() >> [show_line("\nAsserting all OWL 2 triples beliefs...\n"), assert_beliefs_triples(), show_line("\nTurning triples beliefs into Semas beliefs...\n"), pre_process()]
-      
-        pre_process() / TRIPLE(X, "isAffiliated", Y) >> [-TRIPLE(X, "isAffiliated", Y), +IsAffiliated(X, Y), pre_process()]
-        pre_process() / TRIPLE(X, "coAuthorWith", Y) >> [-TRIPLE(X, "coAuthorWith", Y), +CoAuthorship(X, Y), co_authorshiplink(X,Y), pre_process()]
-        pre_process() / TRIPLE(X, "hasAffiliationWith", Y) >> [-TRIPLE(X, "hasAffiliationWith", Y), +Affiliation(X, Y), affiliationlink(X,Y), pre_process()]
-        pre_process() / TRIPLE(X, "isTopAuthorIn", Y) >> [-TRIPLE(X, "isTopAuthorIn", Y), +TopAuthorship(X, Y), topauthorlink(X,Y), pre_process()]
-        pre_process() / TRIPLE(X, "selectedFor", Y) >> [-TRIPLE(X, "selectedFor", Y), +Selectionship(X, Y), selectforlink(X,Y), pre_process()]
-        pre_process() / TRIPLE(X, "hasInterest", Y) >> [-TRIPLE(X, "hasInterest", Y), +HasInterest(X, Y), pre_process()]
-        pre_process() / TRIPLE(X, "hasGender", Y) >> [-TRIPLE(X, "hasGender", Y), +HasGender(X, Y), pre_process()]
+        load() >> [show_line("\nAsserting all OWL 2 triples beliefs...\n"), assert_beliefs_triples(), show_line("\nTurning triples beliefs into Semas beliefs...\n"), turn()]
+        turn() / TRIPLE(X, "hasLedger",Z) >> [-TRIPLE(X,"hasLedger",Z), +LEDGER(X,"0"), AssignId(X), turn()]
 
-#        DesireGoalFor(X) / (Selectionship(S,U) & TopAuthorship(Y, X) & Affiliation(Y, U)) >> [show_line("Direct match found at ",U,".\n"), -TopAuthorship(Y, X), +ProposeCoauthorship(Y, X), +AcceptOffer(S,X,U),  DesireGoalFor(X)]
-#        DesireGoalFor(X) / (Selectionship(S,U) & TopAuthorship(Y, X) & CoAuthorship(Z, Y)  & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"), -CoAuthorship(Z, Y), +coauthorIndirect(Z, U,Y,X), +AcceptOffer(S,X,U), DesireGoalFor(X)]
+        # desires
+        setup() / WORKTIME(W) >> [show_line("Setup worktime again...\n"), load(), -WORKTIME(W), +WORKTIME(0)]
+        setup() >> [show_line("Setup worktime...\n"), +WORKTIME(0), +MAX_WORK_TIME(Max_Work_Time), +MAX_WORKDAY_TIME(Max_WorkDay_Time), +REST_TIME(Rest_Time)]
+        work() >> [show_line("Starting task detection...\n"), Timer(Max_Work_Time).start(), TaskDetect().start(), show_line("Workers on duty...")]
 
-#        DesireGoalFor(X) / (Selectionship(S,U) & TopAuthorship(Y, X) & CoAuthorship(Z, Y)  & Affiliation(Z, U)) >> [show_line("Indirect match found at ",U,".\n"),  -CoAuthorship(Z, Y), +coauthorIndirect(Z, U,Y,X), +AcceptOffer(S,X,U), DesireGoalFor(X)]
-        DesireGoalForDir(X,L,1) / (IsAffiliated(S, D) & HasInterest(S,X) & Selectionship(S,U) & TopAuthorship(Y, X) & 
-                                   Affiliation(Y, U) & HasGender(S,L)  & (lambda: random.random() <= 1)) >> [
-            show_line("Direct match found at ",U,".\n"), -TopAuthorship(Y, X),+AcceptOffer2(S,X,U), -IsAffiliated(S,D),  DesireGoalForDir(X)]
-        DesireGoalForIndir(X,L,1) / (IsAffiliated(S, D) & HasInterest(S,X) & Selectionship(S,U) & TopAuthorship(Y, X) & CoAuthorship(Z, Y)  & 
-                                   Affiliation(Z, U) & HasGender(S,L) & (lambda:random.random() <= 1)) >> \
-        [show_line("Indirect match found at ",U,".\n"),  -CoAuthorship(Z, Y), +AcceptOffer(S,X,U), -IsAffiliated(S,D), DesireGoalForIndir(X,L,1)]            
+        # AssignJob intentions
+        +TASK(X, Y) / (AGT(A, D) & DUTY(D)) >> [show_line("assigning job to ",A), -DUTY(D), +TASK(X, Y, A)[{'to': A}]]
 
-        report() >> [measures()]
-        reportuniv() >> [measuresuniv()]
-        plotmeasurecn(X) >> [plot_centrality(X)]
-        plotmeasurecl(X) >> [plot_clustering(X)]
-        plotmeasurebt(X) >> [plot_betweeness(X)]
+        # ReceiveCommunication intentions
+        +COMM(X)[{'from': W}] / LEDGER(W, H) >> [show_line("received job done comm from ", W), -LEDGER(W, H), UpdateLedger(W, H)]
+
+        # Pause work intentions - check if the whole working time belief WORKTIME is greater-equal than MAX_WORKDAY_TIME
+        +TIMEOUT("ON") / (WORKTIME(X) & MAX_WORKDAY_TIME(Y) & geq(X,Y)) >> [show_line("\nWorkers are very tired. Finishing working day.\n"), TaskDetect().stop(), stopwork()]
+
+        # End work intentions - Add the MAX_WORK_TIME quantity (during the pause) to the whole working time belief WORKTIME
+        +TIMEOUT("ON") / (WORKTIME(X) & MAX_WORK_TIME(Y)) >> [show_line("\nWorkers are tired, they need some rest.\n"), TaskDetect().stop(), -WORKTIME(X), UpdateWorkTime(X, Y), noduty()]
+        noduty() / (AGT(A, D) & DUTY(D)) >> [show_line("Putting agent" , A, " to rest..."), -DUTY(D), noduty()]
+        noduty() / REST_TIME(X) >> [rest(X), work()]
+
+        # Stop work intention
+        stopwork() / (AGT(A, D) & DUTY(D)) >> [show_line("\n-------------------------> Stopping ", A), -DUTY(D), stopwork()]
+        stopwork() >> [show_line("\nAll workers were stopped. Starting payment process."), pay()]
+
+        # pay desires
+        pay() / LEDGER(Z, H) >> [show_line("\nSending payment to ",Z, " for ",H," tasks..."), -LEDGER(Z, H), pay()]
+        pay() >> [show_line("\nPayments completed.")]
+
+        # Sending belief to agent
+        send(A, X,L) >> [show_line("Sending belief TASK(",X,") to agent ", A), +AGT(A), +TASK(X)]
         
+        +TASK(X,L) / AGT(A) >> [-AGT(A), +TASK(X,L)[{'to': A}]]
+
+        +TASK(X,L)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(X,L,W)]
         
-        +coauthorIndirect(Z, U,Y,X) >> [show_line(Z," at ", U, " is co-author with ",Y,", a top-author in the field of ",X,".\n")]
-        +ProposeCoauthorship(Y,X) >> [show_line("Propose co-authorship with ",Y," as top-author in the field of ",X,".\n")]
-        +AcceptOffer(S,X,U) >> [show_line(S," should accept offer from University ",U," with co-authors of top-authors in field of ",X,".\n"),-TRIPLE(S, "hasAffiliationWith", U), +Affiliation(S,U), new_affiliation(S,U), pre_process()]
-        +AcceptOffer2(S,X,U) >> [show_line(S," should accept offer from University ",U," with top-authors in field ",X,".\n"),-TRIPLE(S, "hasAffiliationWith", U), +Affiliation(S,U), new_affiliation(S,U), pre_process()]
-#        +DeleteSelection(S,A) >> [-TRIPLE(S, "selectedFor", A),-Selectionship(S,A), pre_process()]
-        
+
+# General agents
+for i in range(len(agents)):
+    instance = globals()[agents[i]]()
+    instance.start()
+
+# Custom agent
+instance = globals()["rocco"]()
+instance = globals()["anna"]()
+instance.start()
+
 main().start()
+
+# PHIDIAS.achieve(load(), "main")
+# PHIDIAS.achieve(setup(), "main")
+# PHIDIAS.achieve(work(), "main")
