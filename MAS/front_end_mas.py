@@ -15,7 +15,7 @@ def_vars("X", "Y", "D", "H", "Z", "L", "M", "A", "D", "W","S","U")
 # ---------------------------------------------------------------------
 
 # agents are in config_mas.ini but not actually used, I left for now
-
+agents = get_agents_names()[1:]
 scholars = get_scholars_names()[1:]
 universities = get_universities_names()[1:]
 newcomers = get_newcomers_names()[1:]
@@ -25,6 +25,33 @@ categories = get_categories_names()[1:]
 #   print("\nWARNING: Agents list is empty. Please initialize the ontology with init() from the eShell then restart.")
 #else:
 #   print("Agents list: ", agents)
+
+if len(agents) == 0:
+   print("\nWARNING: Agents list is empty. Please initialize the ontology with init() from the eShell, then restart Semas.")
+else:
+   print("Agents list: ", agents)
+
+
+def create_agents(class_name):
+    def main(self):
+        # MoveAndCompleteJob intention
+#        +TASK(X, Y, A)[{'from': M}] >> [show_line("\n",A," is moving to (", X, ",", Y, "), received task from ", M), move_turtle(A, X, Y), +COMM("DONE")[{'to': 'main'}]]
+#        +TASK(X)[{'from': A}] >> [show_line("\nReceived belief TASK(",X,") from ", A), +TRIPLE(X,X,X), +TASK(X)[{'to': 'main'}]]
+        load() >> [show_line("\nAsserting all OWL 2 triples beliefs...\n"), assert_beliefs_triples(), show_line("\nTurning triples beliefs into Semas beliefs...\n"), pre_process()]
+#        send(A, X,L) >> [show_line("Sending belief TASK(",X,") to agent ", A), +AGT(A), +TASK(X,L)]
+        
+#        +TASK(X,L) / AGT(A) >> [-AGT(A), +TASK(X,L)[{'to': A}]]
+#        +TASK(X,L)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(X,L,W)]
+
+    return type(class_name, (Agent,), {"main": main})
+
+
+for i in range(len(agents)):
+    globals()[agents[i]] = create_agents(agents[i])
+
+for i in range(len(agents)):
+    instance = globals()[agents[i]]()
+
 
 # ---------------------------------------------------------------------
 # Agent 'main'
@@ -69,5 +96,9 @@ class main(Agent):
 #        +AcceptOffer(S,X,U) >> [show_line(S," should accept offer from University ",U," with co-authors of top-authors in field of ",X,".\n"),-TRIPLE(S, "hasAffiliationWith", U), +Affiliation(S,U), new_affiliation(S,U), pre_process()]
 #        +AcceptOffer2(S,X,U) >> [show_line(S," should accept offer from University ",U," with top-authors in field ",X,".\n"),-TRIPLE(S, "hasAffiliationWith", U), +Affiliation(S,U), new_affiliation(S,U), pre_process()]
 #        +DeleteSelection(S,A) >> [-TRIPLE(S, "selectedFor", A),-Selectionship(S,A), pre_process()]
-        
+
+for i in range(len(agents)):
+    instance = globals()[agents[i]]()
+    instance.start()
+
 main().start()

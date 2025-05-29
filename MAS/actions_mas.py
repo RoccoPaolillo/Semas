@@ -404,6 +404,26 @@ def get_genders_names():
     
     return genders
 
+def get_agents_names():
+    agents = []
+    q = PREFIX + f" SELECT ?subj" + " WHERE { "
+    q = q + f"?subj rdf:type {ONTO_NAME}:Agent." + "}"
+
+    result_event = threading.Event()  # Evento per sincronizzare il risultato
+    query_queue.put((q, result_event))  # Invia la query al thread dedicato
+
+    result_event.wait()  # Aspetta che il risultato sia pronto
+
+    result = result_queue.get()  # Ottieni il risultato dalla coda
+
+    for res in result:
+        subj = str(res).split(",")[0]
+        subj = subj.split("#")[1][:-2]
+        agents.append(subj)
+
+    return agents
+
+agents = get_agents_names()[1:]
 scholars = get_scholars_names()[1:]
 universities = get_universities_names()[1:]
 newcomers = get_newcomers_names()[1:]
