@@ -488,10 +488,10 @@ class measuresuniv(Action):
     def execute(self):
         all_edges = []
 #        centrality_index = ()
-        print("Univ-Catania,", len( NG.edges("Univ-Catania")))
-        print("Univ-Bologna, ",len( NG.edges("Univ-Bologna")))
-        print("Univ-Turin, ",len( NG.edges("Univ-Turin")))
-        print("Univ-Messina, ",len( NG.edges("Univ-Messina")))
+    #   print("Univ-Catania,", len( NG.edges("Univ-Catania")))
+    #   print("Univ-Bologna, ",len( NG.edges("Univ-Bologna")))
+    #    print("Univ-Turin, ",len( NG.edges("Univ-Turin")))
+    #    print("Univ-Messina, ",len( NG.edges("Univ-Messina")))
         
         for edgeuniv in universities:
             all_edges.append(len( NG.edges(edgeuniv)))
@@ -512,10 +512,10 @@ class measuresuniv(Action):
 #v        plt.savefig('centralityuniv.png')
         
         print(centrality_index)
-        print("Univ-Catania_centrality,", len( NG.edges("Univ-Catania"))/sum(all_edges))
-        print("Univ-Bologna_centrality, ",len( NG.edges("Univ-Bologna"))/sum(all_edges))
-        print("Univ-Turin_centrality, ",len( NG.edges("Univ-Turin"))/sum(all_edges))
-        print("Univ-Messina_centrality, ",len( NG.edges("Univ-Messina"))/sum(all_edges))
+    #    print("Univ-Catania_centrality,", len( NG.edges("Univ-Catania"))/sum(all_edges))
+    #    print("Univ-Bologna_centrality, ",len( NG.edges("Univ-Bologna"))/sum(all_edges))
+    #   print("Univ-Turin_centrality, ",len( NG.edges("Univ-Turin"))/sum(all_edges))
+    #    print("Univ-Messina_centrality, ",len( NG.edges("Univ-Messina"))/sum(all_edges))
         
 class plot_centrality(Action):
     def execute(self,arg0):
