@@ -38,6 +38,20 @@ def create_agents(class_name):
 #        +TASK(X, Y, A)[{'from': M}] >> [show_line("\n",A," is moving to (", X, ",", Y, "), received task from ", M), move_turtle(A, X, Y), +COMM("DONE")[{'to': 'main'}]]
 #        +TASK(X)[{'from': A}] >> [show_line("\nReceived belief TASK(",X,") from ", A), +TRIPLE(X,X,X), +TASK(X)[{'to': 'main'}]]
         load() >> [show_line("\nAsserting all OWL 2 triples beliefs...\n"), assert_beliefs_triples(), show_line("\nTurning triples beliefs into Semas beliefs...\n"), pre_process()]
+        
+        pre_process() / TRIPLE(X, "coAuthorWith", Y) >> [-TRIPLE(X, "coAuthorWith", Y), +CoAuthorship(X, Y), co_authorshiplink(X,Y), pre_process()]
+        pre_process() / TRIPLE(X, "hasAffiliationWith", Y) >> [-TRIPLE(X, "hasAffiliationWith", Y), +Affiliation(X, Y), affiliationlink(X,Y), pre_process()]
+        pre_process() / TRIPLE(X, "isTopAuthorIn", Y) >> [-TRIPLE(X, "isTopAuthorIn", Y), +TopAuthorship(X, Y), topauthorlink(X,Y), pre_process()]
+        pre_process() / TRIPLE(X, "selectedFor", Y) >> [-TRIPLE(X, "selectedFor", Y), +Selectionship(X, Y), selectforlink(X,Y), pre_process()]
+        
+        send(A, X,L) >> [show_line("Sending belief TASK(",X,") to agent ", A), +AGT(A), +TASK(X,L)]
+        
+        +TASK(X,L) / AGT(A) >> [-AGT(A), +TASK(X,L)[{'to': A}]]
+        +TASK(X,L)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(W, X,L), pre_process()]
+
+        sendDelete(A, X,L) >> [show_line("Sending belief TASK(",X,") to agent ", A), +AGT(A), +TASK(X)]
+        +TASK(X,L) / AGT(A) >> [-AGT(A), +TASK(X,L)[{'to': A}]]
+        +TASK(X,L)[{'from': W}] >> [show_line("received belief from ", W), -TRIPLE(W, X,L), pre_process()]
 #        send(A, X,L) >> [show_line("Sending belief TASK(",X,") to agent ", A), +AGT(A), +TASK(X,L)]
         
 #        +TASK(X,L) / AGT(A) >> [-AGT(A), +TASK(X,L)[{'to': A}]]
@@ -45,6 +59,24 @@ def create_agents(class_name):
 
     return type(class_name, (Agent,), {"main": main})
 
+def create_custom_agent(class_name):
+    def main(self):
+        # Custom intention
+        +TASK(X,L)[{'from': A}] >> [show_line("\nReceived belief TASK(",X,") from ", A), +TRIPLE(X,L,A), +TASK(X)[{'to': 'main'}]]
+
+    return type(class_name, (Agent,), {"main": main})
+
+# General agents from OWL
+for i in range(len(agents)):
+    globals()[agents[i]] = create_agents(agents[i])
+
+for i in range(len(agents)):
+    instance = globals()[agents[i]]()
+
+# custom agent rocco
+globals()["rocco"] = create_custom_agent("rocco")
+globals()["anna"] = create_custom_agent("anna")
+instance = globals()["rocco"]()
 
 for i in range(len(agents)):
     globals()[agents[i]] = create_agents(agents[i])
@@ -70,6 +102,17 @@ class main(Agent):
         pre_process() / TRIPLE(X, "hasAffiliationWith", Y) >> [-TRIPLE(X, "hasAffiliationWith", Y), +Affiliation(X, Y), affiliationlink(X,Y), pre_process()]
         pre_process() / TRIPLE(X, "isTopAuthorIn", Y) >> [-TRIPLE(X, "isTopAuthorIn", Y), +TopAuthorship(X, Y), topauthorlink(X,Y), pre_process()]
         pre_process() / TRIPLE(X, "selectedFor", Y) >> [-TRIPLE(X, "selectedFor", Y), +Selectionship(X, Y), selectforlink(X,Y), pre_process()]
+
+        send(A, X,L) >> [show_line("Sending belief TASK(",X,") to agent ", A), +AGT(A), +TASK(X)]
+        
+        +TASK(X,L) / AGT(A) >> [-AGT(A), +TASK(X,L)[{'to': A}]]
+
+        +TASK(X,L)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(W, X,L), pre_process()]
+
+        sendDelete(A, X,L) >> [show_line("Sending belief TASK(",X,") to agent ", A), +AGT(A), +TASK(X)]
+        +TASK(X,L) / AGT(A) >> [-AGT(A), +TASK(X,L)[{'to': A}]]
+        +TASK(X,L)[{'from': W}] >> [show_line("received belief from ", W), -TRIPLE(W, X,L), pre_process()]
+
 #        pre_process() / TRIPLE(X, "hasInterest", Y) >> [-TRIPLE(X, "hasInterest", Y), +HasInterest(X, Y), pre_process()]
 #        pre_process() / TRIPLE(X, "hasGender", Y) >> [-TRIPLE(X, "hasGender", Y), +HasGender(X, Y), pre_process()]
 

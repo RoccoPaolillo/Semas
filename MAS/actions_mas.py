@@ -170,6 +170,10 @@ class plotmeasurecl(Procedure): pass
 # plot betweeness
 class plotmeasurebt(Procedure): pass
 
+class send(Procedure): pass
+
+class sendDelete(Procedure): pass
+
 class initWorld(Action):
     """World entities initialization"""
     def execute(self):
