@@ -50,7 +50,7 @@ def create_agents(class_name):
         +COMMUNICATEMAIN(Z,U) / AGT(A) >> [-AGT(A), +COMMUNICATEMAIN(Z,U)[{'to': A}]]
         +COMMUNICATEMAIN(Z,U)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(Z,"hasAffiliationWith",U), pre_process()]
         
-        DesireGoalFor(U) / (Affiliation(Z,U)) >> [show_line("found match ",Z), -Affiliation(Z,U), DesireGoalFor(U), +Affiliation(Z,U)]
+        DesireGoalFor(U) / (Affiliation(Z,U)) >> [show_line("found match ",Z), -Affiliation(Z,U), DesireGoalFor(U), +Affiliation(Z,U) ]
 
         +Testkb(U) / (Affiliation(Z,U)) >> [show_line("found match ",Z), -Affiliation(Z,U) ,Testkb(U) ]
 
@@ -115,10 +115,10 @@ class main(Agent):
         
         
         send(A, X,L) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A),  +AGT(A), +COMMUNICATE(X,L)]
-        sendtriple(A,U) / (Affiliation(Z,U)) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A),  +AGT(A),  +COMMUNICATEMAIN(Z,U)]
-        
-    #    ComunicationTriple(A,U) / (Affiliation(Z,U)) >> [-AGT(A), +COMMUNICATEMAIN(Z,U)[{'to': A}]]
-        +COMMUNICATEMAIN(Z,U) / AGT(A) >> [-AGT(A), +COMMUNICATEMAIN(Z,U)[{'to': A}]]
+        sendtriple(A,U) / (Affiliation(Z,U)) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A, " " ,Z),  +AGT(A), -Affiliation(Z,U) ,   +COMMUNICATEMAIN(Z,U), sendtriple(A,U), +Affiliation(Z,U)]
+     #   ComunicationTriple(A,U) / (Affiliation(Z,U)) >> [-AGT(A), +COMMUNICATEMAIN(Z,U)[{'to': A}]]
+     #   +COMMUNICATEMAIN(Z,U) / AGT(A) >> [-AGT(A), +COMMUNICATEMAIN(Z,U)[{'to': A}]]
+        +COMMUNICATEMAIN(Z,U) / AGT(A) >> [ +COMMUNICATEMAIN(Z,U)[{'to': A}]]
         +COMMUNICATEMAIN(Z,U)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(Z,"hasAffiliationWith",U), pre_process()]
 
         +COMMUNICATE(X,L) / AGT(A) >> [-AGT(A), +COMMUNICATE(X,L)[{'to': A}]]
