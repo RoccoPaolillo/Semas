@@ -47,9 +47,14 @@ def create_agents(class_name):
         +COMMUNICATE(X,L) / AGT(A) >> [-AGT(A), +COMMUNICATE(X,L)[{'to': A}]]
         +COMMUNICATE(X,L)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(W, X,L), pre_process()]
 
-        +COMMUNICATEMAIN(Z,U) / AGT(A) >> [-AGT(A), +COMMUNICATEMAIN(Z,U)[{'to': A}]]
-        +COMMUNICATEMAIN(Z,U)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(Z,"hasAffiliationWith",U), pre_process()]
-        
+        +COMMUNNICATEAFF(Z,U) / AGT(A) >> [-AGT(A), +COMMUNNICATEAFF(Z,U)[{'to': A}]]
+        +COMMUNNICATEAFF(Z,U)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(Z,"hasAffiliationWith",U), pre_process()]
+        +COMMUNICATECOAUTH(Y,D) / AGT(A) >> [-AGT(A), +COMMUNICATECOAUTH(Y,D)[{'to': A}]]
+        +COMMUNICATECOAUTH(Y,D)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(Y,"coAuthorWith",D), pre_process()]
+        +COMMUNICATETOPAUTH(Y,D) / AGT(A) >> [ +COMMUNICATETOPAUTH(Y,D)[{'to': A}]]
+        +COMMUNICATETOPAUTH(Y,D)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(Y,"isTopAuthorIn",D), pre_process()]
+
+
         DesireGoalFor(U) / (Affiliation(Z,U)) >> [show_line("found match ",Z), -Affiliation(Z,U), DesireGoalFor(U), +Affiliation(Z,U) ]
 
         +Testkb(U) / (Affiliation(Z,U)) >> [show_line("found match ",Z), -Affiliation(Z,U) ,Testkb(U) ]
@@ -115,11 +120,17 @@ class main(Agent):
         
         
         send(A, X,L) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A),  +AGT(A), +COMMUNICATE(X,L)]
-        sendtriple(A,U) / (Affiliation(Z,U)) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A, " " ,Z),  +AGT(A), -Affiliation(Z,U) ,   +COMMUNICATEMAIN(Z,U), sendtriple(A,U), +Affiliation(Z,U)]
-     #   ComunicationTriple(A,U) / (Affiliation(Z,U)) >> [-AGT(A), +COMMUNICATEMAIN(Z,U)[{'to': A}]]
-     #   +COMMUNICATEMAIN(Z,U) / AGT(A) >> [-AGT(A), +COMMUNICATEMAIN(Z,U)[{'to': A}]]
-        +COMMUNICATEMAIN(Z,U) / AGT(A) >> [ +COMMUNICATEMAIN(Z,U)[{'to': A}]]
-        +COMMUNICATEMAIN(Z,U)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(Z,"hasAffiliationWith",U), pre_process()]
+        sendaffiliation(A,U) / (Affiliation(Z,U)) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A, " " ,Z),  +AGT(A), -Affiliation(Z,U) ,   +COMMUNNICATEAFF(Z,U), sendaffiliation(A,U), +Affiliation(Z,U)]
+        sendcoauthor(A,D) / (CoAuthorship(Y,D)) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A, " " ,Y),  +AGT(A), -CoAuthorship(Y,D) ,   +COMMUNICATECOAUTH(Y,D), sendcoauthor(A,D), +CoAuthorship(Y,D)]
+        sendtopauthor(A,D) / (TopAuthorship(Y,D)) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A, " " ,Y),  +AGT(A), -TopAuthorship(Y,D) ,   +COMMUNICATETOPAUTH(Y,D), sendtopauthor(A,D), +TopAuthorship(Y,D)]
+     #   ComunicationTriple(A,U) / (Affiliation(Z,U)) >> [-AGT(A), +COMMUNNICATEAFF(Z,U)[{'to': A}]]
+     #   +COMMUNNICATEAFF(Z,U) / AGT(A) >> [-AGT(A), +COMMUNNICATEAFF(Z,U)[{'to': A}]]
+        +COMMUNNICATEAFF(Z,U) / AGT(A) >> [ +COMMUNNICATEAFF(Z,U)[{'to': A}]]
+        +COMMUNNICATEAFF(Z,U)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(Z,"hasAffiliationWith",U), pre_process()]
+        +COMMUNICATECOAUTH(Y,D) / AGT(A) >> [ +COMMUNICATECOAUTH(Y,D)[{'to': A}]]
+        +COMMUNICATECOAUTH(Y,D)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(Y,"coAuthorWith",D), pre_process()]
+        +COMMUNICATETOPAUTH(Y,D) / AGT(A) >> [ +COMMUNICATETOPAUTH(Y,D)[{'to': A}]]
+        +COMMUNICATETOPAUTH(Y,D)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(Y,"isTopAuthorIn",D), pre_process()]
 
         +COMMUNICATE(X,L) / AGT(A) >> [-AGT(A), +COMMUNICATE(X,L)[{'to': A}]]
         +COMMUNICATE(X,L)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(W, X,L), pre_process()]

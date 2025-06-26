@@ -21,6 +21,8 @@
 
 <owl:ObjectProperty rdf:about="#hasTask"/>
 
+<owl:ObjectProperty rdf:about="#mainaff"/>
+
 <owl:Class rdf:about="#ENTITY">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
 </owl:Class>
@@ -65,7 +67,27 @@
   <rdfs:subClassOf rdf:resource="#REACTOR"/>
 </owl:Class>
 
+<owl:Class rdf:about="#Testkb">
+  <rdfs:subClassOf rdf:resource="#REACTOR"/>
+</owl:Class>
+
+<owl:Class rdf:about="#COMMUNNICATEAFF">
+  <rdfs:subClassOf rdf:resource="#REACTOR"/>
+</owl:Class>
+
+<owl:Class rdf:about="#COMMUNICATECOAUTH">
+  <rdfs:subClassOf rdf:resource="#REACTOR"/>
+</owl:Class>
+
+<owl:Class rdf:about="#COMMUNICATETOPAUTH">
+  <rdfs:subClassOf rdf:resource="#REACTOR"/>
+</owl:Class>
+
 <owl:Class rdf:about="#DesireGoalFor">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#ComunicationTriple">
   <rdfs:subClassOf rdf:resource="#DESIRE"/>
 </owl:Class>
 
