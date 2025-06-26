@@ -47,6 +47,7 @@ def create_agents(class_name):
         +COMMUNICATE(X,L) / AGT(A) >> [-AGT(A), +COMMUNICATE(X,L)[{'to': A}]]
         +COMMUNICATE(X,L)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(W, X,L), pre_process()]
         
+        DesireGoalFor(U) / (Affiliation(Z,U)) >> [show_line("foundmatch",Z), -Affiliation(Z,U) ,DesireGoalFor(U) ]
 
      #   sendDelete(A, X,L) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A), +AGT(A), +COMMUNICATE(X)]
      #   +COMMUNICATE(X,L) / AGT(A) >> [-AGT(A) ]# , +COMMUNICATE(X,L)[{'to': A}]]
@@ -102,9 +103,8 @@ class main(Agent):
         pre_process() / TRIPLE(X, "isTopAuthorIn", Y) >> [-TRIPLE(X, "isTopAuthorIn", Y), +TopAuthorship(X, Y), topauthorlink(X,Y), pre_process()]
         pre_process() / TRIPLE(X, "selectedFor", Y) >> [-TRIPLE(X, "selectedFor", Y), +Selectionship(X, Y), selectforlink(X,Y), pre_process()]
 
-        DesireGoalFor(X) / (CoAuthorship(Z,Y) & TopAuthorship(Y,X) & Affiliation(Z,U) & Selectionship(S,U) & Affiliation(S,T)) >> [-CoAuthorship(Z,Y), +AcceptOffer(Z,U,Y,X,S,T) , DesireGoalFor(X)]
-
-        +AcceptOffer(Z,U,Y,X,S,T) >> [show_line (Z," at University ", U ," is co-author with ",Y," top-author in the topic ", X), -Affiliation(S,T) ,-Selectionship(S,U), +Affiliation(S,U) ]# , DeleteAlternative(S)]
+     #   DesireGoalFor(X) / (CoAuthorship(Z,Y) & TopAuthorship(Y,X) & Affiliation(Z,U) & Selectionship(S,U) & Affiliation(S,T)) >> [-CoAuthorship(Z,Y), +AcceptOffer(Z,U,Y,X,S,T) , DesireGoalFor(X)]
+     #   +AcceptOffer(Z,U,Y,X,S,T) >> [show_line (Z," at University ", U ," is co-author with ",Y," top-author in the topic ", X), -Affiliation(S,T) ,-Selectionship(S,U), +Affiliation(S,U) ]# , DeleteAlternative(S)]
 
     #    DeleteAlternative(S) / ( Selectionship(S,P)) >> [-Selectionship(S,P) , DeleteAlternative(S)]
         
@@ -113,6 +113,8 @@ class main(Agent):
         
         +COMMUNICATE(X,L) / AGT(A) >> [-AGT(A), +COMMUNICATE(X,L)[{'to': A}]]
         +COMMUNICATE(X,L)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(W, X,L), pre_process()]
+
+        DesireGoalFor(U) / (Affiliation(Z,U)) >> [show_line("foundmatch",Z), -Affiliation(Z,U) ,DesireGoalFor(U) ]
 
      #   sendDelete(A, X,L) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A), +AGT(A), +COMMUNICATE(X)]
      #   +COMMUNICATE(X,L) / AGT(A) >> [-AGT(A), +COMMUNICATE(X,L)[{'to': A}]]
