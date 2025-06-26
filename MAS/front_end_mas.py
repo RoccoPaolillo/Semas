@@ -115,8 +115,9 @@ class main(Agent):
         
         
         send(A, X,L) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A),  +AGT(A), +COMMUNICATE(X,L)]
-        sendtriple(A,U) / (Affiliation(Z,U)) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A),  +AGT(A), +COMMUNICATEMAIN(Z,U)]
+        sendtriple(A,U) / (Affiliation(Z,U)) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A),  +AGT(A),  +COMMUNICATEMAIN(Z,U)]
         
+    #    ComunicationTriple(A,U) / (Affiliation(Z,U)) >> [-AGT(A), +COMMUNICATEMAIN(Z,U)[{'to': A}]]
         +COMMUNICATEMAIN(Z,U) / AGT(A) >> [-AGT(A), +COMMUNICATEMAIN(Z,U)[{'to': A}]]
         +COMMUNICATEMAIN(Z,U)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(Z,"hasAffiliationWith",U), pre_process()]
 
