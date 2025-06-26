@@ -61,27 +61,27 @@
   <rdfs:subClassOf rdf:resource="#BELIEF"/>
 </owl:Class>
 
-<owl:Class rdf:about="#TASK">
-  <rdfs:subClassOf rdf:resource="#BELIEF"/>
-</owl:Class>
-
-<owl:Class rdf:about="#TASK # COMM">
+<owl:Class rdf:about="#COMMUNICATE">
   <rdfs:subClassOf rdf:resource="#REACTOR"/>
 </owl:Class>
 
-<owl:Class rdf:about="#TIMEOUT">
-  <rdfs:subClassOf rdf:resource="#REACTOR"/>
-</owl:Class>
-
-<owl:Class rdf:about="#BeTopAuthorship">
+<owl:Class rdf:about="#DesireGoalFor">
   <rdfs:subClassOf rdf:resource="#DESIRE"/>
 </owl:Class>
 
-<owl:Class rdf:about="#ProposeCoauthorship">
+<owl:Class rdf:about="#AcceptOffer">
   <rdfs:subClassOf rdf:resource="#INTENTION"/>
 </owl:Class>
 
-<owl:Class rdf:about="#coauthorIndirect">
+<owl:Class rdf:about="#CoauthorIndirect">
+  <rdfs:subClassOf rdf:resource="#INTENTION"/>
+</owl:Class>
+
+<owl:Class rdf:about="#DeleteSelection">
+  <rdfs:subClassOf rdf:resource="#INTENTION"/>
+</owl:Class>
+
+<owl:Class rdf:about="#DeleteAlternative">
   <rdfs:subClassOf rdf:resource="#INTENTION"/>
 </owl:Class>
 
@@ -132,7 +132,6 @@
   <hasAffiliationWith rdf:resource="#Uni1"/>
   <selectedFor rdf:resource="#Uni3"/>
   <selectedFor rdf:resource="#Uni4"/>
-  <hasTask rdf:resource="#GoPutShelves1"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#AGT2">
@@ -143,7 +142,6 @@
   <hasAffiliationWith rdf:resource="#Uni2"/>
   <selectedFor rdf:resource="#Uni3"/>
   <selectedFor rdf:resource="#Uni4"/>
-  <hasTask rdf:resource="#GoPutShelves1"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#AGT1a">
@@ -151,7 +149,6 @@
   <rdf:type rdf:resource="#Scholar"/>
   <coAuthorWith rdf:resource="#AGT1b"/>
   <hasAffiliationWith rdf:resource="#Uni1"/>
-  <hasTask rdf:resource="#GoPutShelves2"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#AGT1b">
@@ -159,7 +156,6 @@
   <rdf:type rdf:resource="#Scholar"/>
   <hasAffiliationWith rdf:resource="#Uni1"/>
   <isTopAuthorIn rdf:resource="#Informatics"/>
-  <hasTask rdf:resource="#GoPutShelves2"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#AGT2a">
@@ -167,7 +163,6 @@
   <rdf:type rdf:resource="#Scholar"/>
   <coAuthorWith rdf:resource="#AGT2b"/>
   <hasAffiliationWith rdf:resource="#Uni2"/>
-  <hasTask rdf:resource="#GoPutShelves3"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#AGT2b">
@@ -176,7 +171,6 @@
   <coAuthorWith rdf:resource="#AGT4a"/>
   <hasAffiliationWith rdf:resource="#Uni2"/>
   <isTopAuthorIn rdf:resource="#Mathematics"/>
-  <hasTask rdf:resource="#GoPutShelves3"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#AGT3a">
@@ -185,14 +179,12 @@
   <coAuthorWith rdf:resource="#AGT3b"/>
   <coAuthorWith rdf:resource="#AGT3c"/>
   <hasAffiliationWith rdf:resource="#Uni3"/>
-  <hasTask rdf:resource="#GoPutShelves4"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#AGT3b">
   <rdf:type rdf:resource="#Agent"/>
   <rdf:type rdf:resource="#Scholar"/>
   <hasAffiliationWith rdf:resource="#Uni3"/>
-  <hasTask rdf:resource="#GoPutShelves4"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#AGT3c">
@@ -200,7 +192,6 @@
   <rdf:type rdf:resource="#Scholar"/>
   <coAuthorWith rdf:resource="#AGT3b"/>
   <hasAffiliationWith rdf:resource="#Uni3"/>
-  <hasTask rdf:resource="#GoPutShelves4"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#AGT4a">
@@ -209,7 +200,6 @@
   <coAuthorWith rdf:resource="#AGT4b"/>
   <coAuthorWith rdf:resource="#AGT4c"/>
   <hasAffiliationWith rdf:resource="#Uni4"/>
-  <hasTask rdf:resource="#GoPutShelves5"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#AGT4b">
@@ -217,14 +207,12 @@
   <rdf:type rdf:resource="#Scholar"/>
   <coAuthorWith rdf:resource="#AGT4c"/>
   <hasAffiliationWith rdf:resource="#Uni4"/>
-  <hasTask rdf:resource="#GoPutShelves5"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#AGT4c">
   <rdf:type rdf:resource="#Agent"/>
   <rdf:type rdf:resource="#Scholar"/>
   <hasAffiliationWith rdf:resource="#Uni4"/>
-  <hasTask rdf:resource="#GoPutShelves5"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Uni1">
@@ -239,28 +227,28 @@
   <rdf:type rdf:resource="#University"/>
 </owl:NamedIndividual>
 
-<owl:NamedIndividual rdf:about="#GoPutShelves1">
-  <rdf:type rdf:resource="#AgentTask"/>
-</owl:NamedIndividual>
-
 <owl:NamedIndividual rdf:about="#Uni2">
   <rdf:type rdf:resource="#University"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#GoPutShelves2">
-  <rdf:type rdf:resource="#AgentTask"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#Informatics">
   <rdf:type rdf:resource="#Field"/>
 </owl:NamedIndividual>
 
-<owl:NamedIndividual rdf:about="#GoPutShelves3">
+<owl:NamedIndividual rdf:about="#Mathematics">
+  <rdf:type rdf:resource="#Field"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#GoPutShelves1">
   <rdf:type rdf:resource="#AgentTask"/>
 </owl:NamedIndividual>
 
-<owl:NamedIndividual rdf:about="#Mathematics">
-  <rdf:type rdf:resource="#Field"/>
+<owl:NamedIndividual rdf:about="#GoPutShelves2">
+  <rdf:type rdf:resource="#AgentTask"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#GoPutShelves3">
+  <rdf:type rdf:resource="#AgentTask"/>
 </owl:NamedIndividual>
 
 <owl:NamedIndividual rdf:about="#GoPutShelves4">
@@ -270,20 +258,6 @@
 <owl:NamedIndividual rdf:about="#GoPutShelves5">
   <rdf:type rdf:resource="#AgentTask"/>
 </owl:NamedIndividual>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
 
 <swrl:Imp/>
 
