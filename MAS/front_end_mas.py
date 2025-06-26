@@ -46,8 +46,13 @@ def create_agents(class_name):
         
         +COMMUNICATE(X,L) / AGT(A) >> [-AGT(A), +COMMUNICATE(X,L)[{'to': A}]]
         +COMMUNICATE(X,L)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(W, X,L), pre_process()]
+
+        +COMMUNICATEMAIN(Z,U) / AGT(A) >> [-AGT(A), +COMMUNICATEMAIN(Z,U)[{'to': A}]]
+        +COMMUNICATEMAIN(Z,U)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(Z,"hasAffiliationWith",U), pre_process()]
         
-        DesireGoalFor(U) / (Affiliation(Z,U)) >> [show_line("foundmatch",Z), -Affiliation(Z,U) ,DesireGoalFor(U) ]
+        DesireGoalFor(U) / (Affiliation(Z,U)) >> [show_line("found match ",Z), -Affiliation(Z,U), DesireGoalFor(U), +Affiliation(Z,U)]
+
+        +Testkb(U) / (Affiliation(Z,U)) >> [show_line("found match ",Z), -Affiliation(Z,U) ,Testkb(U) ]
 
      #   sendDelete(A, X,L) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A), +AGT(A), +COMMUNICATE(X)]
      #   +COMMUNICATE(X,L) / AGT(A) >> [-AGT(A) ]# , +COMMUNICATE(X,L)[{'to': A}]]
@@ -109,12 +114,18 @@ class main(Agent):
     #    DeleteAlternative(S) / ( Selectionship(S,P)) >> [-Selectionship(S,P) , DeleteAlternative(S)]
         
         
-        send(A, X,L) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A),  +AGT(A), +COMMUNICATE(X)]
+        send(A, X,L) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A),  +AGT(A), +COMMUNICATE(X,L)]
+        sendtriple(A,U) / (Affiliation(Z,U)) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A),  +AGT(A), +COMMUNICATEMAIN(Z,U)]
         
+        +COMMUNICATEMAIN(Z,U) / AGT(A) >> [-AGT(A), +COMMUNICATEMAIN(Z,U)[{'to': A}]]
+        +COMMUNICATEMAIN(Z,U)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(Z,"hasAffiliationWith",U), pre_process()]
+
         +COMMUNICATE(X,L) / AGT(A) >> [-AGT(A), +COMMUNICATE(X,L)[{'to': A}]]
         +COMMUNICATE(X,L)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(W, X,L), pre_process()]
 
-        DesireGoalFor(U) / (Affiliation(Z,U)) >> [show_line("foundmatch",Z), -Affiliation(Z,U) ,DesireGoalFor(U) ]
+        DesireGoalFor(U) / (Affiliation(Z,U)) >> [show_line("found match ",Z), -Affiliation(Z,U), DesireGoalFor(U), +Affiliation(Z,U)]
+
+        +Testkb(U) / (Affiliation(Z,U)) >> [show_line("found match ",Z), -Affiliation(Z,U) ,Testkb(U) ]
 
      #   sendDelete(A, X,L) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A), +AGT(A), +COMMUNICATE(X)]
      #   +COMMUNICATE(X,L) / AGT(A) >> [-AGT(A), +COMMUNICATE(X,L)[{'to': A}]]
