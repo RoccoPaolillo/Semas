@@ -17,11 +17,11 @@
 
 <owl:ObjectProperty rdf:about="#selectedFor"/>
 
-<owl:ObjectProperty rdf:about="#hasInterest"/>
+<owl:ObjectProperty rdf:about="#hasAgent"/>
 
-<owl:ObjectProperty rdf:about="#isAffiliated"/>
+<owl:ObjectProperty rdf:about="#hasTask"/>
 
-<owl:ObjectProperty rdf:about="#hasGender"/>
+<owl:ObjectProperty rdf:about="#maincomm"/>
 
 <owl:Class rdf:about="#ENTITY">
   <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
@@ -59,55 +59,39 @@
   <rdfs:subClassOf rdf:resource="#BELIEF"/>
 </owl:Class>
 
-<owl:Class rdf:about="#HasInterest">
+<owl:Class rdf:about="#AGT">
   <rdfs:subClassOf rdf:resource="#BELIEF"/>
 </owl:Class>
 
-<owl:Class rdf:about="#IsAffiliated">
-  <rdfs:subClassOf rdf:resource="#BELIEF"/>
-</owl:Class>
-
-<owl:Class rdf:about="#HasGender">
-  <rdfs:subClassOf rdf:resource="#BELIEF"/>
-</owl:Class>
-
-<owl:Class rdf:about="## TASK">
+<owl:Class rdf:about="#COMMUNICATE">
   <rdfs:subClassOf rdf:resource="#REACTOR"/>
 </owl:Class>
 
-<owl:Class rdf:about="#COMM">
+<owl:Class rdf:about="#Testkb">
   <rdfs:subClassOf rdf:resource="#REACTOR"/>
 </owl:Class>
 
-<owl:Class rdf:about="#TIMEOUT">
+<owl:Class rdf:about="#COMMUNICATEMAIN">
   <rdfs:subClassOf rdf:resource="#REACTOR"/>
 </owl:Class>
 
-<owl:Class rdf:about="#DesireGoalForDir">
+<owl:Class rdf:about="#DesireGoalFor">
   <rdfs:subClassOf rdf:resource="#DESIRE"/>
-</owl:Class>
-
-<owl:Class rdf:about="#DesireGoalForIndir">
-  <rdfs:subClassOf rdf:resource="#DESIRE"/>
-</owl:Class>
-
-<owl:Class rdf:about="#ProposeCoauthorship">
-  <rdfs:subClassOf rdf:resource="#INTENTION"/>
-</owl:Class>
-
-<owl:Class rdf:about="#coauthorIndirect">
-  <rdfs:subClassOf rdf:resource="#INTENTION"/>
 </owl:Class>
 
 <owl:Class rdf:about="#AcceptOffer">
   <rdfs:subClassOf rdf:resource="#INTENTION"/>
 </owl:Class>
 
-<owl:Class rdf:about="#AcceptOffer2">
+<owl:Class rdf:about="#CoauthorIndirect">
   <rdfs:subClassOf rdf:resource="#INTENTION"/>
 </owl:Class>
 
 <owl:Class rdf:about="#DeleteSelection">
+  <rdfs:subClassOf rdf:resource="#INTENTION"/>
+</owl:Class>
+
+<owl:Class rdf:about="#DeleteAlternative">
   <rdfs:subClassOf rdf:resource="#INTENTION"/>
 </owl:Class>
 
@@ -127,15 +111,7 @@
   <rdfs:subClassOf rdf:resource="#ENTITY"/>
 </owl:Class>
 
-<owl:Class rdf:about="#Newcomers">
-  <rdfs:subClassOf rdf:resource="#ENTITY"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Cattegories">
-  <rdfs:subClassOf rdf:resource="#ENTITY"/>
-</owl:Class>
-
-<owl:Class rdf:about="#Gender">
+<owl:Class rdf:about="#AgentTask">
   <rdfs:subClassOf rdf:resource="#ENTITY"/>
 </owl:Class>
 
@@ -144,40 +120,124 @@
   <rdf:type rdf:resource="#Scholar"/>
   <rdf:type rdf:resource="#Field"/>
   <rdf:type rdf:resource="#University"/>
-  <rdf:type rdf:resource="#Newcomers"/>
-  <rdf:type rdf:resource="#Cattegories"/>
-  <rdf:type rdf:resource="#Gender"/>
+  <hasAgent rdf:resource="#AGT1"/>
+  <hasAgent rdf:resource="#AGT2"/>
+  <hasAgent rdf:resource="#AGT1a"/>
+  <hasAgent rdf:resource="#AGT1b"/>
+  <hasAgent rdf:resource="#AGT2a"/>
+  <hasAgent rdf:resource="#AGT2b"/>
+  <hasAgent rdf:resource="#AGT3a"/>
+  <hasAgent rdf:resource="#AGT3b"/>
+  <hasAgent rdf:resource="#AGT3c"/>
+  <hasAgent rdf:resource="#AGT4a"/>
+  <hasAgent rdf:resource="#AGT4b"/>
+  <hasAgent rdf:resource="#AGT4c"/>
 </owl:NamedIndividual>
 
-<owl:NamedIndividual rdf:about="#Fabio">
+<owl:NamedIndividual rdf:about="#AGT1">
   <rdf:type rdf:resource="#Agent"/>
   <rdf:type rdf:resource="#Scholar"/>
-  <coAuthorWith rdf:resource="#Rocco"/>
-  <coAuthorWith rdf:resource="#Petra"/>
-  <hasAffiliationWith rdf:resource="#Univ-Catania"/>
+  <coAuthorWith rdf:resource="#AGT1a"/>
+  <coAuthorWith rdf:resource="#AGT1b"/>
+  <hasAffiliationWith rdf:resource="#Uni1"/>
+  <selectedFor rdf:resource="#Uni3"/>
+  <selectedFor rdf:resource="#Uni4"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#AGT2">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <coAuthorWith rdf:resource="#AGT2a"/>
+  <coAuthorWith rdf:resource="#AGT2b"/>
+  <hasAffiliationWith rdf:resource="#Uni2"/>
+  <selectedFor rdf:resource="#Uni3"/>
+  <selectedFor rdf:resource="#Uni4"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#AGT1a">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <coAuthorWith rdf:resource="#AGT1b"/>
+  <hasAffiliationWith rdf:resource="#Uni1"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#AGT1b">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <hasAffiliationWith rdf:resource="#Uni1"/>
   <isTopAuthorIn rdf:resource="#Informatics"/>
-  <hasGender rdf:resource="#Male"/>
 </owl:NamedIndividual>
 
-<owl:NamedIndividual rdf:about="#Rocco">
+<owl:NamedIndividual rdf:about="#AGT2a">
   <rdf:type rdf:resource="#Agent"/>
   <rdf:type rdf:resource="#Scholar"/>
-  <coAuthorWith rdf:resource="#Misael"/>
-  <coAuthorWith rdf:resource="#Fabio"/>
-  <hasAffiliationWith rdf:resource="#Univ-Bologna"/>
-  <isTopAuthorIn rdf:resource="#Philosophy"/>
-  <hasGender rdf:resource="#Male"/>
+  <coAuthorWith rdf:resource="#AGT2b"/>
+  <hasAffiliationWith rdf:resource="#Uni2"/>
 </owl:NamedIndividual>
 
-<owl:NamedIndividual rdf:about="#Petra">
+<owl:NamedIndividual rdf:about="#AGT2b">
   <rdf:type rdf:resource="#Agent"/>
   <rdf:type rdf:resource="#Scholar"/>
-  <hasAffiliationWith rdf:resource="#Univ-Catania"/>
-  <isTopAuthorIn rdf:resource="#Informatics"/>
-  <hasGender rdf:resource="#Female"/>
+  <coAuthorWith rdf:resource="#AGT4a"/>
+  <hasAffiliationWith rdf:resource="#Uni2"/>
+  <isTopAuthorIn rdf:resource="#Mathematics"/>
 </owl:NamedIndividual>
 
-<owl:NamedIndividual rdf:about="#Univ-Catania">
+<owl:NamedIndividual rdf:about="#AGT3a">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <coAuthorWith rdf:resource="#AGT3b"/>
+  <coAuthorWith rdf:resource="#AGT3c"/>
+  <hasAffiliationWith rdf:resource="#Uni3"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#AGT3b">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <hasAffiliationWith rdf:resource="#Uni3"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#AGT3c">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <coAuthorWith rdf:resource="#AGT3b"/>
+  <hasAffiliationWith rdf:resource="#Uni3"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#AGT4a">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <coAuthorWith rdf:resource="#AGT4b"/>
+  <coAuthorWith rdf:resource="#AGT4c"/>
+  <hasAffiliationWith rdf:resource="#Uni4"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#AGT4b">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <coAuthorWith rdf:resource="#AGT4c"/>
+  <hasAffiliationWith rdf:resource="#Uni4"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#AGT4c">
+  <rdf:type rdf:resource="#Agent"/>
+  <rdf:type rdf:resource="#Scholar"/>
+  <hasAffiliationWith rdf:resource="#Uni4"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Uni1">
+  <rdf:type rdf:resource="#University"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Uni3">
+  <rdf:type rdf:resource="#University"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Uni4">
+  <rdf:type rdf:resource="#University"/>
+</owl:NamedIndividual>
+
+<owl:NamedIndividual rdf:about="#Uni2">
   <rdf:type rdf:resource="#University"/>
 </owl:NamedIndividual>
 
@@ -185,210 +245,29 @@
   <rdf:type rdf:resource="#Field"/>
 </owl:NamedIndividual>
 
-<owl:NamedIndividual rdf:about="#Male">
-  <rdf:type rdf:resource="#Gender"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Misael">
-  <rdf:type rdf:resource="#Agent"/>
-  <rdf:type rdf:resource="#Scholar"/>
-  <hasAffiliationWith rdf:resource="#Univ-Catania"/>
-  <isTopAuthorIn rdf:resource="#Informatics"/>
-  <hasGender rdf:resource="#Male"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Univ-Bologna">
-  <rdf:type rdf:resource="#University"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Philosophy">
-  <rdf:type rdf:resource="#Field"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Female">
-  <rdf:type rdf:resource="#Gender"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Albert">
-  <rdf:type rdf:resource="#Agent"/>
-  <rdf:type rdf:resource="#Scholar"/>
-  <coAuthorWith rdf:resource="#Michael"/>
-  <hasAffiliationWith rdf:resource="#Univ-Turin"/>
-  <isTopAuthorIn rdf:resource="#Mathematics"/>
-  <hasGender rdf:resource="#Male"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Michael">
-  <rdf:type rdf:resource="#Agent"/>
-  <rdf:type rdf:resource="#Scholar"/>
-  <coAuthorWith rdf:resource="#Anna"/>
-  <coAuthorWith rdf:resource="#Petra"/>
-  <hasAffiliationWith rdf:resource="#Univ-Bologna"/>
-  <isTopAuthorIn rdf:resource="#Philosophy"/>
-  <hasGender rdf:resource="#Male"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Univ-Turin">
-  <rdf:type rdf:resource="#University"/>
-</owl:NamedIndividual>
-
 <owl:NamedIndividual rdf:about="#Mathematics">
   <rdf:type rdf:resource="#Field"/>
 </owl:NamedIndividual>
 
-<owl:NamedIndividual rdf:about="#Anna">
-  <rdf:type rdf:resource="#Agent"/>
-  <rdf:type rdf:resource="#Scholar"/>
-  <hasAffiliationWith rdf:resource="#Univ-Catania"/>
-  <isTopAuthorIn rdf:resource="#Informatics"/>
-  <hasGender rdf:resource="#Female"/>
+<owl:NamedIndividual rdf:about="#GoPutShelves1">
+  <rdf:type rdf:resource="#AgentTask"/>
 </owl:NamedIndividual>
 
-<owl:NamedIndividual rdf:about="#Jenny">
-  <rdf:type rdf:resource="#Agent"/>
-  <rdf:type rdf:resource="#Scholar"/>
-  <coAuthorWith rdf:resource="#Petra"/>
-  <hasAffiliationWith rdf:resource="#Univ-Bologna"/>
-  <isTopAuthorIn rdf:resource="#Philosophy"/>
-  <hasGender rdf:resource="#Female"/>
+<owl:NamedIndividual rdf:about="#GoPutShelves2">
+  <rdf:type rdf:resource="#AgentTask"/>
 </owl:NamedIndividual>
 
-<owl:NamedIndividual rdf:about="#Esther">
-  <rdf:type rdf:resource="#Agent"/>
-  <rdf:type rdf:resource="#Scholar"/>
-  <coAuthorWith rdf:resource="#Fabio"/>
-  <coAuthorWith rdf:resource="#Anna"/>
-  <coAuthorWith rdf:resource="#Misael"/>
-  <hasAffiliationWith rdf:resource="#Univ-Bologna"/>
-  <isTopAuthorIn rdf:resource="#Philosophy"/>
-  <hasGender rdf:resource="#Female"/>
+<owl:NamedIndividual rdf:about="#GoPutShelves3">
+  <rdf:type rdf:resource="#AgentTask"/>
 </owl:NamedIndividual>
 
-<owl:NamedIndividual rdf:about="#Carlo">
-  <rdf:type rdf:resource="#Agent"/>
-  <rdf:type rdf:resource="#Scholar"/>
-  <coAuthorWith rdf:resource="#Rocco"/>
-  <hasAffiliationWith rdf:resource="#Univ-Turin"/>
-  <isTopAuthorIn rdf:resource="#Mathematics"/>
-  <hasGender rdf:resource="#Male"/>
+<owl:NamedIndividual rdf:about="#GoPutShelves4">
+  <rdf:type rdf:resource="#AgentTask"/>
 </owl:NamedIndividual>
 
-<owl:NamedIndividual rdf:about="#Paola">
-  <rdf:type rdf:resource="#Agent"/>
-  <rdf:type rdf:resource="#Scholar"/>
-  <hasAffiliationWith rdf:resource="#Univ-Turin"/>
-  <isTopAuthorIn rdf:resource="#Mathematics"/>
-  <hasGender rdf:resource="#Female"/>
+<owl:NamedIndividual rdf:about="#GoPutShelves5">
+  <rdf:type rdf:resource="#AgentTask"/>
 </owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Isaac">
-  <rdf:type rdf:resource="#Agent"/>
-  <rdf:type rdf:resource="#Scholar"/>
-  <coAuthorWith rdf:resource="#Misael"/>
-  <hasAffiliationWith rdf:resource="#Univ-Messina"/>
-  <isTopAuthorIn rdf:resource="#Philosophy"/>
-  <hasGender rdf:resource="#Male"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Univ-Messina">
-  <rdf:type rdf:resource="#University"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Andrea">
-  <rdf:type rdf:resource="#Agent"/>
-  <rdf:type rdf:resource="#Scholar"/>
-  <coAuthorWith rdf:resource="#Anna"/>
-  <hasAffiliationWith rdf:resource="#Univ-Messina"/>
-  <isTopAuthorIn rdf:resource="#Philosophy"/>
-  <hasGender rdf:resource="#Male"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Jack">
-  <rdf:type rdf:resource="#Agent"/>
-  <rdf:type rdf:resource="#Scholar"/>
-  <coAuthorWith rdf:resource="#Fabio"/>
-  <hasAffiliationWith rdf:resource="#Univ-Messina"/>
-  <isTopAuthorIn rdf:resource="#Mathematics"/>
-  <hasGender rdf:resource="#Male"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Stefano">
-  <rdf:type rdf:resource="#Agent"/>
-  <rdf:type rdf:resource="#Newcomers"/>
-  <selectedFor rdf:resource="#Univ-Bologna"/>
-  <selectedFor rdf:resource="#Univ-Turin"/>
-  <hasInterest rdf:resource="#Informatics"/>
-  <isAffiliated rdf:resource="#Nope"/>
-  <hasGender rdf:resource="#Male"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Nope">
-  <rdf:type rdf:resource="#Cattegories"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Mandy">
-  <rdf:type rdf:resource="#Agent"/>
-  <rdf:type rdf:resource="#Newcomers"/>
-  <selectedFor rdf:resource="#Univ-Messina"/>
-  <selectedFor rdf:resource="#Univ-Turin"/>
-  <hasInterest rdf:resource="#Informatics"/>
-  <isAffiliated rdf:resource="#Nope"/>
-  <hasGender rdf:resource="#Female"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Bibo">
-  <rdf:type rdf:resource="#Agent"/>
-  <rdf:type rdf:resource="#Newcomers"/>
-  <selectedFor rdf:resource="#Univ-Catania"/>
-  <selectedFor rdf:resource="#Univ-Turin"/>
-  <hasInterest rdf:resource="#Informatics"/>
-  <isAffiliated rdf:resource="#Nope"/>
-  <hasGender rdf:resource="#Male"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Anto">
-  <rdf:type rdf:resource="#Agent"/>
-  <rdf:type rdf:resource="#Newcomers"/>
-  <selectedFor rdf:resource="#Univ-Bologna"/>
-  <selectedFor rdf:resource="#Univ-Turin"/>
-  <hasInterest rdf:resource="#Philosophy"/>
-  <isAffiliated rdf:resource="#Nope"/>
-  <hasGender rdf:resource="#Male"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Felix">
-  <rdf:type rdf:resource="#Agent"/>
-  <rdf:type rdf:resource="#Newcomers"/>
-  <selectedFor rdf:resource="#Univ-Bologna"/>
-  <selectedFor rdf:resource="#Univ-Turin"/>
-  <hasInterest rdf:resource="#Philosophy"/>
-  <isAffiliated rdf:resource="#Nope"/>
-  <hasGender rdf:resource="#Male"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Demography">
-  <rdf:type rdf:resource="#Field"/>
-</owl:NamedIndividual>
-
-<owl:NamedIndividual rdf:about="#Yep">
-  <rdf:type rdf:resource="#Cattegories"/>
-</owl:NamedIndividual>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
 
 <swrl:Imp/>
 

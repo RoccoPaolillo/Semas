@@ -170,6 +170,12 @@ class plotmeasurecl(Procedure): pass
 # plot betweeness
 class plotmeasurebt(Procedure): pass
 
+class send(Procedure): pass
+
+class sendtriple(Procedure): pass
+
+class sendDelete(Procedure): pass
+
 class initWorld(Action):
     """World entities initialization"""
     def execute(self):
@@ -404,6 +410,26 @@ def get_genders_names():
     
     return genders
 
+def get_agents_names():
+    agents = []
+    q = PREFIX + f" SELECT ?subj" + " WHERE { "
+    q = q + f"?subj rdf:type {ONTO_NAME}:Agent." + "}"
+
+    result_event = threading.Event()  # Evento per sincronizzare il risultato
+    query_queue.put((q, result_event))  # Invia la query al thread dedicato
+
+    result_event.wait()  # Aspetta che il risultato sia pronto
+
+    result = result_queue.get()  # Ottieni il risultato dalla coda
+
+    for res in result:
+        subj = str(res).split(",")[0]
+        subj = subj.split("#")[1][:-2]
+        agents.append(subj)
+
+    return agents
+
+agents = get_agents_names()[1:]
 scholars = get_scholars_names()[1:]
 universities = get_universities_names()[1:]
 newcomers = get_newcomers_names()[1:]
@@ -488,10 +514,10 @@ class measuresuniv(Action):
     def execute(self):
         all_edges = []
 #        centrality_index = ()
-        print("Univ-Catania,", len( NG.edges("Univ-Catania")))
-        print("Univ-Bologna, ",len( NG.edges("Univ-Bologna")))
-        print("Univ-Turin, ",len( NG.edges("Univ-Turin")))
-        print("Univ-Messina, ",len( NG.edges("Univ-Messina")))
+    #   print("Univ-Catania,", len( NG.edges("Univ-Catania")))
+    #   print("Univ-Bologna, ",len( NG.edges("Univ-Bologna")))
+    #    print("Univ-Turin, ",len( NG.edges("Univ-Turin")))
+    #    print("Univ-Messina, ",len( NG.edges("Univ-Messina")))
         
         for edgeuniv in universities:
             all_edges.append(len( NG.edges(edgeuniv)))
@@ -512,10 +538,10 @@ class measuresuniv(Action):
 #v        plt.savefig('centralityuniv.png')
         
         print(centrality_index)
-        print("Univ-Catania_centrality,", len( NG.edges("Univ-Catania"))/sum(all_edges))
-        print("Univ-Bologna_centrality, ",len( NG.edges("Univ-Bologna"))/sum(all_edges))
-        print("Univ-Turin_centrality, ",len( NG.edges("Univ-Turin"))/sum(all_edges))
-        print("Univ-Messina_centrality, ",len( NG.edges("Univ-Messina"))/sum(all_edges))
+    #    print("Univ-Catania_centrality,", len( NG.edges("Univ-Catania"))/sum(all_edges))
+    #    print("Univ-Bologna_centrality, ",len( NG.edges("Univ-Bologna"))/sum(all_edges))
+    #   print("Univ-Turin_centrality, ",len( NG.edges("Univ-Turin"))/sum(all_edges))
+    #    print("Univ-Messina_centrality, ",len( NG.edges("Univ-Messina"))/sum(all_edges))
         
 class plot_centrality(Action):
     def execute(self,arg0):
