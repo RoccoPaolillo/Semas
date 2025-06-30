@@ -172,6 +172,12 @@ class plotmeasurebt(Procedure): pass
 
 class send(Procedure): pass
 
+class sendaffiliation(Procedure): pass
+
+class sendcoauthor(Procedure): pass
+
+class sendtopauthor(Procedure): pass
+
 class sendDelete(Procedure): pass
 
 class initWorld(Action):
