@@ -83,6 +83,10 @@
   <rdfs:subClassOf rdf:resource="#REACTOR"/>
 </owl:Class>
 
+<owl:Class rdf:about="#COMMUNICATEOWN">
+  <rdfs:subClassOf rdf:resource="#REACTOR"/>
+</owl:Class>
+
 <owl:Class rdf:about="#DesireGoalFor">
   <rdfs:subClassOf rdf:resource="#DESIRE"/>
 </owl:Class>
@@ -104,6 +108,10 @@
 </owl:Class>
 
 <owl:Class rdf:about="#DeleteAlternative">
+  <rdfs:subClassOf rdf:resource="#INTENTION"/>
+</owl:Class>
+
+<owl:Class rdf:about="#UpdateMain">
   <rdfs:subClassOf rdf:resource="#INTENTION"/>
 </owl:Class>
 
@@ -190,7 +198,6 @@
 <owl:NamedIndividual rdf:about="#AGT2b">
   <rdf:type rdf:resource="#Agent"/>
   <rdf:type rdf:resource="#Scholar"/>
-  <coAuthorWith rdf:resource="#AGT4a"/>
   <hasAffiliationWith rdf:resource="#Uni2"/>
   <isTopAuthorIn rdf:resource="#Mathematics"/>
 </owl:NamedIndividual>
@@ -221,6 +228,7 @@
   <rdf:type rdf:resource="#Scholar"/>
   <coAuthorWith rdf:resource="#AGT4b"/>
   <coAuthorWith rdf:resource="#AGT4c"/>
+  <coAuthorWith rdf:resource="#AGT2b"/>
   <hasAffiliationWith rdf:resource="#Uni4"/>
 </owl:NamedIndividual>
 

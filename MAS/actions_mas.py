@@ -178,7 +178,10 @@ class sendcoauthor(Procedure): pass
 
 class sendtopauthor(Procedure): pass
 
-class sendDelete(Procedure): pass
+# class sendtriples(Procedure): pass
+
+class send_all(Procedure): pass
+
 
 class initWorld(Action):
     """World entities initialization"""
@@ -489,7 +492,15 @@ class selectforlink(Action):
         node_2 = str(arg1).split("'")[3]
         G.add_edge(node_1, node_2, color = "lightgrey", weight = 4,  edgestyle = "dashed" ) #, label  = "selected") # str(arg3).split()[0])
         vis_network()
-        
+
+class deletelink(Action):
+    def execute(self,arg0,arg1):
+        node_1 = str(arg0).split("'")[3]
+        node_2 = str(arg1).split("'")[3]
+        G.remove_edge(node_1, node_2) #, label  = "selected") # str(arg3).split()[0])
+        vis_network()
+
+
 G = nx.Graph()
 
 G.add_nodes_from(universities)
@@ -503,8 +514,36 @@ NG.add_nodes_from(universities)
 # color nodes
 color_map = ['orange' if node in newcomers else 'white' for node in G] 
 # position nodes
-# pos = nx.spring_layout(G , seed=numpy.random.seed(5581), scale = 8) # k = 300, iterations = 70)  # 15495 #5581 # 1933
-pos = nx.spring_layout(G , seed=numpy.random.seed(15489), scale = 8) # k = 300, iterations = 70)  # 5578 15490
+# pos = nx.spring_layout(G , seed=numpy.random.seed(15489), scale = 8) # k = 300, iterations = 70)  # 5578 15490
+pos = {
+    "Uni1": (0, 5),
+    "Uni2": (0, -5),
+    "Uni3": (-1, 0),
+    "Uni4": (1, 0),
+
+    "AGT1": (0, 1),
+    "AGT2": (0, -1),
+    "AGT1a": (-1, 3),
+    "AGT1b": (1, 3),
+
+    "AGT3a": (-4, 3),
+    "AGT3b": (-3, 0),
+    "AGT3c": (-3, -3),
+
+    "AGT2a": (-1, -3),
+    "AGT2b": (1,-3),
+
+    "AGT4a": (4,3),
+    "AGT4b": (3, 0),
+    "AGT4c": (3, -3),
+
+    "Mathematics": (2,-5),
+    "Informatics": (2,5)
+
+
+    }
+
+
 
 class measures(Action):
     def execute(self):
@@ -534,11 +573,10 @@ class measuresuniv(Action):
         centrality_index = dict(zip(universities,list(map(centralityindex, universities))))
         names = list(centrality_index.keys())
         values = list(centrality_index.values())
-        plt.rcParams["figure.figsize"] = (6, 3)
-        plt.bar(range(len(centrality_index)), values, tick_label=names)
-#        plt.xticks(rotation=30)
-        plt.title("Centrality Universities")
-        plt.show()
+#        plt.rcParams["figure.figsize"] = (6, 3)
+#        plt.bar(range(len(centrality_index)), values, tick_label=names)
+#        plt.title("Centrality Universities")
+#        plt.show()
 #v        plt.savefig('centralityuniv.png')
         
         print(centrality_index)
@@ -591,7 +629,7 @@ def vis_network():
                 font_size = 18)
         nx.draw_networkx_edge_labels(G, edge_labels=nx.get_edge_attributes(G,'label'), 
                                      label_pos= 0.7,  pos = pos,
-                                     font_size = 14) 
+                                     font_size = 10) 
         plt.show()
         
 
