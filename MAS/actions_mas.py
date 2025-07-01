@@ -255,8 +255,8 @@ class assert_beliefs_triples(Action):
         my_world.get_ontology(FILE_NAME).load()  # path to the owl file is given here
 
         if REASONING_ACTIVE:
-            # sync_reasoner_pellet(my_world, infer_property_values = True, infer_data_property_values = True)
-            sync_reasoner_hermit(my_world, infer_property_values=True)
+            sync_reasoner_pellet(my_world, infer_property_values = True, infer_data_property_values = True)
+            # sync_reasoner_hermit(my_world, infer_property_values=True)
             # sync_reasoner_hermit(my_world)
 
         graph = my_world.as_rdflib_graph()
@@ -449,7 +449,21 @@ def stop_query_thread():
     query_queue.put((None, None))  # Invia un segnale di terminazione
     query_thread_instance.join()  # Aspetta che il thread termini
 
+# ---------------------------------------------------------------------
+# ActiveBelief
+# ---------------------------------------------------------------------
 
+class trialtest(ActiveBelief):
+    """randomplan"""
+    def evaluate(self, arg1):
+
+        threshold = float(arg1.value)
+        trial  = random.random() <= threshold
+        
+        if trial:
+            return True
+        else:
+            return False
 
 # ---------------------------------------------------------------------
 # Network section
