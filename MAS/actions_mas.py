@@ -182,6 +182,11 @@ class sendtopauthor(Procedure): pass
 
 class send_all(Procedure): pass
 
+class send_ownselectionship(Procedure): pass
+
+class send_ownaffiliation(Procedure): pass
+
+class send_owncoauthor(Procedure): pass
 
 class initWorld(Action):
     """World entities initialization"""
