@@ -83,7 +83,15 @@
   <rdfs:subClassOf rdf:resource="#REACTOR"/>
 </owl:Class>
 
-<owl:Class rdf:about="#COMMUNICATEOWN">
+<owl:Class rdf:about="#COMMUNICATESEL">
+  <rdfs:subClassOf rdf:resource="#REACTOR"/>
+</owl:Class>
+
+<owl:Class rdf:about="#COMMUNICATEOWNAFF">
+  <rdfs:subClassOf rdf:resource="#REACTOR"/>
+</owl:Class>
+
+<owl:Class rdf:about="#COMMUNICATEOWNCOAUTH">
   <rdfs:subClassOf rdf:resource="#REACTOR"/>
 </owl:Class>
 
@@ -96,6 +104,10 @@
 </owl:Class>
 
 <owl:Class rdf:about="#UpdateMain">
+  <rdfs:subClassOf rdf:resource="#DESIRE"/>
+</owl:Class>
+
+<owl:Class rdf:about="#CommunicateSelf">
   <rdfs:subClassOf rdf:resource="#DESIRE"/>
 </owl:Class>
 
@@ -288,18 +300,6 @@
 <owl:NamedIndividual rdf:about="#GoPutShelves5">
   <rdf:type rdf:resource="#AgentTask"/>
 </owl:NamedIndividual>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
-
-<swrl:Imp/>
 
 <swrl:Imp/>
 
