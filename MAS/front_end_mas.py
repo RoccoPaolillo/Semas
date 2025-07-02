@@ -39,7 +39,7 @@ def create_agents(class_name):
         load() >> [show_line("\nAsserting all OWL 2 triples beliefs...\n"), assert_beliefs_triples(), show_line("\nTurning triples beliefs into Semas beliefs...\n"), pre_process()]
 #        load_subj(X, Y) >> [show_line("\nAsserting all OWL 2 beliefs related to ",X," (subj) and ",Y," from triple-store...\n"), assert_beliefs_triples_subj(X, Y), pre_process()]
 #        load_obj(X, Y) >> [show_line("\nAsserting all OWL 2 beliefs related to ",X," (obj) and ",Y," from triple-store...\n"), assert_beliefs_triples_obj(X, Y), pre_process()]
-        pre_process() / TRIPLE(X, "coAuthorWith", Y) >> [-TRIPLE(X, "coAuthorWith", Y), +CoAuthorship(X, Y), co_authorshiplink(X,Y), pre_process()]
+        pre_process() / TRIPLE(X, "coAuthorWith", Y) >> [-TRIPLE(X, "coAuthorWith", Y), +CoAuthorship(X, Y), +CoAuthorship(Y, X), co_authorshiplink(X,Y), pre_process()]
         pre_process() / TRIPLE(X, "hasAffiliationWith", Y) >> [-TRIPLE(X, "hasAffiliationWith", Y), +Affiliation(X, Y), affiliationlink(X,Y), pre_process()]
         pre_process() / TRIPLE(X, "isTopAuthorIn", Y) >> [-TRIPLE(X, "isTopAuthorIn", Y), +TopAuthorship(X, Y), topauthorlink(X,Y), pre_process()]
         pre_process() / TRIPLE(X, "selectedFor", Y) >> [-TRIPLE(X, "selectedFor", Y), +Selectionship(X, Y), selectforlink(X,Y), pre_process()]
@@ -79,6 +79,7 @@ def create_agents(class_name):
         +COMMUNICATETOPAUTH(Y,D)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(Y,"isTopAuthorIn",D), pre_process()]
         
         DesireGoalFor(X,D,U) / (Selectionship(S,D) & Selectionship(S,U) & CoAuthorship(Z,Y) & TopAuthorship(Y,X) & Affiliation(Z,U)) >> [-CoAuthorship(Z,Y), +AcceptOffer(U)]
+        DesireGoalFor(X,D,U) / (Selectionship(S,D) & Selectionship(S,U) & CoAuthorship(Z,Y) & TopAuthorship(Y,X) & Affiliation(Z,D)) >> [-CoAuthorship(Z,Y), +AcceptOffer(D)]
         DesireGoalFor(X,D,U) / trialtest(0.5) >> [+AcceptOffer(U)]
         DesireGoalFor(X,D,U) >> [+AcceptOffer(D)]
 #        DesireGoalFor(X) / (Selectionship(S,D) & Selectionship(S,U)) >> [+AcceptOffer(U)]
@@ -136,7 +137,7 @@ class main(Agent):
         # Importing related triples
         load() >> [show_line("\nAsserting all OWL 2 triples beliefs...\n"), assert_beliefs_triples(), show_line("\nTurning triples beliefs into Semas beliefs...\n"), pre_process()]
       
-        pre_process() / TRIPLE(X, "coAuthorWith", Y) >> [-TRIPLE(X, "coAuthorWith", Y), +CoAuthorship(X, Y), +CoAuthorship(Y,X), co_authorshiplink(X,Y), pre_process()]
+        pre_process() / TRIPLE(X, "coAuthorWith", Y) >> [-TRIPLE(X, "coAuthorWith", Y), +CoAuthorship(X, Y), +CoAuthorship(Y, X), co_authorshiplink(X,Y), pre_process()]
         pre_process() / TRIPLE(X, "hasAffiliationWith", Y) >> [-TRIPLE(X, "hasAffiliationWith", Y), +Affiliation(X, Y), affiliationlink(X,Y), pre_process()]
         pre_process() / TRIPLE(X, "isTopAuthorIn", Y) >> [-TRIPLE(X, "isTopAuthorIn", Y), +TopAuthorship(X, Y), topauthorlink(X,Y), pre_process()]
         pre_process() / TRIPLE(X, "selectedFor", Y) >> [-TRIPLE(X, "selectedFor", Y), +Selectionship(X, Y), selectforlink(X,Y), pre_process()]
@@ -195,6 +196,7 @@ class main(Agent):
 #        +COMMUNICATEOWN(A,D)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(A, D,L), pre_process()]
 
         DesireGoalFor(X,D,U) / (Selectionship(S,D) & Selectionship(S,U) & CoAuthorship(Z,Y) & TopAuthorship(Y,X) & Affiliation(Z,U)) >> [-CoAuthorship(Z,Y), +AcceptOffer(U)]
+        DesireGoalFor(X,D,U) / (Selectionship(S,D) & Selectionship(S,U) & CoAuthorship(Z,Y) & TopAuthorship(Y,X) & Affiliation(Z,D)) >> [-CoAuthorship(Z,Y), +AcceptOffer(D)]
         DesireGoalFor(X,D,U) / trialtest(0.5) >> [+AcceptOffer(U)]
         DesireGoalFor(X,D,U) >> [+AcceptOffer(D)]
 #        DesireGoalFor(X) / (Selectionship(S,D) & Selectionship(S,U)) >> [+AcceptOffer(U)]
