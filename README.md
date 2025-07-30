@@ -115,7 +115,7 @@ which is a way for manually trigger a corresponding rule.
 * **[CONDITIONS]** (optional): one or more **Belief**, or **Active Belief** (a special belief which returns *True*/*False* on the basis of Python code execution)
 * **[PLAN]**: a plan can be made of beliefs assertion/retraction or execution of high level language code invoked by instances of the PHIDIAS class **Action**. 
 
-For more information about PHIDIAS the reader is referred [here](https://www.dmi.unict.it/santoro/teaching/sr/slides/PHIDIAS.pdf).
+For more information about PHIDIAS the reader is referred [here](https://www.dmi.unict.it/santoro/teaching/sr-2024/slides/PHIDIAS.pdf).
 
 
 ### OWL Beliefs, Desires, Intentions
@@ -171,7 +171,7 @@ This case-study provides a formalization about interactions between Scholars in 
 interaction in specific fields, the best University affiliation.
 
 
-#### Ontology initialization
+#### Ontology initialization (local)
 
 ---------------
 The details of the above formalization are all defined in config.ini. Both OWL 2 ontology and PHIDIAS classes can be initialised with the command *init()* as follows:
@@ -194,7 +194,15 @@ All OWL beliefs/desires/intentions are defined by properties of individuals whic
 
 ![Image 3](images/individuals.png)![Image 4](images/properties.png)
 
-#### Ontology import
+
+#### Data sources (local/remote)
+
+---------------
+
+Triples can be imported from either local or remote source. In case of local ontology, REMOTE_SOURCE variable in config.ini (group [ONTOLOGY]) must be set with "true", 
+otherwise with "false". Only in case of local resource (REMOTE_SOURCE = false), ontology must be initialized (whether the .owl file not existing) and loaded with load().
+
+#### Ontology import (local)
 
 ---------------
 
@@ -206,7 +214,7 @@ First, the PHIDIAS Knowledge Base (KB) can be inspected any time with the follow
 The procedure *load()* must be used to import the above ontology into the PHIDIAS environment as follows:
 
 ```sh
-eShell: main > load()
+eShell: main > load_local()
 
 Asserting all OWL 2 beliefs triples...
 Asserting triples ended.
@@ -238,4 +246,20 @@ TopAuthorship('Fabio', 'Artificial-Intelligence')TopAuthorship('Misael', 'Artifi
 TopAuthorship('Rocco', 'Applied-Ontology')Selectionship('Fabio', 'University-of-Catania')
 ```
 
-#### Semas inference and case study academia to add
+#### Triple store GraphDB installation (Remote) - Docker
+
+---------------
+On terminal (Semas venv):
+
+```sh
+pip install SPARQLWrapper
+```
+
+On the same path containing docker-compose.yml:
+
+```sh
+docker compose up -d
+```
+
+After container installation, follow the link http://localhost:7200/ and import rdf files to create triple stores.  
+The file config.ini must contain (section [ONTOLOGY]) the triple store address in the idem TRIPLE_STORE.
