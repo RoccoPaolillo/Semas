@@ -42,40 +42,23 @@ pre_process() / TRIPLE(X, "isTopAuthorIn", Y) >> [-TRIPLE(X, "isTopAuthorIn", Y)
 pre_process() / TRIPLE(X, "selectedFor", Y) >> [-TRIPLE(X, "selectedFor", Y), +Selectionship(X, Y), pre_process()]
 pre_process() >> [show_line("\nAsserting triples ended.\n")]
 
-
-# Desires/Intentions (shell)
-
-# Publish in the field X
-# e.g. BeTopAuthorship('http://fossr.eu/kg/data/topics/2003') ----> Finance
-# BeTopAuthorship('http://fossr.eu/kg/data/topics/2214') ----> Media Technology
-# Assert in shell to handle Selectionshìp beliefs: e.g. +Selectionship('http://fossr.eu/kg/data/authors/57201117401','http://fossr.eu/kg/data/organizations/60000481') ---> Università degli Studi di Padova
-#  +Selectionship('http://fossr.eu/kg/data/authors/57201117401','http://fossr.eu/kg/data/organizations/105937250') ---> Università degli Studi di Milano Statale
-# load_subj("acad:hasAffiliationWith", 'http://fossr.eu/kg/data/authors/57201117401')
-# authors/57201117401 has affiliation from KG time 0 with "http://fossr.eu/kg/data/organizations/60024690" --> "University of Ferrara"
-
 BeTopAuthorship(X) >> [show_line("\nPlanning to be top-author in ",X,"..."), load_obj("acad:isTopAuthorIn", X), FindRelated(), Publicationship(X)]
 
 FindRelated() / ConsiderTopAuthor(X, Y) >> [-ConsiderTopAuthor(X, Y), +TopAuthorship(X, Y), show_line("\nFinding triples related with ",X,"..."), load_subj("acad:hasAffiliationWith", X), load_subj("acad:coAuthorWith", X), load_obj("acad:coAuthorWith", X), FindRelated()]
-# FindRelated() >> [-ConsiderTopAuthor(X, Y), +TopAuthorship(X, Y), show_line("\nFinding triples related with ",X,"..."), load_subj("acad:hasAffiliationWith", X), load_subj("acad:coAuthorWith", X), load_obj("acad:coAuthorWith", X), FindRelated()]
 
 FindRelated() >> [show_line("\nRelated triples retrived."), ]
-
-# comment in case of Selectionship handling (fig. 8)
-# Publicationship(X) / (TopAuthorship(Y, X) & Affiliation(Y, U)) >> [-TopAuthorship(Y, X), +ProposeCoauthorship(Y, X, U),  Publicationship(X)]
-# +ProposeCoauthorship(X, Y,U) >> [show_line("Found top-author ",X," in the Organization ", U, " as top-publisher in the topic ",Y,".\n")]
-
 
 # comment in case of no Selectionship handling (fig. 9, 10, 11)
 Publicationship(X) / (CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U) & Selectionship(S,U) & Affiliation(S,T)) >> [-CoAuthorship(Z, Y), +ProposeCoauthorship(Z,U,Y,X,S,T),Publicationship(X)]
 +ProposeCoauthorship(Z,U,Y,X,S,T) >> [show_line(Z, " at Organization ", U, " is co-author with ", Y, " top-author in the topic ", X, "\n"), -Affiliation(S,T) ,-Selectionship(S,U), +Affiliation(S,U), DeleteAlternative(S)] 
 DeleteAlternative(S) / (Selectionship(S,P)) >> [-Selectionship(S,P), DeleteAlternative(S)]
 
-# Publicationship(X) / (CoAuthorship(Z, Y) & TopAuthorship(Y, X) & Affiliation(Z, U) & Affiliation(S,U) & Selectionship(S,P)) >> [-Selectionship(S,P)] 
+# Prompt shell (figure 4 case study)
 
-
-# +ProposeCoauthorship(X, Y) / REST("ACTIVE") >> [show_line("Propose co-authorship with ",X," to publish in the field of ",Y,".\n"), build_json_response(Y, X)]
-
-# Put here desires to automatically execute on start-up
-
-#PHIDIAS.achieve(start_rest(), "main")
-#PHIDIAS.achieve(load(), "main")
+# BeTopAuthorship('http://fossr.eu/kg/data/topics/2003') ----> Finance
+# BeTopAuthorship('http://fossr.eu/kg/data/topics/2214') ----> Media Technology
+# Assert in shell to handle Selectionshìp beliefs:
+# +Selectionship('http://fossr.eu/kg/data/authors/57201117401','http://fossr.eu/kg/data/organizations/60000481') ---> Università degli Studi di Padova
+# +Selectionship('http://fossr.eu/kg/data/authors/57201117401','http://fossr.eu/kg/data/organizations/105937250') ---> Università degli Studi di Milano Statale
+# load_subj("acad:hasAffiliationWith", 'http://fossr.eu/kg/data/authors/57201117401')
+# authors/57201117401 has affiliation from KG time 0 with "http://fossr.eu/kg/data/organizations/60024690" --> "University of Ferrara"
