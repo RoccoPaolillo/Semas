@@ -44,7 +44,7 @@ def create_agents(class_name):
         pre_process() / TRIPLE(X, "isTopAuthorIn", Y) >> [-TRIPLE(X, "isTopAuthorIn", Y), +TopAuthorship(X, Y), topauthorlink(X,Y), pre_process()]
         pre_process() / TRIPLE(X, "selectedFor", Y) >> [-TRIPLE(X, "selectedFor", Y), +Selectionship(X, Y), selectforlink(X,Y), pre_process()]
         
-        send(A, X,L) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A), +AGT(A), +COMMUNICATE(X,L)]
+        send(A, H,L) >> [show_line("Sending belief COMMUNICATE(",H,") to agent ", A), +AGT(A), +COMMUNICATE(H,L)]
         send_ownselectionship(A,A) / (Selectionship(A,Y)) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A, " "),  +AGT(A), -Selectionship(A,Y) , +COMMUNICATESEL(A,Y), send_ownselectionship(A,A), +Selectionship(A,Y)]
         send_ownaffiliation(A,A) / (Affiliation(A,Y)) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A, " "),  +AGT(A), -Affiliation(A,Y) , +COMMUNICATEOWNAFF(A,Y), send_ownaffiliation(A,A), +Affiliation(A,Y)]
         send_owncoauthor(A,A) / (CoAuthorship(A,Y)) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A, " "),  +AGT(A), -CoAuthorship(A,Y) , +COMMUNICATEOWNCOAUTH(A,Y), send_owncoauthor(A,A), +CoAuthorship(A,Y)]
@@ -52,8 +52,8 @@ def create_agents(class_name):
         #        send_all(A) >>  [show_line("Sending belief COMMUNICATE(",X,") to agent ", A),  +AGT(A), CommunicateOwn(A)]
 
 
-        +COMMUNICATE(X,L) / AGT(A) >> [-AGT(A), +COMMUNICATE(X,L)[{'to': A}]]
-        +COMMUNICATE(X,L)[{'from': W}] >> [show_line("received belief from ", W),  UpdateMain(W) , +TRIPLE(W, X,L), pre_process()   ]
+        +COMMUNICATE(H,L) / AGT(A) >> [-AGT(A), +COMMUNICATE(H,L)[{'to': A}]]
+        +COMMUNICATE(H,L)[{'from': S}] >> [show_line("received belief from ", S),  UpdateMain(S) , +TRIPLE(S, H,L), pre_process()   ]
 
 #        CommunicateSelf(A) / Selectionship(A,Y) >> [+AGT(A), +COMMUNICATEOWN(A,Y)]
         +COMMUNICATESEL(A,Y) / AGT(A) >> [+COMMUNICATESEL(A,Y)[{'to': A}]]
@@ -78,8 +78,8 @@ def create_agents(class_name):
         +COMMUNICATETOPAUTH(Y,D) / AGT(A) >> [ +COMMUNICATETOPAUTH(Y,D)[{'to': A}]]
         +COMMUNICATETOPAUTH(Y,D)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(Y,"isTopAuthorIn",D), pre_process()]
         
-        DesireGoalFor(X,D,U) / (Selectionship(S,D) & Selectionship(S,U) & CoAuthorship(Z,Y) & TopAuthorship(Y,X) & Affiliation(Z,U)) >> [-CoAuthorship(Z,Y), +AcceptOffer(U)]
-        DesireGoalFor(X,D,U) / (Selectionship(S,D) & Selectionship(S,U) & CoAuthorship(Z,Y) & TopAuthorship(Y,X) & Affiliation(Z,D)) >> [-CoAuthorship(Z,Y), +AcceptOffer(D)]
+        DesireGoalFor(X,D,U) / (Selectionship(S,D) & Selectionship(S,U) & TopAuthorship(Y,X) & CoAuthorship(Z,Y) & Affiliation(Z,U)) >> [-CoAuthorship(Z,Y), +AcceptOffer(U)]
+        DesireGoalFor(X,D,U) / (Selectionship(S,D) & Selectionship(S,U) & TopAuthorship(Y,X) & CoAuthorship(Z,Y) & Affiliation(Z,D)) >> [-CoAuthorship(Z,Y), +AcceptOffer(D)]
         DesireGoalFor(X,D,U) / trialtest(0.5) >> [+AcceptOffer(U)]
         DesireGoalFor(X,D,U) >> [+AcceptOffer(D)]
 #        DesireGoalFor(X) / (Selectionship(S,D) & Selectionship(S,U)) >> [+AcceptOffer(U)]
@@ -148,7 +148,7 @@ class main(Agent):
     #    DeleteAlternative(S) / ( Selectionship(S,P)) >> [-Selectionship(S,P) , DeleteAlternative(S)]
         
         
-        send(A, X,L) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A),  +AGT(A), +COMMUNICATE(X,L)]
+        send(A,H,L) >> [show_line("Sending belief COMMUNICATE(",H,") to agent ", A),  +AGT(A), +COMMUNICATE(H,L)]
 #        send_all(A,A) / (CoAuthorship(A,Y)) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A, " " ,Z),  +AGT(A), -CoAuthorship(A,Y) , +COMMUNICATEOWN(A,Y), send_all(A,A), +CoAuthorship(A,Y)]
 #        send_all(A) >>  [show_line("Sending belief COMMUNICATE(",X,") to agent ", A),  +AGT(A), CommunicateOwn(A)]
         send_ownselectionship(A,A) / (Selectionship(A,Y)) >> [show_line("Sending belief COMMUNICATE(",X,") to agent ", A, " "),  +AGT(A), -Selectionship(A,Y) , +COMMUNICATESEL(A,Y), send_ownselectionship(A,A), +Selectionship(A,Y)]
@@ -181,8 +181,8 @@ class main(Agent):
         +COMMUNICATETOPAUTH(Y,D)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(Y,"isTopAuthorIn",D), pre_process()]
 
 
-        +COMMUNICATE(X,L) / AGT(A) >> [-AGT(A), +COMMUNICATE(X,L)[{'to': A}]]
-        +COMMUNICATE(X,L)[{'from': W}] >> [show_line("received belief from ", W),  UpdateMain(W) , +TRIPLE(W, X,L), pre_process()   ]
+        +COMMUNICATE(H,L) / AGT(A) >> [-AGT(A), +COMMUNICATE(H,L)[{'to': A}]]
+        +COMMUNICATE(H,L)[{'from': S}] >> [show_line("received belief from ", S),  UpdateMain(S) , +TRIPLE(S,H,L), pre_process()   ]
 
 #        CommunicateSelf(A) / Selectionship(A,Y) >> [+AGT(A), +COMMUNICATEOWN(A,Y)]
 #        +COMMUNICATEOWN(A,Y) / AGT(A) >> [+COMMUNICATEOWN(A,Y)[{'to': A}]]
@@ -195,20 +195,18 @@ class main(Agent):
 #        +COMMUNICATEOWN(A,D) / (AGT(A) & CoAuthorship(A,L))>> [-AGT(A), +COMMUNICATEOWN(A,D)[{'to': A}]]
 #        +COMMUNICATEOWN(A,D)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(A, D,L), pre_process()]
 
-        DesireGoalFor(X,D,U) / (Selectionship(S,D) & Selectionship(S,U) & CoAuthorship(Z,Y) & TopAuthorship(Y,X) & Affiliation(Z,U)) >> [-CoAuthorship(Z,Y), +AcceptOffer(U)]
-        DesireGoalFor(X,D,U) / (Selectionship(S,D) & Selectionship(S,U) & CoAuthorship(Z,Y) & TopAuthorship(Y,X) & Affiliation(Z,D)) >> [-CoAuthorship(Z,Y), +AcceptOffer(D)]
+        DesireGoalFor(X,D,U) / (Selectionship(S,D) & Selectionship(S,U) & TopAuthorship(Y,X) & CoAuthorship(Z,Y) & Affiliation(Z,U)) >> [-CoAuthorship(Z,Y), +AcceptOffer(U)]
+        DesireGoalFor(X,D,U) / (Selectionship(S,D) & Selectionship(S,U) & TopAuthorship(Y,X) & CoAuthorship(Z,Y) & Affiliation(Z,D)) >> [-CoAuthorship(Z,Y), +AcceptOffer(D)]
         DesireGoalFor(X,D,U) / trialtest(0.5) >> [+AcceptOffer(U)]
         DesireGoalFor(X,D,U) >> [+AcceptOffer(D)]
 #        DesireGoalFor(X) / (Selectionship(S,D) & Selectionship(S,U)) >> [+AcceptOffer(U)]
         +AcceptOffer(U) >> [show_line("affiliation to delete ", S), +Affiliation(U), send("main","hasAffiliationWith",U)]
         +AcceptOffer(D) >> [show_line("affiliation to delete ", S), +Affiliation(D), send("main","hasAffiliationWith",D)]
 
-    #     DesireGoalFor(U) / (Affiliation(Z,U)) >> [show_line("found match ",Z), -Affiliation(Z,U), DesireGoalFor(U), +Affiliation(Z,U)]
-
         +Testkb(U) / (Affiliation(Z,U)) >> [show_line("found match ",Z), -Affiliation(Z,U) ,Testkb(U) ]
 #        +UpdateMain(W) / ((Selectionship(W,D) & Affiliation(W,D)) & Affiliation(W,U) & Selectionship(W,Y)) >> [-Selectionship(W,Y), -Affiliation(W,U), -Selectionship(W,D),  deletelink(W,U), deletelink(W,Y), affiliationlink(W,D) ] #deletelink(W,D),
-        UpdateMain(W) / Selectionship(W,D)  >> [-Selectionship(W,D), deletelink(W,D), UpdateMain(W) ] #deletelink(W,D),
-        UpdateMain(W) / Affiliation(W,D)  >> [-Affiliation(W,D), deletelink(W,D), UpdateMain(W) ] #deletelink(W,D),
+        UpdateMain(S) / Selectionship(S,P)  >> [-Selectionship(S,P), deletelink(S,P), UpdateMain(S) ] #deletelink(W,D),
+        UpdateMain(S) / Affiliation(S,P)  >> [-Affiliation(S,P), deletelink(S,P), UpdateMain(S) ] #deletelink(W,D),
 
 #        +UpdateMain(W,D,U,H) / ( (Affiliation(W,U) & Selectionship(W,U)) & Affiliation(W,H) & Selectionship(W,D)) >> [-Affiliation(W,H), -Selectionship(W,D), -Selectionship(W,U), deletelink(W,H), deletelink(W,D), deletelink(W,U), affiliationlink(W,U) ] #, deletelink(W,T), deletelink(W,Y), affiliationlink(W,T) ]
 #        +UpdateMain(W,D,U,H) / ( (Affiliation(W,D) & Selectionship(W,D)) & Affiliation(W,H) & Selectionship(W,U)) >> [-Affiliation(W,H), -Selectionship(W,U), -Selectionship(W,D), deletelink(W,H), deletelink(W,U), deletelink(W,D), affiliationlink(W,D) ]
