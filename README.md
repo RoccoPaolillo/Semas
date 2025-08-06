@@ -250,8 +250,7 @@ CoAuthorship('AGT2b', 'AGT4a')
 ```
 #### Semas inference and case study academia
 
-`DesireGoalFor(X,D,U)` is the Desire to activate the inference process given the match with Beliefs Conditions, which activates the production rules out of inference.
-Agent called to execute the plans communicates the new triple to agent `main` through *send()* procedure, that updates its kb with +COMMUNICATE reactor:
+`DesireGoalFor(X,D,U)` is the Desire to activate the inference process given the match with Beliefs Conditions, which activates the production rules out of inference. The desire asks to select between options D and U to succeed in field X. Agent called to execute the plans communicates the new triple to agent `main` through *send()* procedure, that updates its kb with +COMMUNICATE reactor:
 
 ```sh
 # Agent instances
