@@ -53,7 +53,7 @@ from prompt:
 First of all, you must create the ontology. In order to do that, you must follow three preliminar steps:
 
 * Choose the owl file name, by setting the variable FILE_NAME (ONTOLOGY Section) in the config.ini (test.owl for instance)
-* Execute semas.py
+* Execute semas_mas.py
 
 ```sh
 Creating new test.owl file...
@@ -167,8 +167,7 @@ The variable **REASONER** indicates which of the integrated reasoners (HERMIT/PE
 ### Case-study: Co-Authorship and Academic Mobility
 
 ---------------
-This case-study provides a formalization about interactions between Scholars in the field of Academic Mobility, in order to choose, on the basis of Co-Authorship
-interaction in specific fields, the best University affiliation.
+This case-study provides a formalization of academic mobility and selection based on co-authorship network.
 
 
 #### Ontology initialization
@@ -217,25 +216,67 @@ by means SPARQL the ontology and assert all beliefs triples. Such query might in
 constrainct the results. The query execution can also be preceded by OWL reasoning (with HERMIT/PELLET).
 After the ontology import, the KB's content will be as follows:
 
+For the agent `main`, to whom triples are passed by default:
 
 ```sh
 eShell: main > kb
-CoAuthorship('Fabio', 'Misael')         CoAuthorship('Misael', 'Rocco')         
-Affiliation('Misael', 'University-of-Catania')Affiliation('Rocco', 'Alma-Mater-Bologna')
-TopAuthorship('Fabio', 'Artificial-Intelligence')TopAuthorship('Misael', 'Artificial-Intelligence')
-TopAuthorship('Rocco', 'Applied-Ontology')Selectionship('Fabio', 'University-of-Catania')
+CoAuthorship('AGT1', 'AGT1b')         CoAuthorship('AGT2b', 'AGT4a')         
+Affiliation('AGT1', 'Uni1')Affiliation('AGT3a', 'Uni3')
+TopAuthorship('AGT1b', 'Informatics')TopAuthorship('AGT2b', 'Mathematics')
+Selectionship('AGT1', 'Uni3')Selectionship('AGT1', 'Uni4')
 ```
 
-In case of active inference with PELLET/HERMIT before the SPARQL query, the outcome after *load()* 
-will be as follows, by the virtue of the defined SWRL rule which specifies the simmetric mutual Coauthorship.
+The agent `main` can communicate specific pieces of knowledge through triples to a specific agent, e.g. agent `AGT1`:
 
 ```sh
-eShell: main > kb
-CoAuthorship('Misael', 'Fabio')         CoAuthorship('Fabio', 'Misael')         
-CoAuthorship('Rocco', 'Misael')         CoAuthorship('Misael', 'Rocco')         
-Affiliation('Misael', 'University-of-Catania')Affiliation('Rocco', 'Alma-Mater-Bologna')
-TopAuthorship('Fabio', 'Artificial-Intelligence')TopAuthorship('Misael', 'Artificial-Intelligence')
-TopAuthorship('Rocco', 'Applied-Ontology')Selectionship('Fabio', 'University-of-Catania')
+eShell: main > sendaffiliation('AGT1','Uni3')
+eShell: main > sendaffiliation('AGT1','Uni4')
+eShell: main > sendtopauthor('AGT1','Mathematics')
+# AGT2b identified as top-author in Mathematics
+eShell: main > sendcoauthor('AGT1','AGT2b')
 ```
 
-#### Semas inference and case study academia to add
+The resulting `kb` of agent `AGT1`:
+
+```sh
+eShell: AGT1 > kb
+Affiliation('AGT3a', 'Uni3')            Affiliation('AGT3b', 'Uni3')
+Affiliation('AGT3c', 'Uni3')            Affiliation('AGT4a', 'Uni4')
+Affiliation('AGT4b', 'Uni4')            Affiliation('AGT4c', 'Uni4')
+TopAuthorship('AGT2b', 'Mathematics')   CoAuthorship('AGT2', 'AGT2b')
+CoAuthorship('AGT2b', 'AGT2')           CoAuthorship('AGT2a', 'AGT2b')
+CoAuthorship('AGT2b', 'AGT2a')          CoAuthorship('AGT4a', 'AGT2b')
+CoAuthorship('AGT2b', 'AGT4a')
+```
+#### Semas inference and case study academia
+
+`DesireGoalFor(X,D,U)` is the Desire to activate the inference process given the match with Beliefs Conditions, which activates the production rules out of inference.
+Agent called to execute the plans communicates the new triple to agent `main` through *send()* procedure, that updates its kb with +COMMUNICATE reactor:
+
+```sh
+# Agent instances
+DesireGoalFor(X,D,U) / (Selectionship(S,D) & Selectionship(S,U) & TopAuthorship(Y,X) & CoAuthorship(Z,Y) & Affiliation(Z,U)) >> [-CoAuthorship(Z,Y), +AcceptOffer(U)]
++AcceptOffer(U) >> [show_line("affiliation to delete ", S), +Affiliation(U), send("main","hasAffiliationWith",U)]
+send(A,H,L) >> [show_line("Sending belief COMMUNICATE(",H,") to agent ", A),  +AGT(A), +COMMUNICATE(H,L)]
+
+# Main instances
++COMMUNICATE(H,L) / AGT(A) >> [-AGT(A), +COMMUNICATE(H,L)[{'to': A}]]
++COMMUNICATE(H,L)[{'from': S}] >> [show_line("received belief from ", S),  UpdateMain(S) , +TRIPLE(S,H,L), pre_process()   ]
+UpdateMain(S) / Selectionship(S,P)  >> [-Selectionship(S,P), deletelink(S,P), UpdateMain(S) ]
+UpdateMain(S) / Affiliation(S,P)  >> [-Affiliation(S,P), deletelink(S,P), UpdateMain(S) ]
+```
+
+The final result is a change in kb of the agent `main`
+
+```sh
+eShell: main > agent AGT1
+eShelL: AGT1 > DesireGoalFor("Mathematics","Uni3","Uni4")
+Sending belief COMMUNICATE(hasAffiliationWith) to agent main
+received belief from AGT1
+eShell: agent main
+
+eShell: main > kb
+Affiliation('AGT4a', 'Uni4')            Affiliation('AGT1', 'Uni4')
+TopAuthorship('AGT1b', 'Informatics')   TopAuthorship('AGT2b', 'Mathematics')
+Selectionship('AGT2', 'Uni3')           Selectionship('AGT2', 'Uni4')
+```
