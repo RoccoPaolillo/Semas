@@ -136,7 +136,10 @@ class main(Agent):
 
         # Importing related triples
         load() >> [show_line("\nAsserting all OWL 2 triples beliefs...\n"), assert_beliefs_triples(), show_line("\nTurning triples beliefs into Semas beliefs...\n"), pre_process()]
-      
+        
+        passagt1() >> [send_ownselectionship("AGT1","AGT1"), sendaffiliation("AGT1","Uni3"), sendaffiliation("AGT1","Uni4"), sendtopauthor("AGT1","Mathematics"), sendcoauthor("AGT1","AGT2b")]
+        passagt2() >> [send_ownselectionship("AGT2","AGT2"), sendaffiliation("AGT2","Uni3"), sendaffiliation("AGT2","Uni4"), sendtopauthor("AGT2","Informatics"), sendcoauthor("AGT2","AGT1b")]
+
         pre_process() / TRIPLE(X, "coAuthorWith", Y) >> [-TRIPLE(X, "coAuthorWith", Y), +CoAuthorship(X, Y), +CoAuthorship(Y, X), co_authorshiplink(X,Y), pre_process()]
         pre_process() / TRIPLE(X, "hasAffiliationWith", Y) >> [-TRIPLE(X, "hasAffiliationWith", Y), +Affiliation(X, Y), affiliationlink(X,Y), pre_process()]
         pre_process() / TRIPLE(X, "isTopAuthorIn", Y) >> [-TRIPLE(X, "isTopAuthorIn", Y), +TopAuthorship(X, Y), topauthorlink(X,Y), pre_process()]
@@ -206,7 +209,7 @@ class main(Agent):
         +Testkb(U) / (Affiliation(Z,U)) >> [show_line("found match ",Z), -Affiliation(Z,U) ,Testkb(U) ]
 #        +UpdateMain(W) / ((Selectionship(W,D) & Affiliation(W,D)) & Affiliation(W,U) & Selectionship(W,Y)) >> [-Selectionship(W,Y), -Affiliation(W,U), -Selectionship(W,D),  deletelink(W,U), deletelink(W,Y), affiliationlink(W,D) ] #deletelink(W,D),
         UpdateMain(S) / Selectionship(S,P)  >> [-Selectionship(S,P), deletelink(S,P), UpdateMain(S) ] #deletelink(W,D),
-        UpdateMain(S) / Affiliation(S,P)  >> [-Affiliation(S,P), deletelink(S,P), UpdateMain(S) ] #deletelink(W,D),
+        UpdateMain(S) / Affiliation(S,P)  >> [-Affiliation(S,P), deletelinkaffiliation(S,P),deletelink(S,P), UpdateMain(S) ] #deletelink(W,D),
 
 #        +UpdateMain(W,D,U,H) / ( (Affiliation(W,U) & Selectionship(W,U)) & Affiliation(W,H) & Selectionship(W,D)) >> [-Affiliation(W,H), -Selectionship(W,D), -Selectionship(W,U), deletelink(W,H), deletelink(W,D), deletelink(W,U), affiliationlink(W,U) ] #, deletelink(W,T), deletelink(W,Y), affiliationlink(W,T) ]
 #        +UpdateMain(W,D,U,H) / ( (Affiliation(W,D) & Selectionship(W,D)) & Affiliation(W,H) & Selectionship(W,U)) >> [-Affiliation(W,H), -Selectionship(W,U), -Selectionship(W,D), deletelink(W,H), deletelink(W,U), deletelink(W,D), affiliationlink(W,D) ]
@@ -221,6 +224,7 @@ class main(Agent):
         plotmeasurecl(X) >> [plot_clustering(X)]
         plotmeasurebt(X) >> [plot_betweeness(X)]
         
+
 
 
 for i in range(len(agents)):

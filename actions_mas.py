@@ -155,6 +155,10 @@ for i in range(len(INTENTIONS)):
 class init(Procedure): pass
 # Import OWL triples
 class load(Procedure): pass
+# send AGT1 info
+class passagt1(Procedure): pass
+# send AGT2 info
+class passagt2(Procedure): pass
 # Turning triples to beliefs
 class pre_process(Procedure): pass
 # report measures
@@ -517,6 +521,13 @@ class deletelink(Action):
         node_1 = str(arg0).split("'")[3]
         node_2 = str(arg1).split("'")[3]
         G.remove_edge(node_1, node_2) #, label  = "selected") # str(arg3).split()[0])
+        vis_network()
+
+class deletelinkaffiliation(Action):
+    def execute(self,arg0,arg1):
+        node_1 = str(arg0).split("'")[3]
+        node_2 = str(arg1).split("'")[3]
+        NG.remove_edge(node_1, node_2) #, label  = "selected") # str(arg3).split()[0])
         vis_network()
 
 
