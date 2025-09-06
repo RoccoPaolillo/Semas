@@ -199,12 +199,9 @@ class main(Agent):
 #        +COMMUNICATEOWN(A,D)[{'from': W}] >> [show_line("received belief from ", W), +TRIPLE(A, D,L), pre_process()]
 
 
-        DesireGoalFor(X,D,U) / (Selectionship(S,D) & Selectionship(S,U) & TopAuthorship(Y,X) & CoAuthorship(Z,Y) & Affiliation(Z,U)) >> 
-            [-CoAuthorship(Z,Y), +AcceptOffer(U)]
-        DesireGoalFor(X,D,U) / (Selectionship(S,D) & Selectionship(S,U) & TopAuthorship(Y,X) & CoAuthorship(Z,Y) & Affiliation(Z,D)) >> 
-            [-CoAuthorship(Z,Y), +AcceptOffer(D)]
-        DesireGoalFor(X,D,U) / trialtest(0.5) >> 
-            [+AcceptOffer(U)]
+        DesireGoalFor(X,D,U) / (Selectionship(S,D) & Selectionship(S,U) & TopAuthorship(Y,X) & CoAuthorship(Z,Y) & Affiliation(Z,U)) >>  [-CoAuthorship(Z,Y), +AcceptOffer(U)]
+        DesireGoalFor(X,D,U) / (Selectionship(S,D) & Selectionship(S,U) & TopAuthorship(Y,X) & CoAuthorship(Z,Y) & Affiliation(Z,D)) >>  [-CoAuthorship(Z,Y), +AcceptOffer(D)]
+        DesireGoalFor(X,D,U) / trialtest(0.5) >>  [+AcceptOffer(U)]
         DesireGoalFor(X,D,U) >> [+AcceptOffer(D)]
 
 
