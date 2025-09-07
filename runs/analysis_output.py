@@ -4,7 +4,7 @@ from matplotlib.patches import Patch
 import os
 
 file_path = "C:/Users/LENOVO/Desktop/plato/"
-df = pd.read_excel("C:/Users/LENOVO/Desktop/plato/runs.xlsx", sheet_name="Sheet1")
+df = pd.read_excel("C:/Users/LENOVO/Desktop/plato/runs_new.xlsx", sheet_name="Sheet1")
 
 # For plots of selection
 
@@ -12,8 +12,8 @@ agt1_counts = df.groupby(["SCENARIO", "AGT1choice"]).size().unstack(fill_value=0
 agt2_counts = df.groupby(["SCENARIO", "AGT2choice"]).size().unstack(fill_value=0)
 
 # Percentage
-agt1_perc = agt1_counts.div(10).mul(100).add_prefix("AGT1_")
-agt2_perc = agt2_counts.div(10).mul(100).add_prefix("AGT2_")
+agt1_perc = agt1_counts.div(40).mul(100).add_prefix("AGT1_")
+agt2_perc = agt2_counts.div(40).mul(100).add_prefix("AGT2_")
 
 # Merge into one dataframe
 result_explicit = pd.concat([agt1_perc, agt2_perc], axis=1).reset_index()
@@ -27,6 +27,9 @@ result_explicit = result_explicit.fillna(0.0)
 
 # Colors
 color_map = {"Uni3": "blue", "Uni4": "orange"}
+
+out_hist = os.path.join(os.path.dirname(file_path), "histograms")
+os.makedirs(out_hist, exist_ok=True)
 
 # Generate one PNG per scenario
 for _, row in result_explicit.iterrows():
@@ -43,8 +46,9 @@ for _, row in result_explicit.iterrows():
     ax.set_xticks(x)
     ax.set_xticklabels(["AGT1", "AGT2"])
     ax.set_ylim(0, 100)
+    ax.set_yticks([0, 20, 40, 50, 60, 80, 100])
     ax.set_ylabel("% Selection")
-    ax.set_title(f"Scenario {scenario}")
+#    ax.set_title(f"Scenario {scenario}")
     
     # Only two legend entries, no duplicates
     handles = [Patch(facecolor=color_map["Uni3"], label="Uni3"),
@@ -52,7 +56,8 @@ for _, row in result_explicit.iterrows():
     ax.legend(handles=handles)
     
     # Save PNG
-    out_path = f"C:/Users/LENOVO/Desktop/plato/scenario_{scenario}.png"
+#   out_path = f"C:/Users/LENOVO/Desktop/plato/scenario_{scenario}.png"
+    out_path = os.path.join(out_hist, f"hist_scenario_{scenario}.png")
     plt.savefig(out_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
 
@@ -81,7 +86,7 @@ for scenario, g in df_sub.groupby("SCENARIO"):
         meanprops=dict(marker='o', markerfacecolor='green', markeredgecolor='black', markersize=6) # dot for mean
     )
 
-    ax.set_title(f"Scenario {scenario}")
+#    ax.set_title(f"Scenario {scenario}")
     ax.set_ylabel("Centrality Index")
     ax.set_ylim(0, 1)       # values look like probabilities; set as needed
     ax.grid(True, axis="y", linestyle="--", alpha=0.4)
@@ -93,14 +98,6 @@ for scenario, g in df_sub.groupby("SCENARIO"):
     plt.close(fig)
 
 print(f"Saved PNGs to: {out_dir}")
-
-
-
-
-
-
-
-
 
 
 
