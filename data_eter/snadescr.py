@@ -6,7 +6,7 @@ import os
 import csv
 import pandas as pd
 import plotly.express as px
-os.chdir("C:/Users/LENOVO/Desktop/eter/data_eter/")
+os.chdir("C:/Users/LENOVO/Documents/GitHub/Semas/data_eter/")
 
 # Acquire the df and keep_2021, a string of ID of universities who are not fine arts or music institutes
 df = pd.read_excel('eter_ita.xlsx')
