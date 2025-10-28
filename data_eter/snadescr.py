@@ -57,6 +57,70 @@ filtered_df["IND.RES.SHAREMENPHDSTUD"] = filtered_df.apply(
     if pd.notnull(row["IND.RES.SHAREWOMENPHDSTUD"]) else None,
     axis=1)
 
+# cerca_universita database
+
+cerca_univ = pd.read_excel('db_cerca_univ.xlsx')
+
+fascia = {
+ 'Associato non confermato': "associato", 
+ 'Ricercatore': "ricercatore", 
+ 'Ordinario' : "ordinario",
+ 'Associato confermato' : "associato",
+ 'Ricercatore non confermato' : "ricercatore",
+ 'Ricercatore a t.d. - t.pieno (art. 24 c.3-a L. 240/10)' : "ricercatore",
+ 'Ricercatore a t.d. (art.1 comma 14 L. 230/05)' : "ricercatore",
+ 'Straordinario' : "ordinario",
+ 'Associato' : "associato",
+ 'Ricercatore a t.d. - t.pieno (art. 24 c.3-b L. 240/10)' : "ricercatore",
+ 'Assistente r.e.' : "other", 
+ 'Straordinario tempo determinato' : "ordinario",
+ 'Incaricato' : "other",
+ 'Ordinario r.e.' : "ordinario",
+ 'Ricercatore a t.d. - t.defin. (art. 24 c.3-a L. 240/10)' : "ricercatore",
+ 'Ricercatore a t.d. - t.defin. (art. 24 c.3-b L. 240/10)': "ricercatore",
+ 'Ricercatore a t.d. - t.pieno (L. 79/2022)': "ricercatore",
+ 'Ricercatore a t.d. - t.defin. (L. 79/2022)': "ricercatore" 
+ }
+
+cerca_univ['fascia_simplified'] = cerca_univ['Fascia'].map(fascia)
+
+cun_eter = {
+"Area 01" : "Eter_5"  ,  # looking at distribution specific SSD (math, informatics)
+"Area 02" : "Eter_5"  , 
+"Area 03" : "Eter_5"  , 
+"Area 04" : "Eter_5"  , 
+"Area 05" : "Eter_5"  , 
+"Area 06" : "Eter_9" , 
+"Area 07" : "Eter_8"  , 
+"Area 08" : "Eter_7"  , 
+"Area 09" : "Eter_7"  , 
+"Area 10" : "Eter_2"  , 
+"Area 11" : "Eter_1" ,  # looking at distribution specific SSD (philosofy, history, anthropology, psychology, physical education)
+"Area 12" : "Eter_4" ,
+"Area 13" : "Eter_4" , # looking at distribution specific SSD (economics, and statistics applied to economics)
+"Area 14" : "Eter_3"
+}
+
+
+
+ssd_eter = pd.read_excel('ssd_area.xlsx')
+merged_ssd = pd.merge(cerca_univ, ssd_eter, on=["SSD"], how="left")
+
+merged_ssd["aggEter"] = (
+    merged_ssd
+    .groupby(["Ateneo_Eter", "fascia_simplified", "BAS.REFYEAR", "Eter_area"])["Eter_area"]
+    .transform("count")
+)
+
+filtered_df_nuts = filtered_df[["Ateneo_Eter", "AGG.NUTS"]]
+filtered_df_nuts = filtered_df_nuts.drop_duplicates(subset=["Ateneo_Eter"])
+
+
+merged_ssd = pd.merge(merged_ssd,filtered_df_nuts, on=["Ateneo_Eter"], how="left")
+
+
+merged_ssd.to_csv("cercauniv_eter.csv", index = False)
+
 # Functions for centrality index ######
 
 # centrality index
@@ -325,6 +389,20 @@ avg_nuts = (
                .sum()
                .reset_index()
 )
+
+cols_univ =  [
+    'fascia_simplified',
+    'Eter_area',
+    'aggEter'
+              ]
+
+
+avg_nuts_cercauniv = (
+    merged_ssd.groupby(["AGG.NUTS", "BAS.REFYEAR",'fascia_simplified',"Eter_area"])["aggEter"]
+               .sum()
+               .reset_index()
+)
+
 # avg_nuts.to_csv("avg_nuts.csv",index= False, sep = ";")
 
 # to compile interactive plots aggregated by NUTS
@@ -849,3 +927,64 @@ g.fig.suptitle("Affluence PhD enrollments per area; Size = yearly relative size 
 plt.xticks(years)
 plt.savefig("AGGcentfacsize.png", dpi=300, bbox_inches="tight")
 plt.show()
+
+
+## plotcercauniv
+
+def plotfiguniv(dforig, plotvariable, labeltitle, figlabel, color_map=None):
+    # --- Custom facet order ---
+    facet_order = ["NW", "NE", "C", "S", "I"]
+
+    # Keep only regions present in the data, respecting the desired order
+    nuts_values = [n for n in facet_order if n in dforig["AGG.NUTS"].unique()]
+    n_facets = len(nuts_values)
+
+    # --- Create subplots ---
+    fig, axes = plt.subplots(
+        nrows=1,
+        ncols=n_facets,
+        figsize=(6 * n_facets, 5),
+        sharey=True
+    )
+
+    if n_facets == 1:
+        axes = [axes]
+
+    # --- Plot each facet ---
+    for ax, nuts in zip(axes, nuts_values):
+        subset_nuts = dforig[dforig["AGG.NUTS"] == nuts]
+
+        for fascia, sub_fascia in subset_nuts.groupby("fascia_simplified"):
+            color = color_map.get(fascia, None) if color_map else None
+            ax.plot(
+                sub_fascia["BAS.REFYEAR"],
+                sub_fascia[plotvariable],
+                marker="o",
+                label=fascia,
+                color=color
+            )
+
+        ax.set_title(f"NUTS: {nuts}")
+        ax.set_xlabel("Year")
+        ax.grid(True)
+        ax.legend(title="Fascia Simplified", fontsize=8)
+
+    # --- Common settings ---
+    fig.suptitle("Enrollment " + labeltitle, fontsize=14)
+    axes[0].set_ylabel(plotvariable)
+
+    plt.tight_layout()
+    plt.subplots_adjust(top=0.88)
+    plt.savefig(figlabel + ".png", bbox_inches="tight")
+    plt.show()
+    
+plotfiguniv(avg_nuts_cercauniv[avg_nuts_cercauniv["Eter_area"] == "Eter_1"],"aggEter","Eter_1: Education, tenure","Eter_1_cercauniv",color_map = None)
+plotfiguniv(avg_nuts_cercauniv[avg_nuts_cercauniv["Eter_area"] == "Eter_2"],"aggEter","Eter_2: Arts and Humanities, tenure","Eter_2_cercauniv",color_map = None)
+plotfiguniv(avg_nuts_cercauniv[avg_nuts_cercauniv["Eter_area"] == "Eter_3"],"aggEter","Eter_3: Social sciences, journalism and information, tenure","Eter_3_cercauniv",color_map = None)
+plotfiguniv(avg_nuts_cercauniv[avg_nuts_cercauniv["Eter_area"] == "Eter_4"],"aggEter","Eter_4: Business, administration and law, tenure","Eter_4_cercauniv",color_map = None)
+plotfiguniv(avg_nuts_cercauniv[avg_nuts_cercauniv["Eter_area"] == "Eter_5"],"aggEter","Eter_5: Natural sciences, mathematics and statistics, tenure","Eter_5_cercauniv",color_map = None)
+plotfiguniv(avg_nuts_cercauniv[avg_nuts_cercauniv["Eter_area"] == "Eter_6"],"aggEter","Eter_6: Information and Communication Technologies, tenure","Eter_6_cercauniv",color_map = None)
+plotfiguniv(avg_nuts_cercauniv[avg_nuts_cercauniv["Eter_area"] == "Eter_7"],"aggEter","Eter_7: Engineering, manufacturing and construction, tenure","Eter_7_cercauniv",color_map = None)
+plotfiguniv(avg_nuts_cercauniv[avg_nuts_cercauniv["Eter_area"] == "Eter_8"],"aggEter","Eter_8: Agriculture, forestry, fisheries and veterinary, tenure","Eter_8_cercauniv",color_map = None)
+plotfiguniv(avg_nuts_cercauniv[avg_nuts_cercauniv["Eter_area"] == "Eter_9"],"aggEter","Eter_9: Health and welfare, tenure","Eter_9_cercauniv",color_map = None)
+
